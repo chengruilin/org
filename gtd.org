@@ -2,19 +2,31 @@
 #+STARTUP: overview
 
 * Work
-  123
+
 
 * Reading
-  asdf
 
-* Life
-  asdf
+** [[file:books/the_art_of_unix_programming.org][The Art of UNIX Programming]]                                 :READING:UNIX:
+** [[file:books/being_friends_with_time.org][把时间当作朋友-李笑来]]                                       :READING:TIME:
+
 
 * Read Org Info Doc
-  asdfsadf
 
-** sub_titl1
-   asdfsadf
+** Org Mode - Info                                        :READING:INFO_DOC:
+*** [[info:org:Introduction][1 Introduction]]
+*** [[info:org:Document%20structure][2 Document structure]]
+*** [[info:org:Tables][3 Tables]]
+*** [[info:org:Hyperlinks][4 Hyperlinks]]
+*** [[info:org:TODO%20items][5 TODO items]]
+*** [[info:org:Tags][6 Tags]] 
+*** [[info:org:Properties%20and%20columns][7 Properties and columns]]  
+*** [[info:org:Dates%20and%20times][8 Dates and times]] 
+*** [[info:org:Capture%20-%20Refile%20-%20Archive][9 Capture - Refile - Archive]] 
+*** [[info:org:Agenda%20views][10 Agenda views]]  
+*** [[info:org:Markup%20for%20rich%20export][11 Markup for rich export]] 
+*** [[info:org:Exporting][12 Exporting]] 
+*** [[info:org:Publishing][13 Publishing]]
+*** [[info:org:Working%20with%20source%20code][14 Working with source code]] 
+*** [[info:org:Miscellaneous][15 Miscellaneous]] 
+** Elisp - Info                                           :READING:INFO_DOC:
 
-** sub_titl2
-   asdfasdf
