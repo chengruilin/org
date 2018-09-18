@@ -1,0 +1,20 @@
+#+TITLE My GTDs
+#+STARTUP: overview
+
+* Work
+  123
+
+* Reading
+  asdf
+
+* Life
+  asdf
+
+* Read Org Info Doc
+  asdfsadf
+
+** sub_titl1
+   asdfsadf
+
+** sub_titl2
+   asdfasdf
