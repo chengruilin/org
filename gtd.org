@@ -162,54 +162,57 @@
      |-
      #+END_EXAMPLE
 
+     Creation and conversion
      | function                                | key             | description                                                                   | spacemacs   |
      |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
-     | Creation and conversion                 |                 |                                                                               |             |
-     |                                         |                 |                                                                               |             |
      | org-table-create-or-convert-from-region | C-c "the vline" | convert the active region to a table                                          |             |
      | org-table-create                        |                 | create table like 3x2                                                         | <, t n>     |
-     |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
-     | Re-aligning and field motion            |                 |                                                                               |             |
-     |                                         |                 |                                                                               |             |
-     | org-table-align                         | C-c C-c         | re-align the table                                                            | <, t a>     |
-     | org-table-blank-field                   | C-c <SPC>       | blank the field at point                                                      | <, t b>     |
-     | org-table-next-field                    | <TAB>           | re-align & move to the next field                                             | <, t, l>    |
-     | org-table-previous-field                | S-<TAB>         | re-align & move to previous field                                             | <, t, h>    |
-     | org-table-next-row                      | <RET>           | re-align & move down to next row                                              | <, t, j>    |
-     | org-table-beginning-of-field            | M-a             | move to beginning of the current table field                                  | X           |
-     | org-table-end-of-field                  | M-e             | move to end of the current table field/next field                             | X           |
-     |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
-     | Column and row editing                  |                 |                                                                               |             |
-     |                                         |                 |                                                                               |             |
-     | org-table-move-column-left              | M-<LEFT>        | move the current column left                                                  | <, t, H>    |
-     | org-table-move-column-right             | M-<RIGHT>       | move the current column right                                                 | <, t, L>    |
-     | org-table-delete-column                 | M-S-<LEFT>      | kill the current column                                                       | <, t, d, c> |
-     | org-table-insert-column                 | M-S-<RIGHT>     | insert a new column to the left                                               | <, t, i, c> |
-     | org-table-move-row-up                   | M-<UP>          | move the current row up                                                       | <, t, K>    |
-     | org-table-move-row-down                 | M-<DOWN>        | move the current row down                                                     | <, t, J>    |
-     | org-table-kill-row                      | M-S-<UP>        | kill thr row or horizontal line                                               | <, t, d, r> |
-     | org-table-insert-row                    | M-S-<DOWN>      | insert a new row above                                                        | <, t, i, r> |
-     | org-table-insert-hline                  | C-c -           | insert a horizontal line below                                                | <, t, i, h> |
-     | org-table-hline-and-move                | C-c <RET>       | insert a horizontal line below, and move cursor below line                    | <, t, i, H> |
-     | org-table-sort-lines                    | C-c ^           | sort the table lines in the region                                            | <, t, s>    |
-     |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
-     | Regions                                 |                 |                                                                               |             |
-     |                                         |                 |                                                                               |             |
-     | org-table-copy-region                   | C-c C-x M-w     | copy a rectangular region from a table to a special clipboard                 |             |
-     | org-table-cut-region                    | C-c C-x C-w     | copy a rectangular region from a table, and blank all fields in the rectangle |             |
-     | org-table-paste-rectangle               | C-c C-x C-y     | paste a rectangular region into a table                                       |             |
-     | org-table-wrap-region                   | M-<RET>         | split the current field at the cursor position                                | <, t, w>    |
-     |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
-     | Calculations                            |                 |                                                                               |             |
-     |                                         |                 |                                                                               |             |
-     | org-table-sum                           | C-c +           | sum the numbers in current column, 'C-y' insert the result                    |             |
-     | org-table-copy-down                     | S-<RET>         | when current field is empty, copy from first non-empty field above            |             |
-     |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
-     | Miscellaneous                           |                 |                                                                               |             |
-     |                                         |                 |                                                                               |             |
-     | org-table-edit-field                    | C-c '           | Edit the current field in a separate window                                   |             |
-     | org-table-import                        |                 | Import a file as a table.(import a spreadsheet table or data from a database) | <, t, I>    |
-     | org-table-export                        |                 | Export the table, by default as a TAB-separated file                          | <, t, E>    |
+     
+     Re-aligning and field motion
+     | function                     | key         | description                                                                   | spacemacs   |
+     |------------------------------+-------------+-------------------------------------------------------------------------------+-------------|
+     | org-table-align              | C-c C-c     | re-align the table                                                            | <, t a>     |
+     | org-table-blank-field        | C-c <SPC>   | blank the field at point                                                      | <, t b>     |
+     | org-table-next-field         | <TAB>       | re-align & move to the next field                                             | <, t, l>    |
+     | org-table-previous-field     | S-<TAB>     | re-align & move to previous field                                             | <, t, h>    |
+     | org-table-next-row           | <RET>       | re-align & move down to next row                                              | <, t, j>    |
+     | org-table-beginning-of-field | M-a         | move to beginning of the current table field                                  | X           |
+     | org-table-end-of-field       | M-e         | move to end of the current table field/next field                             | X           |
+
+     Column and row editing
+     | function                    | key         | description                                                                   | spacemacs   |
+     |-----------------------------+-------------+-------------------------------------------------------------------------------+-------------|
+     | org-table-move-column-left  | M-<LEFT>    | move the current column left                                                  | <, t, H>    |
+     | org-table-move-column-right | M-<RIGHT>   | move the current column right                                                 | <, t, L>    |
+     | org-table-delete-column     | M-S-<LEFT>  | kill the current column                                                       | <, t, d, c> |
+     | org-table-insert-column     | M-S-<RIGHT> | insert a new column to the left                                               | <, t, i, c> |
+     | org-table-move-row-up       | M-<UP>      | move the current row up                                                       | <, t, K>    |
+     | org-table-move-row-down     | M-<DOWN>    | move the current row down                                                     | <, t, J>    |
+     | org-table-kill-row          | M-S-<UP>    | kill thr row or horizontal line                                               | <, t, d, r> |
+     | org-table-insert-row        | M-S-<DOWN>  | insert a new row above                                                        | <, t, i, r> |
+     | org-table-insert-hline      | C-c -       | insert a horizontal line below                                                | <, t, i, h> |
+     | org-table-hline-and-move    | C-c <RET>   | insert a horizontal line below, and move cursor below line                    | <, t, i, H> |
+     | org-table-sort-lines        | C-c ^       | sort the table lines in the region                                            | <, t, s>    |
+
+     Regions
+     | function                    | key         | description                                                                   | spacemacs   |
+     |-----------------------------+-------------+-------------------------------------------------------------------------------+-------------|
+     | org-table-copy-region       | C-c C-x M-w | copy a rectangular region from a table to a special clipboard                 |             |
+     | org-table-cut-region        | C-c C-x C-w | copy a rectangular region from a table, and blank all fields in the rectangle |             |
+     | org-table-paste-rectangle   | C-c C-x C-y | paste a rectangular region into a table                                       |             |
+     | org-table-wrap-region       | M-<RET>     | split the current field at the cursor position                                | <, t, w>    |
+
+     Calculations
+     | function             | key     | description                                                                   | spacemacs |
+     |----------------------+---------+-------------------------------------------------------------------------------+-----------|
+     | org-table-sum        | C-c +   | sum the numbers in current column, 'C-y' insert the result                    |           |
+     | org-table-copy-down  | S-<RET> | when current field is empty, copy from first non-empty field above            |           |
+
+     Miscellaneous
+     | function             | key     | description                                                                   | spacemacs |
+     | org-table-edit-field | C-c '   | Edit the current field in a separate window                                   |           |
+     | org-table-import     |         | Import a file as a table.(import a spreadsheet table or data from a database) | <, t, I>  |
+     | org-table-export     |         | Export the table, by default as a TAB-separated file                          | <, t, E>  |
 
 **** Column width and alignment
      Column width
