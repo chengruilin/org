@@ -1,7 +1,7 @@
 #+TITLE: My GTDs
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e@)
 #+STARTUP: overview
-#+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
+#+TAGS: @work(w) @youzan(y) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
 
 * Work
 
@@ -24,7 +24,6 @@
    - State "DOING"      from "PAUSE"      [2018-09-19 三 16:39]
 
 * Read Org Info Doc
-
 ** Org Mode - Info                                                   :@read:
 *** DONE [[info:org:Introduction][1 Introduction]]
     CLOSED: [2018-09-19 三 16:42]
@@ -104,7 +103,7 @@
      | org-sparse-tree | C-c /   | select a sparse-tree creating command           | <, />     |
      | org-occur       | C-c / r | regexp and shows a sparse tree with all matches |           |
      | next-error      | M-g n   | jump to the next sparse tree match              | C-x '     |
-     | previours-error | M-g p   | jump to the previous sparse tree match          |           |
+     | previous-error  | M-g p   | jump to the previous sparse tree match          |           |
      
 **** Plaint lis
    | symbol   | description                 |
@@ -152,8 +151,116 @@
 **** Org syntax
      [[https://orgmode.org/worg/dev/org-syntax.html][Document]]
      You can check syntax in your document using 'org-lint' command.
-*** TODO [[info:org:Tables][3 Tables]]
-*** TODO [[info:org:Hyperlinks][4 Hyperlinks]]
+*** RESUME [[info:org:Tables][3 Tables]]
+    - State "RESUME"     from "PAUSE"      [2018-09-19 三 21:57]
+    - State "PAUSE"      from "DOING"      [2018-09-19 三 20:34]
+    - State "DOING"      from "TODO"       [2018-09-19 Wed 20:15]
+**** Table editor                                                  :@key_map:
+     enter this and press <TAB>
+     #+BEGIN_EXAMPLE
+     |Name|Phone|Age|
+     |-
+     #+END_EXAMPLE
+
+     | function                                | key             | description                                                                   | spacemacs   |
+     |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
+     | Creation and conversion                 |                 |                                                                               |             |
+     |                                         |                 |                                                                               |             |
+     | org-table-create-or-convert-from-region | C-c "the vline" | convert the active region to a table                                          |             |
+     | org-table-create                        |                 | create table like 3x2                                                         | <, t n>     |
+     |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
+     | Re-aligning and field motion            |                 |                                                                               |             |
+     |                                         |                 |                                                                               |             |
+     | org-table-align                         | C-c C-c         | re-align the table                                                            | <, t a>     |
+     | org-table-blank-field                   | C-c <SPC>       | blank the field at point                                                      | <, t b>     |
+     | org-table-next-field                    | <TAB>           | re-align & move to the next field                                             | <, t, l>    |
+     | org-table-previous-field                | S-<TAB>         | re-align & move to previous field                                             | <, t, h>    |
+     | org-table-next-row                      | <RET>           | re-align & move down to next row                                              | <, t, j>    |
+     | org-table-beginning-of-field            | M-a             | move to beginning of the current table field                                  | X           |
+     | org-table-end-of-field                  | M-e             | move to end of the current table field/next field                             | X           |
+     |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
+     | Column and row editing                  |                 |                                                                               |             |
+     |                                         |                 |                                                                               |             |
+     | org-table-move-column-left              | M-<LEFT>        | move the current column left                                                  | <, t, H>    |
+     | org-table-move-column-right             | M-<RIGHT>       | move the current column right                                                 | <, t, L>    |
+     | org-table-delete-column                 | M-S-<LEFT>      | kill the current column                                                       | <, t, d, c> |
+     | org-table-insert-column                 | M-S-<RIGHT>     | insert a new column to the left                                               | <, t, i, c> |
+     | org-table-move-row-up                   | M-<UP>          | move the current row up                                                       | <, t, K>    |
+     | org-table-move-row-down                 | M-<DOWN>        | move the current row down                                                     | <, t, J>    |
+     | org-table-kill-row                      | M-S-<UP>        | kill thr row or horizontal line                                               | <, t, d, r> |
+     | org-table-insert-row                    | M-S-<DOWN>      | insert a new row above                                                        | <, t, i, r> |
+     | org-table-insert-hline                  | C-c -           | insert a horizontal line below                                                | <, t, i, h> |
+     | org-table-hline-and-move                | C-c <RET>       | insert a horizontal line below, and move cursor below line                    | <, t, i, H> |
+     | org-table-sort-lines                    | C-c ^           | sort the table lines in the region                                            | <, t, s>    |
+     |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
+     | Regions                                 |                 |                                                                               |             |
+     |                                         |                 |                                                                               |             |
+     | org-table-copy-region                   | C-c C-x M-w     | copy a rectangular region from a table to a special clipboard                 |             |
+     | org-table-cut-region                    | C-c C-x C-w     | copy a rectangular region from a table, and blank all fields in the rectangle |             |
+     | org-table-paste-rectangle               | C-c C-x C-y     | paste a rectangular region into a table                                       |             |
+     | org-table-wrap-region                   | M-<RET>         | split the current field at the cursor position                                | <, t, w>    |
+     |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
+     | Calculations                            |                 |                                                                               |             |
+     |                                         |                 |                                                                               |             |
+     | org-table-sum                           | C-c +           | sum the numbers in current column, 'C-y' insert the result                    |             |
+     | org-table-copy-down                     | S-<RET>         | when current field is empty, copy from first non-empty field above            |             |
+     |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
+     | Miscellaneous                           |                 |                                                                               |             |
+     |                                         |                 |                                                                               |             |
+     | org-table-edit-field                    | C-c '           | Edit the current field in a separate window                                   |             |
+     | org-table-import                        |                 | Import a file as a table.(import a spreadsheet table or data from a database) | <, t, I>    |
+     | org-table-export                        |                 | Export the table, by default as a TAB-separated file                          | <, t, E>    |
+
+**** Column width and alignment
+     Column width
+     | Column1    | Column2  |
+     | <10>       | <8>      |
+     | aaaaaaaaaaaaaaa | asdfasdfasdfasdf |
+
+     Alignment startup
+     #+BEGIN_EXAMPLE
+     #+STARTUP: align
+     #+STARTUP: noalign
+     #+END_EXAMPLE
+
+**** Column groups
+     | Column1 | Column2 | Column3 | Column4 |
+     | /       |       < |         |       > |
+     | 1       |       1 |      23 |       1 |
+     | a       |      20 |      23 |       3 |
+     | b       |      30 |     123 |    9999 |
+
+**** The Orgtbl minor mode
+     If you like the intuitive way the Org table editor works, you might also want to use it in other modes like Text mode or Mail mode.
+     #+BEGIN_EXAMPLE
+     (add-hook 'message-mode-hook 'turn-on-orgtbl)
+     #+END_EXAMPLE
+     
+**** The spreadsheet
+     The table editor makes use or the Eacs 'calc' package to implement spreadsheet-like capabilities.
+
+***** References
+      
+      How to refer to another field or range
+      | key   | description                                   |
+      |-------+-----------------------------------------------|
+      | C-c ? | find out what the coordinates of a fields are |
+      | C-c } | find out what the coordinates of a fields are |
+
+      Field references [@ROW$COLUMN]
+      | type   | references type        | example                                   |
+      |--------+------------------------+-------------------------------------------|
+      | column | absolute column number | $1, $2, ... $N                            |
+      | column | relative column number | $+1, $-2, $<, $>                          |
+      |--------+------------------------+-------------------------------------------|
+      | row    | absolute row number    | @1, @2, ... @N                            |
+      | row    | relative row number    | @+3, @-1, @<, @>                          |
+      |--------+------------------------+-------------------------------------------|
+      | hline  | I as hline             | @I(first hline), @II(second hline)        |
+      | hline  | column relative hline  | @III+2(second dataline after third hline) |
+
+
+*** Todo [[info:org:Hyperlinks][4 Hyperlinks]]
 *** TODO [[info:org:TODO%20items][5 TODO items]]
 *** TODO [[info:org:Tags][6 Tags]]
 *** TODO [[info:org:Properties%20and%20columns][7 Properties and columns]]
@@ -166,16 +273,8 @@
 *** TODO [[info:org:Working%20with%20source%20code][14 Working with source code]]
 *** TODO [[info:org:Miscellaneous][15 Miscellaneous]]
 
-
 ** Elisp - Info                                                      :@read:
 
-** asdfsdf
-
-*** sub1
-
-*** sub2
-
-    
 * Source Code
 
 ** TODO [[file:source_code/read_weex_source_code.org][Weex]]                                                  :@source_code:
