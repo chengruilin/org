@@ -1,27 +1,25 @@
 #+TITLE: My GTDs
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e@)
 #+STARTUP: overview
-#+TAGS: @work(w) @youzan(y) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
+#+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
 
 * Work
 
-* Emacs usa
+* Emacs
 
 ** Problem                                                          :@emacs:
 
 *** sogou input method not work
     update emacs.desktop "Exec=env LC_CTYPE=zh_CN.UTF-8 emacs25 %F"
-    
+
 
 ** Key Map
 
 * Reading
 
 ** DOING [[file:books/the_art_of_unix_programming.org][The Art of UNIX Programming]]                                 :@read:
-   - State "DOING"      from "TODO"       [2018-09-19 三 16:39]
 
 ** DOING [[file:books/being_friends_with_time.org][把时间当作朋友-李笑来]]                                       :@read:
-   - State "DOING"      from "PAUSE"      [2018-09-19 三 16:39]
 
 * Read Org Info Doc
 ** Org Mode - Info                                                   :@read:
@@ -36,12 +34,12 @@
     CLOSED: [2018-09-19 三 19:01]
     - State "DONE"       from "DOING"      [2018-09-19 三 19:01] \\
       get knowlege about org document structure
-   - State "DOING"      from "TODO"       [2018-09-19 三 16:44]
+    - State "DOING"      from "TODO"       [2018-09-19 三 16:44]
 **** Outlines
-    org-cycle <TAB>
+     org-cycle <TAB>
 **** Headlines
-    org-footnote-section
-    Clean view 'org-cycle-separator-lines'
+     org-footnote-section
+     Clean view 'org-cycle-separator-lines'
 **** Visibility cycling                                            :@key_map:
      | function                    | key               | description                                    | spacemacs |
      |-----------------------------+-------------------+------------------------------------------------+-----------|
@@ -104,30 +102,30 @@
      | org-occur       | C-c / r | regexp and shows a sparse tree with all matches |           |
      | next-error      | M-g n   | jump to the next sparse tree match              | C-x '     |
      | previous-error  | M-g p   | jump to the previous sparse tree match          |           |
-     
+
 **** Plaint lis
-   | symbol   | description                 |
-   |----------+-----------------------------|
-   | -        | unorderd list item          |
-   | +        | unorderd list item          |
-   | 1.,2.,3. | orderd list item            |
-   | 1),2),3) | orderd list item            |
-   | ::       | distinguish the description |
+     | symbol   | description                 |
+     |----------+-----------------------------|
+     | -        | unorderd list item          |
+     | +        | unorderd list item          |
+     | 1.,2.,3. | orderd list item            |
+     | 1),2),3) | orderd list item            |
+     | ::       | distinguish the description |
 
 **** Drawers
-      | function          | key       | description             | spacemacs |
-      |-------------------+-----------+-------------------------+-----------|
-      | org-insert-drawer | C-c C-x d | insert drawers at point | <, D>     |
-      
-      Hiding drawers on export
-      1. hide all drawer: #+OPTIONS: d:nil
-      2. hide some drawer:#+OPTIONS: d(not "D_NAME1" not "D_NAME2")
+     | function          | key       | description             | spacemacs |
+     |-------------------+-----------+-------------------------+-----------|
+     | org-insert-drawer | C-c C-x d | insert drawers at point | <, D>     |
+
+     Hiding drawers on export
+     1. hide all drawer: #+OPTIONS: d:nil
+     2. hide some drawer:#+OPTIONS: d(not "D_NAME1" not "D_NAME2")
 **** Blocks
      Org mode use begin...end blocks for various purposes from including source code example, example:
      #+BEGIN_EXAMPLE
      This is a block
      #+END_EXAMPLE
-    
+
      You can set "STARTUP":
      - #+STARTUP: hideblocks
      - #+STARTUP: nohideblocks
@@ -136,10 +134,10 @@
      - "[fn:name]"
      - "[fn::This is the inline definition of this footnote]"
      - "[fn:name:a definition]"
-       
-    | function            | key       | description                             | spacemacs |
-    |---------------------+-----------+-----------------------------------------+-----------|
-    | org-footnote-action | C-c C-x f | the footnote action command (s,r,S,n,d) |           |
+
+     | function            | key       | description                             | spacemacs |
+     |---------------------+-----------+-----------------------------------------+-----------|
+     | org-footnote-action | C-c C-x f | the footnote action command (s,r,S,n,d) |           |
 **** The Orgstruct minor mode
      If you like the Org mode structure editing and list formatting works, you can turn 'orgstruct-mode' on, example:
      "M-x orgstruct-mode <RET>"
@@ -151,7 +149,11 @@
 **** Org syntax
      [[https://orgmode.org/worg/dev/org-syntax.html][Document]]
      You can check syntax in your document using 'org-lint' command.
-*** RESUME [[info:org:Tables][3 Tables]]
+*** DONE [[info:org:Tables][3 Tables]]
+    CLOSED: [2018-09-20 四 01:11]
+    - State "DONE"       from "RESUME"     [2018-09-20 四 01:11] \\
+      org table usually usage.
+      spreadsheet and org-plot not finish
     - State "RESUME"     from "PAUSE"      [2018-09-19 三 21:57]
     - State "PAUSE"      from "DOING"      [2018-09-19 三 20:34]
     - State "DOING"      from "TODO"       [2018-09-19 Wed 20:15]
@@ -167,7 +169,7 @@
      |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
      | org-table-create-or-convert-from-region | C-c "the vline" | convert the active region to a table                                          |             |
      | org-table-create                        |                 | create table like 3x2                                                         | <, t n>     |
-     
+
      Re-aligning and field motion
      | function                     | key         | description                                                                   | spacemacs   |
      |------------------------------+-------------+-------------------------------------------------------------------------------+-------------|
@@ -238,30 +240,100 @@
      #+BEGIN_EXAMPLE
      (add-hook 'message-mode-hook 'turn-on-orgtbl)
      #+END_EXAMPLE
-     
-**** The spreadsheet
-     The table editor makes use or the Eacs 'calc' package to implement spreadsheet-like capabilities.
 
+**** [[info:org:The%20spreadsheet][The spreadsheet]]
+     The table editor makes use or the Eacs 'calc' package to implement spreadsheet-like capabilities.
 ***** References
-      
       How to refer to another field or range
       | key   | description                                   |
       |-------+-----------------------------------------------|
       | C-c ? | find out what the coordinates of a fields are |
       | C-c } | find out what the coordinates of a fields are |
 
-      Field references [@ROW$COLUMN]
-      | type   | references type        | example                                   |
-      |--------+------------------------+-------------------------------------------|
-      | column | absolute column number | $1, $2, ... $N                            |
-      | column | relative column number | $+1, $-2, $<, $>                          |
-      |--------+------------------------+-------------------------------------------|
-      | row    | absolute row number    | @1, @2, ... @N                            |
-      | row    | relative row number    | @+3, @-1, @<, @>                          |
-      |--------+------------------------+-------------------------------------------|
-      | hline  | I as hline             | @I(first hline), @II(second hline)        |
-      | hline  | column relative hline  | @III+2(second dataline after third hline) |
+****** Field references
+         #+BEGIN_EXAMPLE
+         @ROW$COLUMN
+         ---------------
+         @2$3
+         $5
+         @2
+         @-1$-3
+         @-I$2
+         @>$5
+         #+END_EXAMPLE
 
+         | type   | references type                 | example                                   |
+         |--------+---------------------------------+-------------------------------------------|
+         | column | absolute column number          | $1, $2, ... $N                            |
+         | column | relative column number          | $+1, $-2                                  |
+         | column | first column                    | $<                                        |
+         | column | last column                     | $>                                        |
+         | column | the third column from the right | $>>>                                      |
+         | column | current column                  | $0                                        |
+         | column | use A,B,C... as r               | A,B,C,D                                   |
+         |--------+---------------------------------+-------------------------------------------|
+         | row    | absolute row number             | @1, @2, ... @N                            |
+         | row    | relative row number             | @+3, @-1                                  |
+         | row    | first row                       | @<                                        |
+         | row    | last row                        | @>                                        |
+         | row    | current row                     | @0                                        |
+         |--------+---------------------------------+-------------------------------------------|
+         | hline  | I as hline                      | @I(first hline), @II(second hline)        |
+         | hline  | column relative hline           | @III+2(second dataline after third hline) |
+
+****** Range references
+        references connected by two dots '..', like:
+        #+BEGIN_EXAMPLE
+        @row..@row2
+        @column..@column2
+        @row$column..@row2$column2
+        --------------------------
+        $2..$7
+        $P..$Q
+        $<<<..$>>
+        @2$1..@4$3
+        @-1$-2..@-1
+        @I..@II
+        #+END_EXAMPLE
+
+****** Field coordinates in formulas
+       '@#' or '$#' like a variable, is current result will go to in traditional Lisp formula.
+       | symbol | description              |
+       |--------+--------------------------|
+       | @#     | org-table-current-dline  |
+       | @$     | org-table-current-column |
+       Here is example:
+       #+BEGIN_EXAMPLE
+       if(@# % 2, $#, string(""))
+       
+       $2 = '(identity remote(FOO, @@#$1))
+       
+       @3 = 2 * remote(FOO, @1$$#)
+       #+END_EXAMPLE
+       
+****** Named references
+       | symbol | description                 |
+       |--------+-----------------------------|
+       | $name  | org-table-formula-constants |
+       
+       The example:
+       #+BEGIN_EXAMPLE
+       #+CONSTANTS: c=29999 pi=3.14159 eps=2.4e-6
+       #+END_EXAMPLE
+       
+****** Remote references
+       You may alse reference constants, fields and ranges from a different table(current file or even different file).
+       The syntax is
+       #+BEGIN_SAMPLE
+       remote(NAME-OR-ID, REF)
+       #+END_SAMPLE
+       - NAME can be the name of a table in the current file set by '#+NAME: Name'
+       - NAME can alse be the ID of an entry
+       - REF is an absolute field or rangge reference
+***** Formula syntax for Calc
+
+**** [[info:org:Org-Plot][Org-Plot]]
+     produce graphs of information stored in org tables.'Gnuplot'
 
 *** Todo [[info:org:Hyperlinks][4 Hyperlinks]]
 *** TODO [[info:org:TODO%20items][5 TODO items]]
@@ -283,4 +355,3 @@
 ** TODO [[file:source_code/read_weex_source_code.org][Weex]]                                                  :@source_code:
 
 ** TODO [[file:source_code/read_flutter_source_code.org][Flutter]]                                               :@source_code:
-   
