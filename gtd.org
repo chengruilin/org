@@ -23,14 +23,14 @@
 
 * Read Org Info Doc
 ** Org Mode - Info                                                   :@read:
-*** DONE [[info:org:Introduction][1 Introduction]]
+*** DONE [[elisp:(info-other-window%20"(org)Introduction")][1 Introduction]]
     CLOSED: [2018-09-19 三 16:42]
     - State "DONE"       from "DOING"      [2018-09-19 三 16:42] \\
       - org install
       - org file
       - org basic info
     - State "DOING"      from "TODO"       [2018-09-19 三 16:41]
-*** DONE [[info:org:Document%20structure][2 Document structure]]
+*** DONE [[elisp:(info-other-window%20"(org)Document%20structure")][2 Document structure]]
     CLOSED: [2018-09-19 三 19:01]
     - State "DONE"       from "DOING"      [2018-09-19 三 19:01] \\
       get knowlege about org document structure
@@ -149,7 +149,7 @@
 **** Org syntax
      [[https://orgmode.org/worg/dev/org-syntax.html][Document]]
      You can check syntax in your document using 'org-lint' command.
-*** DONE [[info:org:Tables][3 Tables]]
+*** DONE [[elisp:(info-other-window%20"(org)Tables")][3 Tables]]
     CLOSED: [2018-09-20 四 01:11]
     - State "DONE"       from "RESUME"     [2018-09-20 四 01:11] \\
       org table usually usage.
@@ -335,18 +335,18 @@
 **** [[info:org:Org-Plot][Org-Plot]]
      produce graphs of information stored in org tables.'Gnuplot'
 
-*** Todo [[info:org:Hyperlinks][4 Hyperlinks]]
-*** TODO [[info:org:TODO%20items][5 TODO items]]
-*** TODO [[info:org:Tags][6 Tags]]
-*** TODO [[info:org:Properties%20and%20columns][7 Properties and columns]]
-*** TODO [[info:org:Dates%20and%20times][8 Dates and times]]
-*** TODO [[info:org:Capture%20-%20Refile%20-%20Archive][9 Capture - Refile - Archive]]
-*** TODO [[info:org:Agenda%20views][10 Agenda views]]
-*** TODO [[info:org:Markup%20for%20rich%20export][11 Markup for rich export]]
-*** TODO [[info:org:Exporting][12 Exporting]]
-*** TODO [[info:org:Publishing][13 Publishing]]
-*** TODO [[info:org:Working%20with%20source%20code][14 Working with source code]]
-*** TODO [[info:org:Miscellaneous][15 Miscellaneous]]
+*** Todo [[elisp:(info-other-windown%20"(org)Hyperlinks")][4 Hyperlinks]]
+*** TODO [[elisp:(info-other-window%20"(org)TODO%20items")][5 TODO items]]
+*** TODO [[elisp:(info-other-window%20"(org)Tags")][6 Tags]]
+*** TODO [[elisp:(info-other-window%20"(org)Properties%20and%20columns")][7 Properties and columns]]
+*** TODO [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
+*** TODO [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
+*** TODO [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
+*** TODO [[elisp:(info-other-window%20"(org)Markup%20for%20rich%20export")][11 Markup for rich export]]
+*** TODO [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
+*** TODO [[elisp:(info-other-window%20"(org)Publishing")][13 Publishing]]
+*** TODO [[elisp:(info-other-window%20"(org)Working%20with%20source%20code")][14 Working with source code]]
+*** TODO [[elisp:(info-other-window%20"(org)Miscellaneous")][15 Miscellaneous]]
 
 ** Elisp - Info                                                      :@read:
 
