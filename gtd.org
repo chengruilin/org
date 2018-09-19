@@ -1,32 +1,184 @@
-#+TITLE My GTDs
+#+TITLE: My GTDs
+#+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e@)
 #+STARTUP: overview
+#+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
 
 * Work
 
+* Emacs usa
+
+** Problem                                                          :@emacs:
+
+*** sogou input method not work
+    update emacs.desktop "Exec=env LC_CTYPE=zh_CN.UTF-8 emacs25 %F"
+    
+
+** Key Map
 
 * Reading
 
-** [[file:books/the_art_of_unix_programming.org][The Art of UNIX Programming]]                                 :READING:UNIX:
-** [[file:books/being_friends_with_time.org][把时间当作朋友-李笑来]]                                       :READING:TIME:
+** DOING [[file:books/the_art_of_unix_programming.org][The Art of UNIX Programming]]                                 :@read:
+   - State "DOING"      from "TODO"       [2018-09-19 三 16:39]
 
+** DOING [[file:books/being_friends_with_time.org][把时间当作朋友-李笑来]]                                       :@read:
+   - State "DOING"      from "PAUSE"      [2018-09-19 三 16:39]
 
 * Read Org Info Doc
 
-** Org Mode - Info                                        :READING:INFO_DOC:
-*** [[info:org:Introduction][1 Introduction]]
-*** [[info:org:Document%20structure][2 Document structure]]
-*** [[info:org:Tables][3 Tables]]
-*** [[info:org:Hyperlinks][4 Hyperlinks]]
-*** [[info:org:TODO%20items][5 TODO items]]
-*** [[info:org:Tags][6 Tags]] 
-*** [[info:org:Properties%20and%20columns][7 Properties and columns]]  
-*** [[info:org:Dates%20and%20times][8 Dates and times]] 
-*** [[info:org:Capture%20-%20Refile%20-%20Archive][9 Capture - Refile - Archive]] 
-*** [[info:org:Agenda%20views][10 Agenda views]]  
-*** [[info:org:Markup%20for%20rich%20export][11 Markup for rich export]] 
-*** [[info:org:Exporting][12 Exporting]] 
-*** [[info:org:Publishing][13 Publishing]]
-*** [[info:org:Working%20with%20source%20code][14 Working with source code]] 
-*** [[info:org:Miscellaneous][15 Miscellaneous]] 
-** Elisp - Info                                           :READING:INFO_DOC:
+** Org Mode - Info                                                   :@read:
+*** DONE [[info:org:Introduction][1 Introduction]]
+    CLOSED: [2018-09-19 三 16:42]
+    - State "DONE"       from "DOING"      [2018-09-19 三 16:42] \\
+      - org install
+      - org file
+      - org basic info
+    - State "DOING"      from "TODO"       [2018-09-19 三 16:41]
+*** DONE [[info:org:Document%20structure][2 Document structure]]
+    CLOSED: [2018-09-19 三 19:01]
+    - State "DONE"       from "DOING"      [2018-09-19 三 19:01] \\
+      get knowlege about org document structure
+   - State "DOING"      from "TODO"       [2018-09-19 三 16:44]
+**** Outlines
+    org-cycle <TAB>
+**** Headlines
+    org-footnote-section
+    Clean view 'org-cycle-separator-lines'
+**** Visibility cycling                                            :@key_map:
+     | function                    | key               | description                                    | spacemacs |
+     |-----------------------------+-------------------+------------------------------------------------+-----------|
+     | org-cycle                   | <TAB>             | subtree cycling                                |           |
+     | org-global-cycle            | S-<TAB>           | global cycling                                 |           |
+     | org-set-startup-visibility  | C-u C-u <TAB>     | startup visibility                             |           |
+     | outline-show-all            | C-u C-u C-u <TAB> | show all                                       |           |
+     | org-reveal                  | C-c C-r           | reveal context around point                    |           |
+     | outline-show-branches       | C-c C-k           | expose all the headlins of the subtree         |           |
+     | outlien-show-children       | C-c <TAB>         | expose all direct children of the subtree      |           |
+     | org-tree-to-indirect-buffer | C-c C-x b         | show the current subtree in an indirect buffer |           |
+     | org-copy-visible            | C-c C-x v         | copy the visible text in the region            |           |
 
+     org "#+STARTUP" in (overview, content, showall, showeverything)
+**** Motion                                                        :@key_map:
+     | function                     | key     | description                      | spacemacs |
+     |------------------------------+---------+----------------------------------+-----------|
+     | org-next-visible-heading     | C-c C-n | next heading                     |           |
+     | org-previous-visible-heading | C-c C-p | previous heading                 |           |
+     | org-forward-same-level       | C-c C-f | next heading same level          |           |
+     | org-backward-same-level      | C-c C-b | backward to higher level heading |           |
+     | org-goto                     | C-c C-j | jump                             |           |
+
+**** Structure editing                                             :@key_map:
+     basic
+     | function                                | key         | description                                | spacemacs |
+     |-----------------------------------------+-------------+--------------------------------------------+-----------|
+     | org-meta-return                         | M-<RET>     | insert a new heading, item or row          | X         |
+     | org-insert-heading-respect-content      | C-<RET>     | insert a new heading after current subtree |           |
+     | org-insert-todo-heading                 | M-S-<RET>   | insert todo entry as current heading       |           |
+     | org-insert-todo-heading-respect-content | C-S-<RET>   | insert todo entry after current subtree    |           |
+     | org-do-promote                          | M-<LEFT>    | promote current heading by one level       |           |
+     | org-do-demote                           | M-<RIGHT>   | demote current heading by one level        |           |
+     | org-promote-subtree                     | M-S-<LEFT>  | promote the current subtree one level      |           |
+     | org-demote-subtree                      | M-S-<RIGHT> | demote the current subtree one level       |           |
+     | org-move-subtree-up                     | M-<UP>      | move subtree up                            |           |
+     | org-move-subtree-down                   | M-<DOWN>    | move subtree down                          |           |
+
+     mark/copy/paste
+     | function                          | key         | description                                                | spacemacs |
+     |-----------------------------------+-------------+------------------------------------------------------------+-----------|
+     | org-mark-element                  | M-h         | mark the element at point                                  |           |
+     | org-mark-subtree                  | C-c @       | mark the subtree at point                                  |           |
+     | org-cut-subtree                   | C-c C-x C-w | kill subtree, save in kill ring                            | X         |
+     | org-copy-subtree                  | C-c C-x M-w | copy subtree to kill ring                                  | X         |
+     | org-paste-subtree                 | C-c C-x C-y | yank subtree from kill ring                                | X         |
+     | org-yank                          | C-y         | paste subtrees folded                                      |           |
+     | org-clone-subtree-with-time-shift | C-c C-x c   | clone a subtree by making a number of sibling copies of it |           |
+     | org-refile                        | C-c C-w     | refile entry to a different location                       | <, R>     |
+     | org-sort                          | C-c ^       | sort same-level entries(by time, by priority, by TODO...)  | <, ^>     |
+     | org-narrow-to-subtree             | C-x n s     | narrow buffer to current subtree                           | <, n>     |
+     | org-narrow-to-block               | C-x n b     | narrow buffer to current block                             |           |
+     | widen                             | C-x n w     | widen buffer to remove narrowing                           | <SPC n w> |
+     | org-toggle-heading                | C-c *       | toggle (plaint list item or a headline)                    |           |
+
+**** Sparse trees                                                  :@key_map:
+     | function        | key     | description                                     | spacemacs |
+     |-----------------+---------+-------------------------------------------------+-----------|
+     | org-sparse-tree | C-c /   | select a sparse-tree creating command           | <, />     |
+     | org-occur       | C-c / r | regexp and shows a sparse tree with all matches |           |
+     | next-error      | M-g n   | jump to the next sparse tree match              | C-x '     |
+     | previours-error | M-g p   | jump to the previous sparse tree match          |           |
+     
+**** Plaint lis
+   | symbol   | description                 |
+   |----------+-----------------------------|
+   | -        | unorderd list item          |
+   | +        | unorderd list item          |
+   | 1.,2.,3. | orderd list item            |
+   | 1),2),3) | orderd list item            |
+   | ::       | distinguish the description |
+
+**** Drawers
+      | function          | key       | description             | spacemacs |
+      |-------------------+-----------+-------------------------+-----------|
+      | org-insert-drawer | C-c C-x d | insert drawers at point | <, D>     |
+      
+      Hiding drawers on export
+      1. hide all drawer: #+OPTIONS: d:nil
+      2. hide some drawer:#+OPTIONS: d(not "D_NAME1" not "D_NAME2")
+**** Blocks
+     Org mode use begin...end blocks for various purposes from including source code example, example:
+     #+BEGIN_EXAMPLE
+     This is a block
+     #+END_EXAMPLE
+    
+     You can set "STARTUP":
+     - #+STARTUP: hideblocks
+     - #+STARTUP: nohideblocks
+**** Footnotes                                                     :@key_map:
+     A footnote start with 'fn:', like these:
+     - "[fn:name]"
+     - "[fn::This is the inline definition of this footnote]"
+     - "[fn:name:a definition]"
+       
+    | function            | key       | description                             | spacemacs |
+    |---------------------+-----------+-----------------------------------------+-----------|
+    | org-footnote-action | C-c C-x f | the footnote action command (s,r,S,n,d) |           |
+**** The Orgstruct minor mode
+     If you like the Org mode structure editing and list formatting works, you can turn 'orgstruct-mode' on, example:
+     "M-x orgstruct-mode <RET>"
+     or turn it on by default:
+     #+BEGIN_EXAMPLE
+     (add-hook 'message-mode-hook 'turn-on-orgstruct)
+     (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+     #+END_EXAMPLE
+**** Org syntax
+     [[https://orgmode.org/worg/dev/org-syntax.html][Document]]
+     You can check syntax in your document using 'org-lint' command.
+*** TODO [[info:org:Tables][3 Tables]]
+*** TODO [[info:org:Hyperlinks][4 Hyperlinks]]
+*** TODO [[info:org:TODO%20items][5 TODO items]]
+*** TODO [[info:org:Tags][6 Tags]]
+*** TODO [[info:org:Properties%20and%20columns][7 Properties and columns]]
+*** TODO [[info:org:Dates%20and%20times][8 Dates and times]]
+*** TODO [[info:org:Capture%20-%20Refile%20-%20Archive][9 Capture - Refile - Archive]]
+*** TODO [[info:org:Agenda%20views][10 Agenda views]]
+*** TODO [[info:org:Markup%20for%20rich%20export][11 Markup for rich export]]
+*** TODO [[info:org:Exporting][12 Exporting]]
+*** TODO [[info:org:Publishing][13 Publishing]]
+*** TODO [[info:org:Working%20with%20source%20code][14 Working with source code]]
+*** TODO [[info:org:Miscellaneous][15 Miscellaneous]]
+
+
+** Elisp - Info                                                      :@read:
+
+** asdfsdf
+
+*** sub1
+
+*** sub2
+
+    
+* Source Code
+
+** TODO [[file:source_code/read_weex_source_code.org][Weex]]                                                  :@source_code:
+
+** TODO [[file:source_code/read_flutter_source_code.org][Flutter]]                                               :@source_code:
+   
