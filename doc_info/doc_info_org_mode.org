@@ -1,1 +1,332 @@
-#+TITLE Info Document For Org Mode
+#+TITLE: Info Document For Org Mode
+#+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e@)
+#+STARTUP: overview
+#+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
+
+* DONE [[elisp:(info-other-window%20"(org)Introduction")][1 Introduction]]
+  CLOSED: [2018-09-19 三 16:42]
+  - State "DONE"       from "DOING"      [2018-09-19 三 16:42] \\
+    - org install
+    - org file
+    - org basic info
+  - State "DOING"      from "TODO"       [2018-09-19 三 16:41]
+* DONE [[elisp:(info-other-window%20"(org)Document%20structure")][2 Document structure]]
+  CLOSED: [2018-09-19 三 19:01]
+  - State "DONE"       from "DOING"      [2018-09-19 三 19:01] \\
+    get knowlege about org document structure
+  - State "DOING"      from "TODO"       [2018-09-19 三 16:44]
+** Outlines
+   org-cycle <TAB>
+** Headlines
+   org-footnote-section
+   Clean view 'org-cycle-separator-lines'
+** Visibility cycling                                              :@key_map:
+   | function                    | key               | description                                    | spacemacs |
+   |-----------------------------+-------------------+------------------------------------------------+-----------|
+   | org-cycle                   | <TAB>             | subtree cycling                                |           |
+   | org-global-cycle            | S-<TAB>           | global cycling                                 |           |
+   | org-set-startup-visibility  | C-u C-u <TAB>     | startup visibility                             |           |
+   | outline-show-all            | C-u C-u C-u <TAB> | show all                                       |           |
+   | org-reveal                  | C-c C-r           | reveal context around point                    |           |
+   | outline-show-branches       | C-c C-k           | expose all the headlins of the subtree         |           |
+   | outlien-show-children       | C-c <TAB>         | expose all direct children of the subtree      |           |
+   | org-tree-to-indirect-buffer | C-c C-x b         | show the current subtree in an indirect buffer |           |
+   | org-copy-visible            | C-c C-x v         | copy the visible text in the region            |           |
+
+   org "#+STARTUP" in (overview, content, showall, showeverything)
+** Motion                                                          :@key_map:
+   | function                     | key     | description                      | spacemacs |
+   |------------------------------+---------+----------------------------------+-----------|
+   | org-next-visible-heading     | C-c C-n | next heading                     |           |
+   | org-previous-visible-heading | C-c C-p | previous heading                 |           |
+   | org-forward-same-level       | C-c C-f | next heading same level          |           |
+   | org-backward-same-level      | C-c C-b | backward to higher level heading |           |
+   | org-goto                     | C-c C-j | jump                             |           |
+
+** Structure editing                                               :@key_map:
+   basic
+   | function                                | key         | description                                | spacemacs |
+   |-----------------------------------------+-------------+--------------------------------------------+-----------|
+   | org-meta-return                         | M-<RET>     | insert a new heading, item or row          | X         |
+   | org-insert-heading-respect-content      | C-<RET>     | insert a new heading after current subtree |           |
+   | org-insert-todo-heading                 | M-S-<RET>   | insert todo entry as current heading       |           |
+   | org-insert-todo-heading-respect-content | C-S-<RET>   | insert todo entry after current subtree    |           |
+   | org-do-promote                          | M-<LEFT>    | promote current heading by one level       |           |
+   | org-do-demote                           | M-<RIGHT>   | demote current heading by one level        |           |
+   | org-promote-subtree                     | M-S-<LEFT>  | promote the current subtree one level      |           |
+   | org-demote-subtree                      | M-S-<RIGHT> | demote the current subtree one level       |           |
+   | org-move-subtree-up                     | M-<UP>      | move subtree up                            |           |
+   | org-move-subtree-down                   | M-<DOWN>    | move subtree down                          |           |
+
+   mark/copy/paste
+   | function                          | key         | description                                                | spacemacs |
+   |-----------------------------------+-------------+------------------------------------------------------------+-----------|
+   | org-mark-element                  | M-h         | mark the element at point                                  |           |
+   | org-mark-subtree                  | C-c @       | mark the subtree at point                                  |           |
+   | org-cut-subtree                   | C-c C-x C-w | kill subtree, save in kill ring                            | X         |
+   | org-copy-subtree                  | C-c C-x M-w | copy subtree to kill ring                                  | X         |
+   | org-paste-subtree                 | C-c C-x C-y | yank subtree from kill ring                                | X         |
+   | org-yank                          | C-y         | paste subtrees folded                                      |           |
+   | org-clone-subtree-with-time-shift | C-c C-x c   | clone a subtree by making a number of sibling copies of it |           |
+   | org-refile                        | C-c C-w     | refile entry to a different location                       | <, R>     |
+   | org-sort                          | C-c ^       | sort same-level entries(by time, by priority, by TODO...)  | <, ^>     |
+   | org-narrow-to-subtree             | C-x n s     | narrow buffer to current subtree                           | <, n>     |
+   | org-narrow-to-block               | C-x n b     | narrow buffer to current block                             |           |
+   | widen                             | C-x n w     | widen buffer to remove narrowing                           | <SPC n w> |
+   | org-toggle-heading                | C-c *       | toggle (plaint list item or a headline)                    |           |
+
+** Sparse trees                                                    :@key_map:
+   | function        | key     | description                                     | spacemacs |
+   |-----------------+---------+-------------------------------------------------+-----------|
+   | org-sparse-tree | C-c /   | select a sparse-tree creating command           | <, />     |
+   | org-occur       | C-c / r | regexp and shows a sparse tree with all matches |           |
+   | next-error      | M-g n   | jump to the next sparse tree match              | C-x '     |
+   | previous-error  | M-g p   | jump to the previous sparse tree match          |           |
+
+** Plaint lis
+   | symbol   | description                 |
+   |----------+-----------------------------|
+   | -        | unorderd list item          |
+   | +        | unorderd list item          |
+   | 1.,2.,3. | orderd list item            |
+   | 1),2),3) | orderd list item            |
+   | ::       | distinguish the description |
+
+** Drawers
+   | function          | key       | description             | spacemacs |
+   |-------------------+-----------+-------------------------+-----------|
+   | org-insert-drawer | C-c C-x d | insert drawers at point | <, D>     |
+
+   Hiding drawers on export
+   1. hide all drawer: #+OPTIONS: d:nil
+   2. hide some drawer:#+OPTIONS: d(not "D_NAME1" not "D_NAME2")
+** Blocks
+   Org mode use begin...end blocks for various purposes from including source code example, example:
+   #+BEGIN_EXAMPLE
+   This is a block
+   #+END_EXAMPLE
+
+   You can set "STARTUP":
+   - #+STARTUP: hideblocks
+   - #+STARTUP: nohideblocks
+** Footnotes                                                       :@key_map:
+   A footnote start with 'fn:', like these:
+   - "[fn:name]"
+   - "[fn::This is the inline definition of this footnote]"
+   - "[fn:name:a definition]"
+
+   | function            | key       | description                             | spacemacs |
+   |---------------------+-----------+-----------------------------------------+-----------|
+   | org-footnote-action | C-c C-x f | the footnote action command (s,r,S,n,d) |           |
+** The Orgstruct minor mode
+   If you like the Org mode structure editing and list formatting works, you can turn 'orgstruct-mode' on, example:
+   "M-x orgstruct-mode <RET>"
+   or turn it on by default:
+   #+BEGIN_EXAMPLE
+   (add-hook 'message-mode-hook 'turn-on-orgstruct)
+   (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+   #+END_EXAMPLE
+** Org syntax
+   [[https://orgmode.org/worg/dev/org-syntax.html][Document]]
+   You can check syntax in your document using 'org-lint' command.
+* DONE [[elisp:(info-other-window%20"(org)Tables")][3 Tables]]
+  CLOSED: [2018-09-20 四 01:11]
+  - State "DONE"       from "RESUME"     [2018-09-20 四 01:11] \\
+    org table usually usage.
+    spreadsheet and org-plot not finish
+  - State "RESUME"     from "PAUSE"      [2018-09-19 三 21:57]
+  - State "PAUSE"      from "DOING"      [2018-09-19 三 20:34]
+  - State "DOING"      from "TODO"       [2018-09-19 Wed 20:15]
+** Table editor                                                    :@key_map:
+   enter this and press <TAB>
+   #+BEGIN_EXAMPLE
+   |Name|Phone|Age|
+   |-
+   #+END_EXAMPLE
+
+   Creation and conversion
+   | function                                | key             | description                                                                   | spacemacs   |
+   |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
+   | org-table-create-or-convert-from-region | C-c "the vline" | convert the active region to a table                                          |             |
+   | org-table-create                        |                 | create table like 3x2                                                         | <, t n>     |
+
+   Re-aligning and field motion
+   | function                     | key         | description                                                                   | spacemacs   |
+   |------------------------------+-------------+-------------------------------------------------------------------------------+-------------|
+   | org-table-align              | C-c C-c     | re-align the table                                                            | <, t a>     |
+   | org-table-blank-field        | C-c <SPC>   | blank the field at point                                                      | <, t b>     |
+   | org-table-next-field         | <TAB>       | re-align & move to the next field                                             | <, t, l>    |
+   | org-table-previous-field     | S-<TAB>     | re-align & move to previous field                                             | <, t, h>    |
+   | org-table-next-row           | <RET>       | re-align & move down to next row                                              | <, t, j>    |
+   | org-table-beginning-of-field | M-a         | move to beginning of the current table field                                  | X           |
+   | org-table-end-of-field       | M-e         | move to end of the current table field/next field                             | X           |
+
+   Column and row editing
+   | function                    | key         | description                                                                   | spacemacs   |
+   |-----------------------------+-------------+-------------------------------------------------------------------------------+-------------|
+   | org-table-move-column-left  | M-<LEFT>    | move the current column left                                                  | <, t, H>    |
+   | org-table-move-column-right | M-<RIGHT>   | move the current column right                                                 | <, t, L>    |
+   | org-table-delete-column     | M-S-<LEFT>  | kill the current column                                                       | <, t, d, c> |
+   | org-table-insert-column     | M-S-<RIGHT> | insert a new column to the left                                               | <, t, i, c> |
+   | org-table-move-row-up       | M-<UP>      | move the current row up                                                       | <, t, K>    |
+   | org-table-move-row-down     | M-<DOWN>    | move the current row down                                                     | <, t, J>    |
+   | org-table-kill-row          | M-S-<UP>    | kill thr row or horizontal line                                               | <, t, d, r> |
+   | org-table-insert-row        | M-S-<DOWN>  | insert a new row above                                                        | <, t, i, r> |
+   | org-table-insert-hline      | C-c -       | insert a horizontal line below                                                | <, t, i, h> |
+   | org-table-hline-and-move    | C-c <RET>   | insert a horizontal line below, and move cursor below line                    | <, t, i, H> |
+   | org-table-sort-lines        | C-c ^       | sort the table lines in the region                                            | <, t, s>    |
+
+   Regions
+   | function                    | key         | description                                                                   | spacemacs   |
+   |-----------------------------+-------------+-------------------------------------------------------------------------------+-------------|
+   | org-table-copy-region       | C-c C-x M-w | copy a rectangular region from a table to a special clipboard                 |             |
+   | org-table-cut-region        | C-c C-x C-w | copy a rectangular region from a table, and blank all fields in the rectangle |             |
+   | org-table-paste-rectangle   | C-c C-x C-y | paste a rectangular region into a table                                       |             |
+   | org-table-wrap-region       | M-<RET>     | split the current field at the cursor position                                | <, t, w>    |
+
+   Calculations
+   | function             | key     | description                                                                   | spacemacs |
+   |----------------------+---------+-------------------------------------------------------------------------------+-----------|
+   | org-table-sum        | C-c +   | sum the numbers in current column, 'C-y' insert the result                    |           |
+   | org-table-copy-down  | S-<RET> | when current field is empty, copy from first non-empty field above            |           |
+
+   Miscellaneous
+   | function             | key     | description                                                                   | spacemacs |
+   | org-table-edit-field | C-c '   | Edit the current field in a separate window                                   |           |
+   | org-table-import     |         | Import a file as a table.(import a spreadsheet table or data from a database) | <, t, I>  |
+   | org-table-export     |         | Export the table, by default as a TAB-separated file                          | <, t, E>  |
+
+** Column width and alignment
+   Column width
+   | Column1    | Column2  |
+   | <10>       | <8>      |
+   | aaaaaaaaaaaaaaa | asdfasdfasdfasdf |
+
+   Alignment startup
+   #+BEGIN_EXAMPLE
+   #+STARTUP: align
+   #+STARTUP: noalign
+   #+END_EXAMPLE
+
+** Column groups
+   | Column1 | Column2 | Column3 | Column4 |
+   | /       |       < |         |       > |
+   | 1       |       1 |      23 |       1 |
+   | a       |      20 |      23 |       3 |
+   | b       |      30 |     123 |    9999 |
+
+** The Orgtbl minor mode
+   If you like the intuitive way the Org table editor works, you might also want to use it in other modes like Text mode or Mail mode.
+   #+BEGIN_EXAMPLE
+   (add-hook 'message-mode-hook 'turn-on-orgtbl)
+   #+END_EXAMPLE
+
+** [[info:org:The%20spreadsheet][The spreadsheet]]
+   The table editor makes use or the Eacs 'calc' package to implement spreadsheet-like capabilities.
+*** References
+    How to refer to another field or range
+    | key   | description                                   |
+    |-------+-----------------------------------------------|
+    | C-c ? | find out what the coordinates of a fields are |
+    | C-c } | find out what the coordinates of a fields are |
+
+**** Field references
+       #+BEGIN_EXAMPLE
+       @ROW$COLUMN
+       ---------------
+       @2$3
+       $5
+       @2
+       @-1$-3
+       @-I$2
+       @>$5
+       #+END_EXAMPLE
+
+       | type   | references type                 | example                                   |
+       |--------+---------------------------------+-------------------------------------------|
+       | column | absolute column number          | $1, $2, ... $N                            |
+       | column | relative column number          | $+1, $-2                                  |
+       | column | first column                    | $<                                        |
+       | column | last column                     | $>                                        |
+       | column | the third column from the right | $>>>                                      |
+       | column | current column                  | $0                                        |
+       | column | use A,B,C... as r               | A,B,C,D                                   |
+       |--------+---------------------------------+-------------------------------------------|
+       | row    | absolute row number             | @1, @2, ... @N                            |
+       | row    | relative row number             | @+3, @-1                                  |
+       | row    | first row                       | @<                                        |
+       | row    | last row                        | @>                                        |
+       | row    | current row                     | @0                                        |
+       |--------+---------------------------------+-------------------------------------------|
+       | hline  | I as hline                      | @I(first hline), @II(second hline)        |
+       | hline  | column relative hline           | @III+2(second dataline after third hline) |
+
+**** Range references
+      references connected by two dots '..', like:
+      #+BEGIN_EXAMPLE
+      @row..@row2
+      @column..@column2
+      @row$column..@row2$column2
+      --------------------------
+      $2..$7
+      $P..$Q
+      $<<<..$>>
+      @2$1..@4$3
+      @-1$-2..@-1
+      @I..@II
+      #+END_EXAMPLE
+
+**** Field coordinates in formulas
+     '@#' or '$#' like a variable, is current result will go to in traditional Lisp formula.
+     | symbol | description              |
+     |--------+--------------------------|
+     | @#     | org-table-current-dline  |
+     | @$     | org-table-current-column |
+     Here is example:
+     #+BEGIN_EXAMPLE
+     if(@# % 2, $#, string(""))
+       
+     $2 = '(identity remote(FOO, @@#$1))
+       
+     @3 = 2 * remote(FOO, @1$$#)
+     #+END_EXAMPLE
+       
+**** Named references
+     | symbol | description                 |
+     |--------+-----------------------------|
+     | $name  | org-table-formula-constants |
+       
+     The example:
+     #+BEGIN_EXAMPLE
+     #+CONSTANTS: c=29999 pi=3.14159 eps=2.4e-6
+     #+END_EXAMPLE
+       
+**** Remote references
+     You may alse reference constants, fields and ranges from a different table(current file or even different file).
+     The syntax is
+     #+BEGIN_SAMPLE
+     remote(NAME-OR-ID, REF)
+     #+END_SAMPLE
+     - NAME can be the name of a table in the current file set by '#+NAME: Name'
+     - NAME can alse be the ID of an entry
+     - REF is an absolute field or rangge reference
+*** Formula syntax for Calc
+
+** [[info:org:Org-Plot][Org-Plot]]
+   produce graphs of information stored in org tables.'Gnuplot'
+
+* Todo [[elisp:(info-other-window%20"(org)Hyperlinks")][4 Hyperlinks]]
+* TODO [[elisp:(info-other-window%20"(org)TODO%20items")][5 TODO items]]
+* TODO [[elisp:(info-other-window%20"(org)Tags")][6 Tags]]
+* TODO [[elisp:(info-other-window%20"(org)Properties%20and%20columns")][7 Properties and columns]]
+* TODO [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
+* TODO [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
+* TODO [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
+* TODO [[elisp:(info-other-window%20"(org)Markup%20for%20rich%20export")][11 Markup for rich export]]
+* TODO [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
+* TODO [[elisp:(info-other-window%20"(org)Publishing")][13 Publishing]]
+* TODO [[elisp:(info-other-window%20"(org)Working%20with%20source%20code")][14 Working with source code]]
+* TODO [[elisp:(info-other-window%20"(org)Miscellaneous")][15 Miscellaneous]]
+
+
+
