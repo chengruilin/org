@@ -1,6 +1,6 @@
 #+TITLE: Info Document For Org Mode
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e@)
-#+STARTUP: overview
+#+STARTUP: overview logrepeat
 #+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
 #+OPTIONS: toc:t
 
@@ -550,6 +550,98 @@
    | org-toggle-ordered-property | C-c C-x o | toggle the 'ORDERED' property of the current entry |
 
 ** Progress logging
+   Org mode can automatically record timestamp/note when you change the state of a TODO item.
+   Like the log info.
+
+*** Closing items
+    track item finish timestamp
+    #+BEGIN_CODE
+    # default is nil. 'CLOSED: [timestamp]' will be inserted after headline
+    (setq org-log-down 'time)
+
+    # for you can set in current org file
+    #+STARTUP: logdone
+    #+END_CODE
+
+    record a note along with the timestamp
+    #+BEGIN_CODE
+    (setq org-log-done 'note)
+    
+    #+STARTUP: lognotedone
+    #+END_CODE
+   
+*** Tracking TODO state changes
+    You might want to keep track of state changes(timestamp or note).
+    You can customize 'org-log-into-drawer' to get this behavior.
+    
+    support mark
+    | mark symbol | description                      | example        |
+    |-------------+----------------------------------+----------------|
+    | '!'         | record timestamp                 | "PAUSE(p!)"    |
+    | '@'         | recode a note                    | "CANCLED(c@)"  |
+    | '@/!'       | recode both timestamp and a note | "FINISH(f@/!)" |
+
+    1.global setting:
+    #+BEGIN_CODE
+    (setq org-todo-keywords
+       '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)")))
+    #+END_CODE
+
+    2.current org file setting:
+    #+BEGIN_CODE
+    #+TODO: TODO(t) WAIT(w@/!) | DONE(d!) CANCELED(c@)
+    #+END_CODE
+
+    3.current todo item setting:
+    Step1:
+    #+BEGIN_CODE
+    # add todo properties
+    C-c C-x o
+    #+END_CODE
+
+    Step2:
+    #+BEGIN_CODE
+    # cursor move to 'PROPERTIES', type
+    C-c C-c
+    #+END_CODE
+
+    Step3:
+    Select 'LOGGING' and insert the value, result like:
+    #+BEGIN_CODE
+    * TODO Log each state with only a time
+       :PROPERTIES:
+       :LOGGING: TODO(!) WAIT(!) DONE(!) CANCELED(!)
+       :END:
+    #+END_CODE
+
+*** Tracking your habits
+    Org has the ability to track the consistency of a special category of TODOs, called "habits".
+
+    First, enable 'habits' module, and has these properties:
+    1. 'STYLE' is 'habit'
+    2. 'SCHEDULED: <2009-10-17 Sat .+2d/4d>' means repeat interval.
+
+    Example:
+    #+BEGIN_EXAMPLE
+    ** TODO Shave
+        SCHEDULED: <2009-10-17 Sat .+2d/4d>
+        :PROPERTIES:
+        :STYLE:    habit
+        :LAST_REPEAT: [2009-10-19 Mon 00:36]
+        :END:
+        - State "DONE"       from "TODO"       [2009-10-15 Thu]
+        - State "DONE"       from "TODO"       [2009-10-12 Mon]
+        - State "DONE"       from "TODO"       [2009-10-10 Sat]
+        - State "DONE"       from "TODO"       [2009-10-04 Sun]
+        - State "DONE"       from "TODO"       [2009-10-02 Fri]
+        - State "DONE"       from "TODO"       [2009-09-29 Tue]
+        - State "DONE"       from "TODO"       [2009-09-25 Fri]
+        - State "DONE"       from "TODO"       [2009-09-19 Sat]
+        - State "DONE"       from "TODO"       [2009-09-16 Wed]
+        - State "DONE"       from "TODO"       [2009-09-12 Sat]
+    #+END_EXAMPLE
+
+    
 * TODO [[elisp:(info-other-window%20"(org)Tags")][6 Tags]]
 * TODO [[elisp:(info-other-window%20"(org)Properties%20and%20columns")][7 Properties and columns]]
 * TODO [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
