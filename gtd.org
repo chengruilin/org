@@ -5,6 +5,8 @@
 
 * Work
 
+** [[file:local/work_gtd.org][My Work GTDs]]                                                      :@work:
+
 * Emacs
 
 ** Problem                                                          :@emacs:
