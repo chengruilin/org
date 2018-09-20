@@ -468,7 +468,10 @@
 
 ** Custom Searches
    The doc link: [[info:org#Custom%20searches][info:org#Custom searches]]
-* DOING [#A] [[elisp:(info-other-window%20"(org)TODO%20items")][5 TODO items]]  
+* DONE [[elisp:(info-other-window%20"(org)TODO%20items")][5 TODO items]]  
+  CLOSED: [2018-09-20 四 21:35]
+  - State "DONE"       from "DOING"      [2018-09-20 四 21:35] \\
+    get org todo knowlege
   - State "DOING"      from "TODO"       [2018-09-20 四 17:09]
 ** Basic TODO functionality                                       :@key_map:
   | function                | key         | description                                     | spacemacs   |
@@ -642,6 +645,86 @@
     #+END_EXAMPLE
 
     
+** Priorities
+   Priorities make a difference only for sorting in the agenda.
+   A TODO item with priorities like this:
+   #+BEGIN_EXAMPLE
+   *** TODO [#A] Do something
+   #+END_EXAMPLE
+
+   Org mode support three priorities: 'A', 'B', and 'C'. default: A>B>C, also you can change like this:
+   #+BEGIN_EXAMPLE
+   #+PRIORITIES: A C B
+   #+END_EXAMPLE
+   
+  | function          | key      | description                           |
+  |-------------------+----------+---------------------------------------|
+  | org-priority      | C-c ,    | set priority of current headline      |
+  | org-priority-up   | S-<UP>   | increase priority of current headline |
+  | org-priority-down | S-<DOWN> | decrease priority of current headline |
+
+** Breaking tasks down into subtask
+   Purpose:
+   1.Break down large tasks into smaller, manageable subtasks.
+   2.Keep overview over the fraction of subtasks that are already completed.
+
+   Syntax:
+   1.Add "[%]" or "[/]" at the end or the parent task line.
+   2.Value will update when type 'C-c C-c' or when subtask TODO states change.
+
+   Here is example:
+   #+BEGIN_EXAMPLE
+   * Organize Party [33%]
+   ** TODO Call people [1/2]
+   *** TODO Peter
+   *** DONE Sarah
+   ** TODO Buy food
+   ** DONE Talk to neighbor
+   #+END_EXAMPLE
+
+   Statistics cookie count any subtasks, configure 'org-hierarchical-todo-statistics'.
+   You should set 'COOKIE_DATA' to 'recursive' like this:
+   #+BEGIN_EXAMPLE
+   * Parent capturing statistics [2/20]
+     :PROPERTIES:
+     :COOKIE_DATA: todo recursive
+     :END:
+   #+END_EXAMPLE
+
+   Parent task automatically DONE when all children are done. You should write this to conifg.
+   #+BEGIN_CODE
+   (defun org-summary-todo (n-done n-not-done)
+     "Switch entry to DONE when all subentries are done, to TODO otherwise."
+     (let (org-log-done org-log-states)   ; turn off logging
+       (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+
+   (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+   #+END_CODE
+
+** Checkbox
+   Example:
+   #+BEGIN_EXAMPLE
+   * TODO Organize party [2/4]
+     - [-] call people [1/3]
+       - [ ] Peter
+       - [X] Sarah
+       - [ ] Sam
+     - [X] order food
+     - [ ] think about what music to play
+     - [X] talk to the neighbors
+   #+END_EXAMPLE
+
+   If you want check all subtasks states.You can use 'COOKIE_DATA' to either 'checkbox' or 'todo' to resolve this issue.
+   
+   Here are checkbox commands:
+  | function                     | key         | description                                               |
+  |------------------------------+-------------+-----------------------------------------------------------|
+  | org-toggle-checkbox          | C-c C-c     | Toggle checkbox status or checkbox presence at point      |
+  | org-toggle-checkbox          | C-c C-x C-b |                                                           |
+  | org-insert-todo-heading      | M-S-<RET>   | insert a new item with a checkbox                         |
+  | org-toggle-ordered-property  | C-c C-x o   | toggle the 'ORDERED' property of the entry                |
+  | org-update-statistics-cookie | C-c #       | update the statistics cookie in the current outline entry |
+
 * TODO [[elisp:(info-other-window%20"(org)Tags")][6 Tags]]
 * TODO [[elisp:(info-other-window%20"(org)Properties%20and%20columns")][7 Properties and columns]]
 * TODO [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
