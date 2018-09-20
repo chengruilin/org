@@ -20,12 +20,12 @@
 
 ** DOING [[file:books/being_friends_with_time.org][把时间当作朋友-李笑来]]                                       :@read:
 
-** DOING [[file:doc_info/doc_info_org_mode.org][Org Mode]]
+** DOING [[file:doc/doc_info_org_mode.org][Org Mode]]                                                    :@read:
 
-** TODO [[file:doc_info/doc_info_elisp.org][Elisp]] 
+** TODO [[file:doc/doc_info_elisp.org][Elisp]]                                                        :@read:
 
 * Source Code
 
-** TODO [[file:source_code/read_weex_source_code.org][Weex]]                                                  :@source_code:
+** TODO [[file:code/read_weex_source_code.org][Weex]]                                                  :@source_code:
 
-** TODO [[file:source_code/read_flutter_source_code.org][Flutter]]                                               :@source_code:
+** TODO [[file:code/read_flutter_source_code.org][Flutter]]                                               :@source_code:
