@@ -231,50 +231,50 @@
     | C-c } | find out what the coordinates of a fields are |
 
 **** Field references
-       #+BEGIN_EXAMPLE
-       @ROW$COLUMN
-       ---------------
-       @2$3
-       $5
-       @2
-       @-1$-3
-       @-I$2
-       @>$5
-       #+END_EXAMPLE
+     #+BEGIN_EXAMPLE
+     @ROW$COLUMN
+     ---------------
+     @2$3
+     $5
+     @2
+     @-1$-3
+     @-I$2
+     @>$5
+     #+END_EXAMPLE
 
-       | type   | references type                 | example                                   |
-       |--------+---------------------------------+-------------------------------------------|
-       | column | absolute column number          | $1, $2, ... $N                            |
-       | column | relative column number          | $+1, $-2                                  |
-       | column | first column                    | $<                                        |
-       | column | last column                     | $>                                        |
-       | column | the third column from the right | $>>>                                      |
-       | column | current column                  | $0                                        |
-       | column | use A,B,C... as r               | A,B,C,D                                   |
-       |--------+---------------------------------+-------------------------------------------|
-       | row    | absolute row number             | @1, @2, ... @N                            |
-       | row    | relative row number             | @+3, @-1                                  |
-       | row    | first row                       | @<                                        |
-       | row    | last row                        | @>                                        |
-       | row    | current row                     | @0                                        |
-       |--------+---------------------------------+-------------------------------------------|
-       | hline  | I as hline                      | @I(first hline), @II(second hline)        |
-       | hline  | column relative hline           | @III+2(second dataline after third hline) |
+     | type   | references type                 | example                                   |
+     |--------+---------------------------------+-------------------------------------------|
+     | column | absolute column number          | $1, $2, ... $N                            |
+     | column | relative column number          | $+1, $-2                                  |
+     | column | first column                    | $<                                        |
+     | column | last column                     | $>                                        |
+     | column | the third column from the right | $>>>                                      |
+     | column | current column                  | $0                                        |
+     | column | use A,B,C... as r               | A,B,C,D                                   |
+     |--------+---------------------------------+-------------------------------------------|
+     | row    | absolute row number             | @1, @2, ... @N                            |
+     | row    | relative row number             | @+3, @-1                                  |
+     | row    | first row                       | @<                                        |
+     | row    | last row                        | @>                                        |
+     | row    | current row                     | @0                                        |
+     |--------+---------------------------------+-------------------------------------------|
+     | hline  | I as hline                      | @I(first hline), @II(second hline)        |
+     | hline  | column relative hline           | @III+2(second dataline after third hline) |
 
 **** Range references
-      references connected by two dots '..', like:
-      #+BEGIN_EXAMPLE
-      @row..@row2
-      @column..@column2
-      @row$column..@row2$column2
-      --------------------------
-      $2..$7
-      $P..$Q
-      $<<<..$>>
-      @2$1..@4$3
-      @-1$-2..@-1
-      @I..@II
-      #+END_EXAMPLE
+     references connected by two dots '..', like:
+     #+BEGIN_EXAMPLE
+     @row..@row2
+     @column..@column2
+     @row$column..@row2$column2
+     --------------------------
+     $2..$7
+     $P..$Q
+     $<<<..$>>
+     @2$1..@4$3
+     @-1$-2..@-1
+     @I..@II
+     #+END_EXAMPLE
 
 **** Field coordinates in formulas
      '@#' or '$#' like a variable, is current result will go to in traditional Lisp formula.
@@ -285,22 +285,22 @@
      Here is example:
      #+BEGIN_EXAMPLE
      if(@# % 2, $#, string(""))
-       
+
      $2 = '(identity remote(FOO, @@#$1))
-       
+
      @3 = 2 * remote(FOO, @1$$#)
      #+END_EXAMPLE
-       
+
 **** Named references
      | symbol | description                 |
      |--------+-----------------------------|
      | $name  | org-table-formula-constants |
-       
+
      The example:
      #+BEGIN_EXAMPLE
      #+CONSTANTS: c=29999 pi=3.14159 eps=2.4e-6
      #+END_EXAMPLE
-       
+
 **** Remote references
      You may alse reference constants, fields and ranges from a different table(current file or even different file).
      The syntax is
@@ -315,8 +315,13 @@
 ** [[info:org:Org-Plot][Org-Plot]]
    produce graphs of information stored in org tables.'Gnuplot'
 
-* Todo [[elisp:(info-other-window%20"(org)Hyperlinks")][4 Hyperlinks]]
-
+* DONE [[elisp:(info-other-window%20"(org)Hyperlinks")][4 Hyperlinks]]
+  CLOSED: [2018-09-20 四 17:03]
+  - State "DONE"       from "RESUME"     [2018-09-20 四 17:03] \\
+    know about all kinds of link in org-mode
+  - State "RESUME"     from "PAUSE"      [2018-09-20 四 14:22]
+  - State "PAUSE"      from "DOING"      [2018-09-20 四 14:02]
+  - State "DOING"      from              [2018-09-20 四 13:05]
 ** Link format
    <<Internal Link1>>
    External links
@@ -360,7 +365,117 @@
    #+END_INFO
 
 ** External link
-* TODO [#A] [[elisp:(info-other-window%20"(org)TODO%20items")][5 TODO items]]
+   Here are some examples:
+   #+BEGIN_EXAMPLE
+   http://www.astro.uva.nl/~dominik             on the web
+   doi:10.1000/182                              DOI for an electronic resource
+   file:/home/dominik/images/jupiter.jpg        file, absolute path
+   /home/dominik/images/jupiter.jpg             same as above
+   file:papers/last.pdf                         file, relative path
+   ./papers/last.pdf                            same as above
+   file:/ssh:myself@some.where:papers/last.pdf  file, path on remote machine
+   /ssh:myself@some.where:papers/last.pdf       same as above
+   file:sometextfile::NNN                       file, jump to line number
+   file:projects.org                            another Org file
+   file:projects.org::some words                text search in Org file(1)
+   file:projects.org::*task title               heading search in Org file(2)
+   docview:papers/last.pdf::NNN                 open in doc-view mode at page
+   id:B7423F4D-2E8A-471B-8810-C40F074717E9      Link to heading by ID
+   news:comp.emacs                              Usenet link
+   mailto:adent@galaxy.net                      Mail link
+   mhe:folder                                   MH-E folder link
+   mhe:folder#id                                MH-E message link
+   rmail:folder                                 RMAIL folder link
+   rmail:folder#id                              RMAIL message link
+   gnus:group                                   Gnus group link
+   gnus:group#id                                Gnus article link
+   bbdb:R.*Stallman                             BBDB link (with regexp)
+   irc:/irc.com/#emacs/bob                      IRC link
+   info:org#External links                      Info node or index link
+   shell:ls *.org                               A shell command
+   elisp:org-agenda                             Interactive Elisp command
+   elisp:(find-file-other-frame "Elisp.org")    Elisp form to evaluate
+   #+END_EXAMPLE
+   
+   Youcan also add hyperlink types: [[elisp:(info-other-window%20"(org)Adding%20hyperlink%20types")][See Here]]
+
+** Handling links
+  | function                 | key         | description                                  | support                                                      |
+  |--------------------------+-------------+----------------------------------------------+--------------------------------------------------------------|
+  | org-store-link           | <SPC> a o l | store alink to the current location          | Org mode buggers, Email/News client, Web browsers, BBDB, IRC |
+  | org-insert-link          | <, i l>     | insert a link. if cursor in a link, edit it  | insert stored links, completion support                      |
+  | org-toggle-inline-images | C-c C-x C-v | toggle the inline display of linked images   |                                                              |
+  | org-mark-ring-push       | C-c %       | push the current position onto the mark ring |                                                              |
+  | org-mark-ring-goto       | C-c &       | jmp back to a recorded position              |                                                              |
+  | org-next-link            | C-c C-x C-n | move forward to the next link in the buffer  |                                                              |
+  | org-previous-link        | C-c C-x C-p | move backward to the next link in the buffer |                                                              |
+
+** Useing link outside Org
+   You can insert and follow links an any Emacs buffer, youmay suitable global keys:
+   #+BEGIN_KEY
+   (global-set-key "\C-c L" 'org-insert-link-global)
+   (global-set-key "\C-c o" 'org-open-at-point-global)
+   #+END_KEY
+
+** Link abbreviations
+   Long URLs can be cumbersome to type, some usually use needed in a document. An abbreviations link looks like this:
+   #+BEGIN_EXAMPLE
+   [[linkword:tag][desc]]
+   #+END_EXAMPLE
+
+   The linkword must be a word, starting with a letter, followed by letters, numbers, ‘-’, and ‘_’.
+   And you can set the global variable 'org-link-abbrev-alist' like:
+   #+BEGIN_EXAMPLE
+   (setq org-link-abbrev-alist
+       '(("bugzilla"  . "http://10.1.2.9/bugzilla/show_bug.cgi?id=")
+         ("url-to-ja" . "http://translate.google.fr/translate?sl=en&tl=ja&u=%h")
+         ("google"    . "http://www.google.com/search?q=")
+         ("gmap"      . "http://maps.google.com/maps?q=%s")
+         ("omap"      . "http://nominatim.openstreetmap.org/search?q=%s&polygon=1")
+         ("ads"       . "http://adsabs.harvard.edu/cgi-bin/nph-abs_connect?author=%s&db_key=AST")))
+
+   --------------------------------      
+   replacement:
+ 
+         %s        ->   string
+         %h        ->   url-encode string
+   %(my-function)  ->   pass the tag to a custom function
+   --------------------------------
+   use:
+
+   [[bugzilla:129]]
+   [[google:OrgMode]]
+   #+END_EXAMPLE
+   
+   Also you can set values in current org file:
+   #+BEGIN_EXAMPLE
+   #+LINK: bugzilla  http://10.1.2.9/bugzilla/show_bug.cgi?id=
+   #+LINK: google    http://www.google.com/search?q=%s
+   #+END_EXAMPLE
+   
+** Search options in file links
+   Here is the cyntax of the different ways to attach a search to a file link:
+   #+BEGIN_EXAMPLE
+  |     link with search             | description                                   |
+  |----------------------------------+-----------------------------------------------|
+  | [[file:~/code/main.c::255]]      | Jump to line 255                              |
+  | [[file:~/code/main.c::255]]      | search for a link target                      |
+  | [[file:~/xx.org::*My Target]]    | in an org file, restrict search to headlines  |
+  | [[file:~/xx.org::#my-custom-id]] | link to a heading with a 'CUSTOM_ID' property |
+  | [[file:~/xx.org::/regexp/]]      | do a regular expression search for 'regexp'   |
+   #+END_EXAMPLE
+
+** Custom Searches
+   The doc link: [[info:org#Custom%20searches][info:org#Custom searches]]
+* DOING [#A] [[elisp:(info-other-window%20"(org)TODO%20items")][5 TODO items]]  
+  - State "DOING"      from "TODO"       [2018-09-20 四 17:09]
+** Basic TODO functionality                                       :@key_map:
+  | function | key         | description                                     | spacemacs |
+  |----------+-------------+-------------------------------------------------+-----------|
+  | org-todo | C-c C-t     | Rotate the TODO state of the current item among | <t>       |
+  |          | C-u C-c C-t |                                                 |           |
+  |          |             |                                                 |           |
+
 * TODO [[elisp:(info-other-window%20"(org)Tags")][6 Tags]]
 * TODO [[elisp:(info-other-window%20"(org)Properties%20and%20columns")][7 Properties and columns]]
 * TODO [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
@@ -371,6 +486,3 @@
 * TODO [[elisp:(info-other-window%20"(org)Publishing")][13 Publishing]]
 * TODO [[elisp:(info-other-window%20"(org)Working%20with%20source%20code")][14 Working with source code]]
 * TODO [[elisp:(info-other-window%20"(org)Miscellaneous")][15 Miscellaneous]]
-
-
-
