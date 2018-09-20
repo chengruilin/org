@@ -316,12 +316,56 @@
    produce graphs of information stored in org tables.'Gnuplot'
 
 * Todo [[elisp:(info-other-window%20"(org)Hyperlinks")][4 Hyperlinks]]
-* TODO [[elisp:(info-other-window%20"(org)TODO%20items")][5 TODO items]]
+
+** Link format
+   <<Internal Link1>>
+   External links
+   #+BEGIN_EXAMPLE
+   [[link][description]]
+   #+END_EXAMPLE
+
+   Internal links
+   #+BEGIN_EXAMPLE
+   [[lnk]]
+   #+END_EXAMPLE
+
+   Jump to link target
+   #+BEGIN_EXAMPLE
+   C-c C-o
+   #+END_EXAMPLE
+
+** Internal links
+   Setp1: define a target
+   #+BEGIN_EXAMPLE
+   <<My Target>>
+   or
+   #+NAME
+   #+END_EXAMPLE
+   #+NAME: My Target
+   | a  | b  |
+   |----+----|
+   | v1 | v2 |
+
+   Step2: add a link
+   #+BEGIN_EXAMPLE
+   [[My Target]]
+   #+END_EXAMPLE
+   Here is an example: [[Internal Link1]] [[My Target]]
+
+   Tips: back to internal link text
+   #+BEGIN_INFO
+   C-c &
+   or
+   M-x org-mark-ring-goto
+   #+END_INFO
+
+** External link
+* TODO [#A] [[elisp:(info-other-window%20"(org)TODO%20items")][5 TODO items]]
 * TODO [[elisp:(info-other-window%20"(org)Tags")][6 Tags]]
 * TODO [[elisp:(info-other-window%20"(org)Properties%20and%20columns")][7 Properties and columns]]
 * TODO [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
 * TODO [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
-* TODO [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
+* TODO [#A] [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
 * TODO [[elisp:(info-other-window%20"(org)Markup%20for%20rich%20export")][11 Markup for rich export]]
 * TODO [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
 * TODO [[elisp:(info-other-window%20"(org)Publishing")][13 Publishing]]
