@@ -574,6 +574,8 @@
     #+END_EXAMPLE
    
 *** Tracking TODO state changes
+    :PROPERTIES:
+    :END:
     You might want to keep track of state changes(timestamp or note).
     You can customize 'org-log-into-drawer' to get this behavior.
     
@@ -618,6 +620,8 @@
     #+END_EXAMPLE
 
 *** Tracking your habits
+    :PROPERTIES:
+    :END:
     Org has the ability to track the consistency of a special category of TODOs, called "habits".
 
     First, enable 'habits' module, and has these properties:
@@ -664,6 +668,8 @@
   | org-priority-down | S-<DOWN> | decrease priority of current headline |
 
 ** Breaking tasks down into subtask
+   :PROPERTIES:
+   :END:
    Purpose:
    1.Break down large tasks into smaller, manageable subtasks.
    2.Keep overview over the fraction of subtasks that are already completed.
@@ -725,8 +731,309 @@
   | org-toggle-ordered-property  | C-c C-x o   | toggle the 'ORDERED' property of the entry                |
   | org-update-statistics-cookie | C-c #       | update the statistics cookie in the current outline entry |
 
-* TODO [[elisp:(info-other-window%20"(org)Tags")][6 Tags]]
-* TODO [[elisp:(info-other-window%20"(org)Properties%20and%20columns")][7 Properties and columns]]
+* DONE [[elisp:(info-other-window%20"(org)Tags")][6 Tags]]
+  CLOSED: [2018-09-20 四 23:51]
+  - State "DONE"       from "DOING"      [2018-09-20 四 23:51] \\
+    Tags functions and varibles.
+  - State "DOING"      from "TODO"       [2018-09-20 四 22:52]
+
+** Tag inheritance
+   Tags make use of the hierarchical structure of outline trees.
+
+   Example:
+   #+BEGIN_EXAMPLE
+   * Meeting with the French group      :work:
+   ** Summary by Frank                  :boss:notes:
+   *** TODO Prepare slides for him      :action:
+   #+END_EXAMPLE
+   The final heading will have the tags ':work:', ':boss:', ':notes:', and ':action:'
+
+   Set tags all entries ina file:
+   #+BEGIN_EXAMPLE
+   #+FILETAGS: :Peter:Boss:Secret:
+   #+END_EXAMPLE
+
+   Varibles:
+  | variable                          | description                                                  |
+  |-----------------------------------+--------------------------------------------------------------|
+  | org-tags-exclude-from-inheritance | limit tag inheritance to specific tags                       |
+  | org-use-tag-inheritance           | turn inheritance off entrirely                               |
+  | org-tags-match-list-sublevels     | only show the first tags match in a subtrss(not recommended) |
+  | org-agenda-use-tag-inheritance    | the tags correctly set in the agenda for filter.             |
+  |                                   | set value 'nil' can really speed up agenda generation        |
+   
+** Setting tags 
+   Functions:
+   | function             | key     | description                                      | spacemacs |
+   |----------------------+---------+--------------------------------------------------+-----------|
+   | org-set-tags-command | C-c C-q | enter new tags for the current headline          |           |
+   |                      | C-c C-c | when cursor is in a head line, same as 'C-c C-q' |           |
+   | org-set-tags         | M-RET : | add tags to the current headline                 | <, :>     |
+
+   Varibles:'org-tag-alist'
+
+   Set for global tags:
+   #+BEGIN_EXAMPLE
+   (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("laptop" . ?l)))
+
+   ----------------------
+   set 'org-tag-alist', use ':startgroup', ':endgroup':
+   (setq org-tag-alist '((:startgroup . nil)
+                         ("@work" . ?w) ("@home" . ?h)
+                         ("@tennisclub" . ?t)
+                         (:endgroup . nil)
+                         ("laptop" . ?l) ("pc" . ?p)))
+   #+END_EXAMPLE
+
+   Set for current files:
+   #+BEGIN_EXAMPLE
+   #+TAGS: @work(w)  @home(h)  @tennisclub(t)  laptop(l)  pc(p)
+
+   ----------------------
+   '\n' start a new line:
+   #+TAGS: @work(w)  @home(h)  @tennisclub(t) \n laptop(l)  pc(p)
+
+   ----------------------
+   write in two lines:
+   #+TAGS: @work(w)  @home(h)  @tennisclub(t)
+   #+TAGS: laptop(l)  pc(p)
+
+   ----------------------
+   group together tags:
+   #+TAGS: { @work(w)  @home(h)  @tennisclub(t) }  laptop(l)  pc(p)
+
+   ----------------------
+   
+   #+END_EXAMPLE
+
+** Tag hierarchy
+   Tags can be defined in hierarchies.
+   Tags can be defined as a group tag for a set of other tags. Group can be set "broader term".
+   
+   You can set group tags like this in a org file:
+   #+BEGIN_EXAMPLE
+   GTD is group tag
+   @+TAGS: [ GTD: Control Persp ]
+   
+   -------------------------
+   create a hierarchy of tags:
+   #+TAGS: [ Control : Context Task ]
+   #+TAGS: [ Persp : Vision Goal AOF Project ]
+   #+END_EXAMPLE
+
+   The hierarchy:
+   #+BEGIN_EXAMPLE
+   - GTD
+     - Persp
+       - Vision
+       - Goal
+       - AOF
+       - Project
+     - Control
+       - Context
+       - Task
+   #+END_EXAMPLE
+
+   Or set variable in config file:
+   #+BEGIN_EXAMPLE
+   You can use the ':startgrouptag', ':grouptags' and ':endgrouptag' like:
+   (setq org-tag-alist '((:startgrouptag)
+                         ("GTD")
+                         (:grouptags)
+                         ("Control")
+                         ("Persp")
+                         (:endgrouptag)
+                         (:startgrouptag)
+                         ("Control")
+                         (:grouptags)
+                         ("Context")
+                         ("Task")
+                         (:endgrouptag)))
+   #+END_EXAMPLE
+   
+   Tags in a group can be mutually exclusive:
+   #+BEGIN_EXAMPLE
+   #+TAGS: { Context : @Home @Work @Call }
+   #+END_EXAMPLE
+
+   Tags can also be regular expressions like this:
+   #+BEGIN_EXAMPLE
+   #+TAGS: [ Vision : {V@.+} ]
+   #+TAGS: [ Goal : {G@.+} ]
+   #+TAGS: [ AOF : {AOF@.+} ]
+   #+TAGS: [ Project : {P@.+} ]
+   #+END_EXAMPLE
+
+** Tag searches
+   Functions:
+   | function              | key       | description                                               |
+   |-----------------------+-----------+-----------------------------------------------------------|
+   | org-match-sparse-tree | C-c /     | create a sparse tree with all headlings matching a        |
+   |                       | C-c \     | tags/property/TODO search                                 |
+   |                       | C-u C-c / | ignore headlies not a TODO line                           |
+   | org-tags-view         | C-c a m   | create a global list of tag matches form all agenda files |
+   | org-tags-view         | C-c a M   | like 'C-c a m', but not only TODO items                   |
+
+* DONE [[elisp:(info-other-window%20"(org)Properties%20and%20columns")][7 Properties and columns]]
+  CLOSED: [2018-09-21 Fri 01:23]
+  - State "DONE"       from "DOING"      [2018-09-21 Fri 01:23] \\
+    Column view not finish read.
+  - State "DOING"      from "TODO"       [2018-09-20 四 23:52]
+    
+** Property syntax
+   :PROPERTIES:
+   :END:
+
+   A property is a key-value pair associated with an entry.
+   Properties are like tags, but with a value.
+   
+   The keyword is "PROPERTIES". Here is an example:
+   #+BEGIN_EXAMPLE
+   * CD collection
+   ** Classic
+   *** Goldberg Variations
+       :PROPERTIES:
+       :Title:     Goldberg Variations
+       :Composer:  J.S. Bach
+       :Artist:    Glen Gould
+       :Publisher: Deutsche Grammophon
+       :NDisks:    1
+       :END:
+   #+END_EXAMPLE
+   Property is inherited. You can define the allowed values for a particular property ':Xyz:' by setting a property ':XyzAll:'.
+
+   Functions:
+   | function                            | key       | description                                                   | spacemacs |
+   |-------------------------------------+-----------+---------------------------------------------------------------+-----------|
+   | pcomplete                           | M-<TAB>   | complete property keys                                        | <C-M-i>   |
+   | org-set-property                    | C-c C-x p | set a property                                                | <, p>     |
+   |                                     | C-c C-c s | set a property using completion                               |           |
+   | org-insert-drawer                   |           | insert a property drawer into the current entry               |           |
+   | org-property-action                 | C-c C-c   | with a cursor in a property drawer, execute property commands |           |
+   | org-property-next-allowed-value     | S-<RIGHT> | switch property at cursor to the next allowed value           |           |
+   | org-property-previous-allowed-value | S-<LEFT>  | switch property at cursor to the previous allowed value       |           |
+   | org-delete-property                 | C-c C-c d | remove a property form the current entry                      |           |
+   | org-delete-property-globally        | C-c C-c D | globally remove a property                                    |           |
+
+
+   
+   
+** Special properties
+   #+BEGIN_EXAMPLE
+   ALLTAGS      All tags, including inherited ones.
+   BLOCKED      "t" if task is currently blocked by children or siblings.
+   CLOCKSUM     The sum of CLOCK intervals in the subtree.  ‘org-clock-sum’
+                  must be run first to compute the values in the current buffer.
+   CLOCKSUM_T   The sum of CLOCK intervals in the subtree for today.
+                ‘org-clock-sum-today’ must be run first to compute the
+                values in the current buffer.
+   CLOSED       When was this entry closed?
+   DEADLINE     The deadline time string, without the angular brackets.
+   FILE         The filename the entry is located in.
+   ITEM         The headline of the entry.
+   PRIORITY     The priority of the entry, a string with a single letter.
+   SCHEDULED    The scheduling timestamp, without the angular brackets.
+   TAGS         The tags defined directly in the headline.
+   TIMESTAMP    The first keyword-less timestamp in the entry.
+   TIMESTAMP_IA The first inactive timestamp in the entry.
+   TODO         The TODO keyword of the entry.
+   #+END_EXAMPLE
+
+** Property searches
+   Functions
+   | function              | key         | description                                                        |
+   |-----------------------+-------------+--------------------------------------------------------------------|
+   | org-match-sparse-tree | C-c / m     | create a sparse tree with all matching ectries                     |
+   |                       | C-c \       | create a sparse tree with all matching ectries                     |
+   |                       | C-u C-c / m | ignore headlines not a TODO line                                   |
+   | org-tags-view         | C-c a m     | create a global list of tag/property matches from all agenda files |
+   |                       | C-c a M     | check only TODO items and force checking of subitems               |
+   |                       |             |                                                                    |
+   | org-sparse-tree       | C-c / p     | create a sparse tree based on the value of a property              |
+
+** Property Inheritance
+   If the parent in a tree has a certain property, the children can inherit this property.
+   Org mode does not turn this on by default, because it can slow down property searches.
+   You can open it:
+   #+BEGIN_EXAMPLE
+   (setq org-use-property-inheritance t)
+   #+END_EXAMPLE
+   
+   Org mode has a few properties for whicn inheritance is hard-coded.
+   | property   | description                                    |
+   |------------+------------------------------------------------|
+   | 'COLUMNS'  | Column view                                    |
+   | 'CATEGORY' | applies to the entire subtree                  |
+   | 'ARCHIVE'  | define the archive location for entire subtree |
+   | 'LOGGING'  |                                                |
+
+** Column View
+   A greate way to view and edit properties in an outline tree is column view.
+   
+*** Defining columns
+**** Scope of column definitions
+     To define a column format for an entire file, use a line like:
+     #+BEGIN_EXAMPLE
+     #+COLUMNS: %25ITEM %TAGS %PRIORITY %TODO
+     #+END_EXAMPLE
+     
+**** Column attributes
+     The general definition looks like this:
+     #+BEGIN_EXAMPLE
+     %[WIDTH]PROPERTY[(TITLE)][{SUMMARY-TYPE}]
+     #+END_EXAMPLE
+     
+     Here is available contnet:
+     #+BEGIN_EXAMPLE
+     WIDTH           An integer specifying the width of the column in characters.
+                     If omitted, the width will be determined automatically.
+     PROPERTY        The property that should be edited in this column.
+                     Special properties representing meta data are allowed here
+                     as well (*note Special properties::)
+     TITLE           The header text for the column.  If omitted, the property
+                     name is used.
+     {SUMMARY-TYPE}  The summary type.  If specified, the column values for
+                     parent nodes are computed from the children(1).
+                     Supported summary types are:
+                     {+}       Sum numbers in this column.
+                     {+;%.1f}  Like ‘+’, but format result with ‘%.1f’.
+                     {$}       Currency, short for ‘+;%.2f’.
+                     {min}     Smallest number in column.
+                     {max}     Largest number.
+                     {mean}    Arithmetic mean of numbers.
+                     {X}       Checkbox status, ‘[X]’ if all children are ‘[X]’.
+                     {X/}      Checkbox status, ‘[n/m]’.
+                     {X%}      Checkbox status, ‘[n%]’.
+                     {:}       Sum times, HH:MM, plain numbers are
+                     hours(2).
+                     {:min}    Smallest time value in column.
+                     {:max}    Largest time value.
+                     {:mean}   Arithmetic mean of time values.
+                     {@min}    Minimum age(3) (in
+                     days/hours/mins/seconds).
+                     {@max}    Maximum age (in days/hours/mins/seconds).
+                     {@mean}   Arithmetic mean of ages (in days/hours/mins/seconds).
+                     {est+}    Add ‘low-high’ estimates.
+
+     #+END_EXAMPLE
+     
+     An example:
+     #+BEGIN_EXAMPLE
+     :COLUMNS:  %25ITEM %9Approved(Approved?){X} %Owner %11Status \(4)
+                        %10Time_Estimate{:} %CLOCKSUM %CLOCKSUM_T
+     :Owner_ALL:    Tammy Mark Karl Lisa Don
+     :Status_ALL:   "In progress" "Not started yet" "Finished" ""
+     :Approved_ALL: "[ ]" "[X]"
+     #+END_EXAMPLE
+
+*** Using coumn view
+    read:[[info:org#Using%20column%20view][Link]] 
+
+*** Capturing column view
+    read:[[info:org#Capturing%20column%20view][Link]] 
+
+** Using property API
+   Here is the doc: [[info:org#Using%20the%20property%20API][Property API DOC]]
 * TODO [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
 * TODO [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
 * TODO [#A] [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
