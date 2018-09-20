@@ -2,6 +2,7 @@
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e@)
 #+STARTUP: overview
 #+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
+#+OPTIONS: toc:t
 
 * DONE [[elisp:(info-other-window%20"(org)Introduction")][1 Introduction]]
   CLOSED: [2018-09-19 三 16:42]
@@ -470,12 +471,23 @@
 * DOING [#A] [[elisp:(info-other-window%20"(org)TODO%20items")][5 TODO items]]  
   - State "DOING"      from "TODO"       [2018-09-20 四 17:09]
 ** Basic TODO functionality                                       :@key_map:
-  | function | key         | description                                     | spacemacs |
-  |----------+-------------+-------------------------------------------------+-----------|
-  | org-todo | C-c C-t     | Rotate the TODO state of the current item among | <t>       |
-  |          | C-u C-c C-t |                                                 |           |
-  |          |             |                                                 |           |
+  | function                | key         | description                                     | spacemacs   |
+  |-------------------------+-------------+-------------------------------------------------+-------------|
+  | org-todo                | C-c C-t     | Rotate the TODO state of the current item among | <t>         |
+  |                         | C-u C-c C-t |                                                 |             |
+  |                         | S-<RIGHT>   | select the following TODO state                 |             |
+  |                         | S-<LEFT>    | select the preceding TODO state                 |             |
+  | org-show-todo-tree      | C-c / t     | view TODO items in a spparse tree               | <, T>       |
+  |                         | C-c / T     | search for specific TODO                        |             |
+  | org-todo-list           | C-c a t     | show the global TODO list                       | <SPC a o t> |
+  | org-insert-todo-heading | S-M-<RET>   | insert a new TODO entry below current one       |             |
 
+** Extended use of TODO keywords
+   Org mode allows you to classify TODO items in more complex ways with TODO keywords (stored in 'org-todo-keywords')
+
+*** Wrokflow states
+    
+    
 * TODO [[elisp:(info-other-window%20"(org)Tags")][6 Tags]]
 * TODO [[elisp:(info-other-window%20"(org)Properties%20and%20columns")][7 Properties and columns]]
 * TODO [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
