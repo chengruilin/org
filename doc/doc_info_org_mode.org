@@ -1223,10 +1223,65 @@
       DEADLINE:<2018-10-21 日 .+1m>
     #+END_EXAMPLE
 
-    
-
 ** Clocking work time
-   
+   Org mode allows you to clock the time you spend on specific tasks in a project.
+   #+BEGIN_EXAMPLE
+   Start Working(Clock start)  ---->  Stop Working/Task done(Clock stop)
+   #+END_EXAMPLE
+
+   To save the clock history accross Emacs session, use:
+   #+BEGIN_SRC elisp
+   (setq org-clock-persist 'history)
+   (org-clock-persistence-insinuate)
+   #+END_SRC
+
+   To resume the clock under the assumption you worked on task while outside Emacs, use
+   #+BEGIN_SRC elisp
+   (setq org-clock-persist t)
+   #+END_SRC
+*** Clocking commands
+
+    #+NAME: Clocking Functions
+    | function                         | key                     | description                                                                  | spacemacs   |
+    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+    | org-clock-in                     | C-c C-x C-i             | Start the clock on the current item                                          | <, I>       |
+    |                                  | C-u C-c C-x C-i         | Select the task from a list of recently clocked tasks                        |             |
+    |                                  | C-u C-u C-c C-x C-i     | Clock into the task at point and mark it as the default task                 |             |
+    |                                  | C-u C-u C-u C-c C-x C-i | Force continuous clocking by starting the clock when the last clock stopped. |             |
+    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+    | org-clock-out                    | C-c C-x C-o             | Stop the clock                                                               | <SPC a o O> |
+    |                                  |                         | variable 'org-log-note-clock-out' for record an additional note              |             |
+    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+    | org-clock-in-last                | C-c C-x C-x             | Reclock the last locked task                                                 |             |
+    |                                  | C-u C-c C-x C-x         | Select the task from the clock history                                       |             |
+    |                                  | C-u C-u C-c C-x C-x     | Force continuous clocking by starting the clock when the last clock stopped. |             |
+    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+    | org-clock-modify-effort-estimate | C-c C-x C-e             | Update the effort estimate for the current clock task                        |             |
+    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+    | org-evaluate-time-range          | C-c C-c                 | Recompute the time interval after changing one of the timestamp              |             |
+    |                                  | C-c C-y                 |                                                                              |             |
+    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+    | org-clock-timestamps-up          | C-S-<up>                |                                                                              |             |
+    | org                              |                         |                                                                              |             |
+
+    #+NAME: Clocking variables
+    | variable               | type          | description                                                          |
+    |                        | [V: Variable] |                                                                      |
+    |                        | [P: PROPERTY] |                                                                      |
+    |------------------------+---------------+----------------------------------------------------------------------|
+    | org-clock-into-drawer  | V             | the multiple 'CLOCK' lines will be wrapped into a ':LOGBOOK:' drawer |
+    | CLOCKINTODRAWER        | P             |                                                                      |
+    | LOGINTODRAWER          | P             |                                                                      |
+    |------------------------+---------------+----------------------------------------------------------------------|
+    | CLOCKMODELINETOTAL     | P             | 'current' to show only the current clocking instance                 |
+    |                        |               | 'today' to show all time clocked on this task today                  |
+    |                        |               | 'all' to include all time                                            |
+    |                        |               | 'auto' is default                                                    |
+    |------------------------+---------------+----------------------------------------------------------------------|
+    | org-extend-today-until | V             | same as 'CLOCKMODELINETOTAL: today'                                  |
+    |                        |               |                                                                      |
+
+
 
 * TODO [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
 * TODO [#A] [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
