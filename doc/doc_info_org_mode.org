@@ -4,1290 +4,1330 @@
 #+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
 #+OPTIONS: toc:t
 
-* DONE [[elisp:(info-other-window%20"(org)Introduction")][1 Introduction]]
-  CLOSED: [2018-09-19 三 16:42]
-  - State "DONE"       from "DOING"      [2018-09-19 三 16:42] \\
-    - org install
-    - org file
-    - org basic info
-  - State "DOING"      from "TODO"       [2018-09-19 三 16:41]
-* DONE [[elisp:(info-other-window%20"(org)Document%20structure")][2 Document structure]]
-  CLOSED: [2018-09-19 三 19:01]
-  - State "DONE"       from "DOING"      [2018-09-19 三 19:01] \\
-    get knowlege about org document structure
-  - State "DOING"      from "TODO"       [2018-09-19 三 16:44]
-** Outlines
-   org-cycle <TAB>
-** Headlines
-   org-footnote-section
-   Clean view 'org-cycle-separator-lines'
-** Visibility cycling                                              :@key_map:
-   | function                    | key               | description                                    | spacemacs |
-   |-----------------------------+-------------------+------------------------------------------------+-----------|
-   | org-cycle                   | <TAB>             | subtree cycling                                |           |
-   | org-global-cycle            | S-<TAB>           | global cycling                                 |           |
-   | org-set-startup-visibility  | C-u C-u <TAB>     | startup visibility                             |           |
-   | outline-show-all            | C-u C-u C-u <TAB> | show all                                       |           |
-   | org-reveal                  | C-c C-r           | reveal context around point                    |           |
-   | outline-show-branches       | C-c C-k           | expose all the headlins of the subtree         |           |
-   | outlien-show-children       | C-c <TAB>         | expose all direct children of the subtree      |           |
-   | org-tree-to-indirect-buffer | C-c C-x b         | show the current subtree in an indirect buffer |           |
-   | org-copy-visible            | C-c C-x v         | copy the visible text in the region            |           |
+* Org Mode
+** DONE [[elisp:(info-other-window%20"(org)Introduction")][1 Introduction]]
+   CLOSED: [2018-09-19 三 16:42]
+   - State "DONE"       from "DOING"      [2018-09-19 三 16:42] \\
+     - org install
+     - org file
+     - org basic info
+   - State "DOING"      from "TODO"       [2018-09-19 三 16:41]
+** DONE [[elisp:(info-other-window%20"(org)Document%20structure")][2 Document structure]]
+   CLOSED: [2018-09-19 三 19:01]
+   - State "DONE"       from "DOING"      [2018-09-19 三 19:01] \\
+     get knowlege about org document structure
+   - State "DOING"      from "TODO"       [2018-09-19 三 16:44]
+*** Outlines
+    org-cycle <TAB>
+*** Headlines
+    org-footnote-section
+    Clean view 'org-cycle-separator-lines'
+*** Visibility cycling                                             :@key_map:
+    | function                    | key               | description                                    | spacemacs |
+    |-----------------------------+-------------------+------------------------------------------------+-----------|
+    | org-cycle                   | <TAB>             | subtree cycling                                |           |
+    | org-global-cycle            | S-<TAB>           | global cycling                                 |           |
+    | org-set-startup-visibility  | C-u C-u <TAB>     | startup visibility                             |           |
+    | outline-show-all            | C-u C-u C-u <TAB> | show all                                       |           |
+    | org-reveal                  | C-c C-r           | reveal context around point                    |           |
+    | outline-show-branches       | C-c C-k           | expose all the headlins of the subtree         |           |
+    | outlien-show-children       | C-c <TAB>         | expose all direct children of the subtree      |           |
+    | org-tree-to-indirect-buffer | C-c C-x b         | show the current subtree in an indirect buffer |           |
+    | org-copy-visible            | C-c C-x v         | copy the visible text in the region            |           |
 
-   org "#+STARTUP" in (overview, content, showall, showeverything)
-** Motion                                                          :@key_map:
-   | function                     | key     | description                      | spacemacs |
-   |------------------------------+---------+----------------------------------+-----------|
-   | org-next-visible-heading     | C-c C-n | next heading                     |           |
-   | org-previous-visible-heading | C-c C-p | previous heading                 |           |
-   | org-forward-same-level       | C-c C-f | next heading same level          |           |
-   | org-backward-same-level      | C-c C-b | backward to higher level heading |           |
-   | org-goto                     | C-c C-j | jump                             |           |
+    org "#+STARTUP" in (overview, content, showall, showeverything)
+*** Motion                                                         :@key_map:
+    | function                     | key     | description                      | spacemacs |
+    |------------------------------+---------+----------------------------------+-----------|
+    | org-next-visible-heading     | C-c C-n | next heading                     |           |
+    | org-previous-visible-heading | C-c C-p | previous heading                 |           |
+    | org-forward-same-level       | C-c C-f | next heading same level          |           |
+    | org-backward-same-level      | C-c C-b | backward to higher level heading |           |
+    | org-goto                     | C-c C-j | jump                             |           |
 
-** Structure editing                                               :@key_map:
-   basic
-   | function                                | key         | description                                | spacemacs |
-   |-----------------------------------------+-------------+--------------------------------------------+-----------|
-   | org-meta-return                         | M-<RET>     | insert a new heading, item or row          | X         |
-   | org-insert-heading-respect-content      | C-<RET>     | insert a new heading after current subtree |           |
-   | org-insert-todo-heading                 | M-S-<RET>   | insert todo entry as current heading       |           |
-   | org-insert-todo-heading-respect-content | C-S-<RET>   | insert todo entry after current subtree    |           |
-   | org-do-promote                          | M-<LEFT>    | promote current heading by one level       |           |
-   | org-do-demote                           | M-<RIGHT>   | demote current heading by one level        |           |
-   | org-promote-subtree                     | M-S-<LEFT>  | promote the current subtree one level      |           |
-   | org-demote-subtree                      | M-S-<RIGHT> | demote the current subtree one level       |           |
-   | org-move-subtree-up                     | M-<UP>      | move subtree up                            |           |
-   | org-move-subtree-down                   | M-<DOWN>    | move subtree down                          |           |
+*** Structure editing                                              :@key_map:
+    basic
+    | function                                | key         | description                                | spacemacs |
+    |-----------------------------------------+-------------+--------------------------------------------+-----------|
+    | org-meta-return                         | M-<RET>     | insert a new heading, item or row          | X         |
+    | org-insert-heading-respect-content      | C-<RET>     | insert a new heading after current subtree |           |
+    | org-insert-todo-heading                 | M-S-<RET>   | insert todo entry as current heading       |           |
+    | org-insert-todo-heading-respect-content | C-S-<RET>   | insert todo entry after current subtree    |           |
+    | org-do-promote                          | M-<LEFT>    | promote current heading by one level       |           |
+    | org-do-demote                           | M-<RIGHT>   | demote current heading by one level        |           |
+    | org-promote-subtree                     | M-S-<LEFT>  | promote the current subtree one level      |           |
+    | org-demote-subtree                      | M-S-<RIGHT> | demote the current subtree one level       |           |
+    | org-move-subtree-up                     | M-<UP>      | move subtree up                            |           |
+    | org-move-subtree-down                   | M-<DOWN>    | move subtree down                          |           |
 
-   mark/copy/paste
-   | function                          | key         | description                                                | spacemacs |
-   |-----------------------------------+-------------+------------------------------------------------------------+-----------|
-   | org-mark-element                  | M-h         | mark the element at point                                  |           |
-   | org-mark-subtree                  | C-c @       | mark the subtree at point                                  |           |
-   | org-cut-subtree                   | C-c C-x C-w | kill subtree, save in kill ring                            | X         |
-   | org-copy-subtree                  | C-c C-x M-w | copy subtree to kill ring                                  | X         |
-   | org-paste-subtree                 | C-c C-x C-y | yank subtree from kill ring                                | X         |
-   | org-yank                          | C-y         | paste subtrees folded                                      |           |
-   | org-clone-subtree-with-time-shift | C-c C-x c   | clone a subtree by making a number of sibling copies of it |           |
-   | org-refile                        | C-c C-w     | refile entry to a different location                       | <, R>     |
-   | org-sort                          | C-c ^       | sort same-level entries(by time, by priority, by TODO...)  | <, ^>     |
-   | org-narrow-to-subtree             | C-x n s     | narrow buffer to current subtree                           | <, n>     |
-   | org-narrow-to-block               | C-x n b     | narrow buffer to current block                             |           |
-   | widen                             | C-x n w     | widen buffer to remove narrowing                           | <SPC n w> |
-   | org-toggle-heading                | C-c *       | toggle (plaint list item or a headline)                    |           |
+    mark/copy/paste
+    | function                          | key         | description                                                | spacemacs |
+    |-----------------------------------+-------------+------------------------------------------------------------+-----------|
+    | org-mark-element                  | M-h         | mark the element at point                                  |           |
+    | org-mark-subtree                  | C-c @       | mark the subtree at point                                  |           |
+    | org-cut-subtree                   | C-c C-x C-w | kill subtree, save in kill ring                            | X         |
+    | org-copy-subtree                  | C-c C-x M-w | copy subtree to kill ring                                  | X         |
+    | org-paste-subtree                 | C-c C-x C-y | yank subtree from kill ring                                | X         |
+    | org-yank                          | C-y         | paste subtrees folded                                      |           |
+    | org-clone-subtree-with-time-shift | C-c C-x c   | clone a subtree by making a number of sibling copies of it |           |
+    | org-refile                        | C-c C-w     | refile entry to a different location                       | <, R>     |
+    | org-sort                          | C-c ^       | sort same-level entries(by time, by priority, by TODO...)  | <, ^>     |
+    | org-narrow-to-subtree             | C-x n s     | narrow buffer to current subtree                           | <, n>     |
+    | org-narrow-to-block               | C-x n b     | narrow buffer to current block                             |           |
+    | widen                             | C-x n w     | widen buffer to remove narrowing                           | <SPC n w> |
+    | org-toggle-heading                | C-c *       | toggle (plaint list item or a headline)                    |           |
 
-** Sparse trees                                                    :@key_map:
-   | function        | key     | description                                     | spacemacs |
-   |-----------------+---------+-------------------------------------------------+-----------|
-   | org-sparse-tree | C-c /   | select a sparse-tree creating command           | <, />     |
-   | org-occur       | C-c / r | regexp and shows a sparse tree with all matches |           |
-   | next-error      | M-g n   | jump to the next sparse tree match              | C-x '     |
-   | previous-error  | M-g p   | jump to the previous sparse tree match          |           |
+*** Sparse trees                                                   :@key_map:
+    | function        | key     | description                                     | spacemacs |
+    |-----------------+---------+-------------------------------------------------+-----------|
+    | org-sparse-tree | C-c /   | select a sparse-tree creating command           | <, />     |
+    | org-occur       | C-c / r | regexp and shows a sparse tree with all matches |           |
+    | next-error      | M-g n   | jump to the next sparse tree match              | C-x '     |
+    | previous-error  | M-g p   | jump to the previous sparse tree match          |           |
 
-** Plaint lis
-   | symbol   | description                 |
-   |----------+-----------------------------|
-   | -        | unorderd list item          |
-   | +        | unorderd list item          |
-   | 1.,2.,3. | orderd list item            |
-   | 1),2),3) | orderd list item            |
-   | ::       | distinguish the description |
+*** Plaint lis
+    | symbol   | description                 |
+    |----------+-----------------------------|
+    | -        | unorderd list item          |
+    | +        | unorderd list item          |
+    | 1.,2.,3. | orderd list item            |
+    | 1),2),3) | orderd list item            |
+    | ::       | distinguish the description |
 
-** Drawers
-   | function          | key       | description             | spacemacs |
-   |-------------------+-----------+-------------------------+-----------|
-   | org-insert-drawer | C-c C-x d | insert drawers at point | <, D>     |
+*** Drawers
+    | function          | key       | description             | spacemacs |
+    |-------------------+-----------+-------------------------+-----------|
+    | org-insert-drawer | C-c C-x d | insert drawers at point | <, D>     |
 
-   Hiding drawers on export
-   1. hide all drawer: #+OPTIONS: d:nil
-   2. hide some drawer:#+OPTIONS: d(not "D_NAME1" not "D_NAME2")
-** Blocks
-   Org mode use begin...end blocks for various purposes from including source code example, example:
-   #+BEGIN_EXAMPLE
-   This is a block
-   #+END_EXAMPLE
+    Hiding drawers on export
+    1. hide all drawer: #+OPTIONS: d:nil
+    2. hide some drawer:#+OPTIONS: d(not "D_NAME1" not "D_NAME2")
+*** Blocks
+    Org mode use begin...end blocks for various purposes from including source code example, example:
+    #+BEGIN_EXAMPLE
+    This is a block
+    #+END_EXAMPLE
 
-   You can set "STARTUP":
-   - #+STARTUP: hideblocks
-   - #+STARTUP: nohideblocks
-** Footnotes                                                       :@key_map:
-   A footnote start with 'fn:', like these:
-   - "[fn:name]"
-   - "[fn::This is the inline definition of this footnote]"
-   - "[fn:name:a definition]"
+    You can set "STARTUP":
+    - #+STARTUP: hideblocks
+    - #+STARTUP: nohideblocks
+*** Footnotes                                                      :@key_map:
+    A footnote start with 'fn:', like these:
+    - "[fn:name]"
+    - "[fn::This is the inline definition of this footnote]"
+    - "[fn:name:a definition]"
 
-   | function            | key       | description                             | spacemacs |
-   |---------------------+-----------+-----------------------------------------+-----------|
-   | org-footnote-action | C-c C-x f | the footnote action command (s,r,S,n,d) |           |
-** The Orgstruct minor mode
-   If you like the Org mode structure editing and list formatting works, you can turn 'orgstruct-mode' on, example:
-   "M-x orgstruct-mode <RET>"
-   or turn it on by default:
-   #+BEGIN_EXAMPLE
-   (add-hook 'message-mode-hook 'turn-on-orgstruct)
-   (add-hook 'message-mode-hook 'turn-on-orgstruct++)
-   #+END_EXAMPLE
-** Org syntax
-   [[https://orgmode.org/worg/dev/org-syntax.html][Document]]
-   You can check syntax in your document using 'org-lint' command.
-* DONE [[elisp:(info-other-window%20"(org)Tables")][3 Tables]]
-  CLOSED: [2018-09-20 四 01:11]
-  - State "DONE"       from "RESUME"     [2018-09-20 四 01:11] \\
-    org table usually usage.
-    spreadsheet and org-plot not finish
-  - State "RESUME"     from "PAUSE"      [2018-09-19 三 21:57]
-  - State "PAUSE"      from "DOING"      [2018-09-19 三 20:34]
-  - State "DOING"      from "TODO"       [2018-09-19 Wed 20:15]
-** Table editor                                                    :@key_map:
-   enter this and press <TAB>
-   #+BEGIN_EXAMPLE
-   |Name|Phone|Age|
-   |-
-   #+END_EXAMPLE
+    | function            | key       | description                             | spacemacs |
+    |---------------------+-----------+-----------------------------------------+-----------|
+    | org-footnote-action | C-c C-x f | the footnote action command (s,r,S,n,d) |           |
+*** The Orgstruct minor mode
+    If you like the Org mode structure editing and list formatting works, you can turn 'orgstruct-mode' on, example:
+    "M-x orgstruct-mode <RET>"
+    or turn it on by default:
+    #+BEGIN_EXAMPLE
+    (add-hook 'message-mode-hook 'turn-on-orgstruct)
+    (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+    #+END_EXAMPLE
+*** Org syntax
+    [[https://orgmode.org/worg/dev/org-syntax.html][Document]]
+    You can check syntax in your document using 'org-lint' command.
+** DONE [[elisp:(info-other-window%20"(org)Tables")][3 Tables]]
+   CLOSED: [2018-09-20 四 01:11]
+   - State "DONE"       from "RESUME"     [2018-09-20 四 01:11] \\
+     org table usually usage.
+     spreadsheet and org-plot not finish
+   - State "RESUME"     from "PAUSE"      [2018-09-19 三 21:57]
+   - State "PAUSE"      from "DOING"      [2018-09-19 三 20:34]
+   - State "DOING"      from "TODO"       [2018-09-19 Wed 20:15]
+*** Table editor                                                   :@key_map:
+    enter this and press <TAB>
+    #+BEGIN_EXAMPLE
+    |Name|Phone|Age|
+    |-
+    #+END_EXAMPLE
 
-   Creation and conversion
-   | function                                | key             | description                                                                   | spacemacs   |
-   |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
-   | org-table-create-or-convert-from-region | C-c "the vline" | convert the active region to a table                                          |             |
-   | org-table-create                        |                 | create table like 3x2                                                         | <, t n>     |
+    Creation and conversion
+    | function                                | key             | description                                                                   | spacemacs   |
+    |-----------------------------------------+-----------------+-------------------------------------------------------------------------------+-------------|
+    | org-table-create-or-convert-from-region | C-c "the vline" | convert the active region to a table                                          |             |
+    | org-table-create                        |                 | create table like 3x2                                                         | <, t n>     |
 
-   Re-aligning and field motion
-   | function                     | key         | description                                                                   | spacemacs   |
-   |------------------------------+-------------+-------------------------------------------------------------------------------+-------------|
-   | org-table-align              | C-c C-c     | re-align the table                                                            | <, t a>     |
-   | org-table-blank-field        | C-c <SPC>   | blank the field at point                                                      | <, t b>     |
-   | org-table-next-field         | <TAB>       | re-align & move to the next field                                             | <, t, l>    |
-   | org-table-previous-field     | S-<TAB>     | re-align & move to previous field                                             | <, t, h>    |
-   | org-table-next-row           | <RET>       | re-align & move down to next row                                              | <, t, j>    |
-   | org-table-beginning-of-field | M-a         | move to beginning of the current table field                                  | X           |
-   | org-table-end-of-field       | M-e         | move to end of the current table field/next field                             | X           |
+    Re-aligning and field motion
+    | function                     | key         | description                                                                   | spacemacs   |
+    |------------------------------+-------------+-------------------------------------------------------------------------------+-------------|
+    | org-table-align              | C-c C-c     | re-align the table                                                            | <, t a>     |
+    | org-table-blank-field        | C-c <SPC>   | blank the field at point                                                      | <, t b>     |
+    | org-table-next-field         | <TAB>       | re-align & move to the next field                                             | <, t, l>    |
+    | org-table-previous-field     | S-<TAB>     | re-align & move to previous field                                             | <, t, h>    |
+    | org-table-next-row           | <RET>       | re-align & move down to next row                                              | <, t, j>    |
+    | org-table-beginning-of-field | M-a         | move to beginning of the current table field                                  | X           |
+    | org-table-end-of-field       | M-e         | move to end of the current table field/next field                             | X           |
 
-   Column and row editing
-   | function                    | key         | description                                                                   | spacemacs   |
-   |-----------------------------+-------------+-------------------------------------------------------------------------------+-------------|
-   | org-table-move-column-left  | M-<LEFT>    | move the current column left                                                  | <, t, H>    |
-   | org-table-move-column-right | M-<RIGHT>   | move the current column right                                                 | <, t, L>    |
-   | org-table-delete-column     | M-S-<LEFT>  | kill the current column                                                       | <, t, d, c> |
-   | org-table-insert-column     | M-S-<RIGHT> | insert a new column to the left                                               | <, t, i, c> |
-   | org-table-move-row-up       | M-<UP>      | move the current row up                                                       | <, t, K>    |
-   | org-table-move-row-down     | M-<DOWN>    | move the current row down                                                     | <, t, J>    |
-   | org-table-kill-row          | M-S-<UP>    | kill thr row or horizontal line                                               | <, t, d, r> |
-   | org-table-insert-row        | M-S-<DOWN>  | insert a new row above                                                        | <, t, i, r> |
-   | org-table-insert-hline      | C-c -       | insert a horizontal line below                                                | <, t, i, h> |
-   | org-table-hline-and-move    | C-c <RET>   | insert a horizontal line below, and move cursor below line                    | <, t, i, H> |
-   | org-table-sort-lines        | C-c ^       | sort the table lines in the region                                            | <, t, s>    |
+    Column and row editing
+    | function                    | key         | description                                                                   | spacemacs   |
+    |-----------------------------+-------------+-------------------------------------------------------------------------------+-------------|
+    | org-table-move-column-left  | M-<LEFT>    | move the current column left                                                  | <, t, H>    |
+    | org-table-move-column-right | M-<RIGHT>   | move the current column right                                                 | <, t, L>    |
+    | org-table-delete-column     | M-S-<LEFT>  | kill the current column                                                       | <, t, d, c> |
+    | org-table-insert-column     | M-S-<RIGHT> | insert a new column to the left                                               | <, t, i, c> |
+    | org-table-move-row-up       | M-<UP>      | move the current row up                                                       | <, t, K>    |
+    | org-table-move-row-down     | M-<DOWN>    | move the current row down                                                     | <, t, J>    |
+    | org-table-kill-row          | M-S-<UP>    | kill thr row or horizontal line                                               | <, t, d, r> |
+    | org-table-insert-row        | M-S-<DOWN>  | insert a new row above                                                        | <, t, i, r> |
+    | org-table-insert-hline      | C-c -       | insert a horizontal line below                                                | <, t, i, h> |
+    | org-table-hline-and-move    | C-c <RET>   | insert a horizontal line below, and move cursor below line                    | <, t, i, H> |
+    | org-table-sort-lines        | C-c ^       | sort the table lines in the region                                            | <, t, s>    |
 
-   Regions
-   | function                    | key         | description                                                                   | spacemacs   |
-   |-----------------------------+-------------+-------------------------------------------------------------------------------+-------------|
-   | org-table-copy-region       | C-c C-x M-w | copy a rectangular region from a table to a special clipboard                 |             |
-   | org-table-cut-region        | C-c C-x C-w | copy a rectangular region from a table, and blank all fields in the rectangle |             |
-   | org-table-paste-rectangle   | C-c C-x C-y | paste a rectangular region into a table                                       |             |
-   | org-table-wrap-region       | M-<RET>     | split the current field at the cursor position                                | <, t, w>    |
+    Regions
+    | function                    | key         | description                                                                   | spacemacs   |
+    |-----------------------------+-------------+-------------------------------------------------------------------------------+-------------|
+    | org-table-copy-region       | C-c C-x M-w | copy a rectangular region from a table to a special clipboard                 |             |
+    | org-table-cut-region        | C-c C-x C-w | copy a rectangular region from a table, and blank all fields in the rectangle |             |
+    | org-table-paste-rectangle   | C-c C-x C-y | paste a rectangular region into a table                                       |             |
+    | org-table-wrap-region       | M-<RET>     | split the current field at the cursor position                                | <, t, w>    |
 
-   Calculations
-   | function             | key     | description                                                                   | spacemacs |
-   |----------------------+---------+-------------------------------------------------------------------------------+-----------|
-   | org-table-sum        | C-c +   | sum the numbers in current column, 'C-y' insert the result                    |           |
-   | org-table-copy-down  | S-<RET> | when current field is empty, copy from first non-empty field above            |           |
+    Calculations
+    | function             | key     | description                                                                   | spacemacs |
+    |----------------------+---------+-------------------------------------------------------------------------------+-----------|
+    | org-table-sum        | C-c +   | sum the numbers in current column, 'C-y' insert the result                    |           |
+    | org-table-copy-down  | S-<RET> | when current field is empty, copy from first non-empty field above            |           |
 
-   Miscellaneous
-   | function             | key     | description                                                                   | spacemacs |
-   | org-table-edit-field | C-c '   | Edit the current field in a separate window                                   |           |
-   | org-table-import     |         | Import a file as a table.(import a spreadsheet table or data from a database) | <, t, I>  |
-   | org-table-export     |         | Export the table, by default as a TAB-separated file                          | <, t, E>  |
+    Miscellaneous
+    | function             | key     | description                                                                   | spacemacs |
+    | org-table-edit-field | C-c '   | Edit the current field in a separate window                                   |           |
+    | org-table-import     |         | Import a file as a table.(import a spreadsheet table or data from a database) | <, t, I>  |
+    | org-table-export     |         | Export the table, by default as a TAB-separated file                          | <, t, E>  |
 
-** Column width and alignment
-   Column width
-   | Column1    | Column2  |
-   | <10>       | <8>      |
-   | aaaaaaaaaaaaaaa | asdfasdfasdfasdf |
+*** Column width and alignment
+    Column width
+    | Column1    | Column2  |
+    | <10>       | <8>      |
+    | aaaaaaaaaaaaaaa | asdfasdfasdfasdf |
 
-   Alignment startup
-   #+BEGIN_EXAMPLE
-   #+STARTUP: align
-   #+STARTUP: noalign
-   #+END_EXAMPLE
+    Alignment startup
+    #+BEGIN_EXAMPLE
+    #+STARTUP: align
+    #+STARTUP: noalign
+    #+END_EXAMPLE
 
-** Column groups
-   | Column1 | Column2 | Column3 | Column4 |
-   | /       |       < |         |       > |
-   | 1       |       1 |      23 |       1 |
-   | a       |      20 |      23 |       3 |
-   | b       |      30 |     123 |    9999 |
+*** Column groups
+    | Column1 | Column2 | Column3 | Column4 |
+    | /       |       < |         |       > |
+    | 1       |       1 |      23 |       1 |
+    | a       |      20 |      23 |       3 |
+    | b       |      30 |     123 |    9999 |
 
-** The Orgtbl minor mode
-   If you like the intuitive way the Org table editor works, you might also want to use it in other modes like Text mode or Mail mode.
-   #+BEGIN_EXAMPLE
-   (add-hook 'message-mode-hook 'turn-on-orgtbl)
-   #+END_EXAMPLE
+*** The Orgtbl minor mode
+    If you like the intuitive way the Org table editor works, you might also want to use it in other modes like Text mode or Mail mode.
+    #+BEGIN_EXAMPLE
+    (add-hook 'message-mode-hook 'turn-on-orgtbl)
+    #+END_EXAMPLE
 
-** [[info:org:The%20spreadsheet][The spreadsheet]]
-   The table editor makes use or the Eacs 'calc' package to implement spreadsheet-like capabilities.
-*** References
-    How to refer to another field or range
-    | key   | description                                   |
-    |-------+-----------------------------------------------|
-    | C-c ? | find out what the coordinates of a fields are |
-    | C-c } | find out what the coordinates of a fields are |
+*** [[info:org:The%20spreadsheet][The spreadsheet]]
+    The table editor makes use or the Eacs 'calc' package to implement spreadsheet-like capabilities.
+**** References
+     How to refer to another field or range
+     | key   | description                                   |
+     |-------+-----------------------------------------------|
+     | C-c ? | find out what the coordinates of a fields are |
+     | C-c } | find out what the coordinates of a fields are |
 
-**** Field references
-     #+BEGIN_EXAMPLE
-     @ROW$COLUMN
-     ---------------
-     @2$3
-     $5
-     @2
-     @-1$-3
-     @-I$2
-     @>$5
-     #+END_EXAMPLE
+***** Field references
+      #+BEGIN_EXAMPLE
+      @ROW$COLUMN
+      ---------------
+      @2$3
+      $5
+      @2
+      @-1$-3
+      @-I$2
+      @>$5
+      #+END_EXAMPLE
 
-     | type   | references type                 | example                                   |
-     |--------+---------------------------------+-------------------------------------------|
-     | column | absolute column number          | $1, $2, ... $N                            |
-     | column | relative column number          | $+1, $-2                                  |
-     | column | first column                    | $<                                        |
-     | column | last column                     | $>                                        |
-     | column | the third column from the right | $>>>                                      |
-     | column | current column                  | $0                                        |
-     | column | use A,B,C... as r               | A,B,C,D                                   |
-     |--------+---------------------------------+-------------------------------------------|
-     | row    | absolute row number             | @1, @2, ... @N                            |
-     | row    | relative row number             | @+3, @-1                                  |
-     | row    | first row                       | @<                                        |
-     | row    | last row                        | @>                                        |
-     | row    | current row                     | @0                                        |
-     |--------+---------------------------------+-------------------------------------------|
-     | hline  | I as hline                      | @I(first hline), @II(second hline)        |
-     | hline  | column relative hline           | @III+2(second dataline after third hline) |
+      | type   | references type                 | example                                   |
+      |--------+---------------------------------+-------------------------------------------|
+      | column | absolute column number          | $1, $2, ... $N                            |
+      | column | relative column number          | $+1, $-2                                  |
+      | column | first column                    | $<                                        |
+      | column | last column                     | $>                                        |
+      | column | the third column from the right | $>>>                                      |
+      | column | current column                  | $0                                        |
+      | column | use A,B,C... as r               | A,B,C,D                                   |
+      |--------+---------------------------------+-------------------------------------------|
+      | row    | absolute row number             | @1, @2, ... @N                            |
+      | row    | relative row number             | @+3, @-1                                  |
+      | row    | first row                       | @<                                        |
+      | row    | last row                        | @>                                        |
+      | row    | current row                     | @0                                        |
+      |--------+---------------------------------+-------------------------------------------|
+      | hline  | I as hline                      | @I(first hline), @II(second hline)        |
+      | hline  | column relative hline           | @III+2(second dataline after third hline) |
 
-**** Range references
-     references connected by two dots '..', like:
-     #+BEGIN_EXAMPLE
-     @row..@row2
-     @column..@column2
-     @row$column..@row2$column2
-     --------------------------
-     $2..$7
-     $P..$Q
-     $<<<..$>>
-     @2$1..@4$3
-     @-1$-2..@-1
-     @I..@II
-     #+END_EXAMPLE
+***** Range references
+      references connected by two dots '..', like:
+      #+BEGIN_EXAMPLE
+      @row..@row2
+      @column..@column2
+      @row$column..@row2$column2
+      --------------------------
+      $2..$7
+      $P..$Q
+      $<<<..$>>
+      @2$1..@4$3
+      @-1$-2..@-1
+      @I..@II
+      #+END_EXAMPLE
 
-**** Field coordinates in formulas
-     '@#' or '$#' like a variable, is current result will go to in traditional Lisp formula.
-     | symbol | description              |
-     |--------+--------------------------|
-     | @#     | org-table-current-dline  |
-     | @$     | org-table-current-column |
-     Here is example:
-     #+BEGIN_EXAMPLE
-     if(@# % 2, $#, string(""))
+***** Field coordinates in formulas
+      '@#' or '$#' like a variable, is current result will go to in traditional Lisp formula.
+      | symbol | description              |
+      |--------+--------------------------|
+      | @#     | org-table-current-dline  |
+      | @$     | org-table-current-column |
+      Here is example:
+      #+BEGIN_EXAMPLE
+      if(@# % 2, $#, string(""))
 
-     $2 = '(identity remote(FOO, @@#$1))
+      $2 = '(identity remote(FOO, @@#$1))
 
-     @3 = 2 * remote(FOO, @1$$#)
-     #+END_EXAMPLE
+      @3 = 2 * remote(FOO, @1$$#)
+      #+END_EXAMPLE
 
-**** Named references
-     | symbol | description                 |
-     |--------+-----------------------------|
-     | $name  | org-table-formula-constants |
+***** Named references
+      | symbol | description                 |
+      |--------+-----------------------------|
+      | $name  | org-table-formula-constants |
 
-     The example:
-     #+BEGIN_EXAMPLE
-     #+CONSTANTS: c=29999 pi=3.14159 eps=2.4e-6
-     #+END_EXAMPLE
+      The example:
+      #+BEGIN_EXAMPLE
+      #+CONSTANTS: c=29999 pi=3.14159 eps=2.4e-6
+      #+END_EXAMPLE
 
-**** Remote references
-     You may alse reference constants, fields and ranges from a different table(current file or even different file).
-     The syntax is
-     #+BEGIN_SAMPLE
-     remote(NAME-OR-ID, REF)
-     #+END_SAMPLE
-     - NAME can be the name of a table in the current file set by '#+NAME: Name'
-     - NAME can alse be the ID of an entry
-     - REF is an absolute field or rangge reference
-*** Formula syntax for Calc
+***** Remote references
+      You may alse reference constants, fields and ranges from a different table(current file or even different file).
+      The syntax is
+      #+BEGIN_SAMPLE
+      remote(NAME-OR-ID, REF)
+      #+END_SAMPLE
+      - NAME can be the name of a table in the current file set by '#+NAME: Name'
+      - NAME can alse be the ID of an entry
+      - REF is an absolute field or rangge reference
+**** Formula syntax for Calc
 
-** [[info:org:Org-Plot][Org-Plot]]
-   produce graphs of information stored in org tables.'Gnuplot'
+*** [[info:org:Org-Plot][Org-Plot]]
+    produce graphs of information stored in org tables.'Gnuplot'
 
-* DONE [[elisp:(info-other-window%20"(org)Hyperlinks")][4 Hyperlinks]]
-  CLOSED: [2018-09-20 四 17:03]
-  - State "DONE"       from "RESUME"     [2018-09-20 四 17:03] \\
-    know about all kinds of link in org-mode
-  - State "RESUME"     from "PAUSE"      [2018-09-20 四 14:22]
-  - State "PAUSE"      from "DOING"      [2018-09-20 四 14:02]
-  - State "DOING"      from              [2018-09-20 四 13:05]
-** Link format
-   <<Internal Link1>>
-   External links
-   #+BEGIN_EXAMPLE
-   [[link][description]]
-   #+END_EXAMPLE
+** DONE [[elisp:(info-other-window%20"(org)Hyperlinks")][4 Hyperlinks]]
+   CLOSED: [2018-09-20 四 17:03]
+   - State "DONE"       from "RESUME"     [2018-09-20 四 17:03] \\
+     know about all kinds of link in org-mode
+   - State "RESUME"     from "PAUSE"      [2018-09-20 四 14:22]
+   - State "PAUSE"      from "DOING"      [2018-09-20 四 14:02]
+   - State "DOING"      from              [2018-09-20 四 13:05]
+*** Link format
+    <<Internal Link1>>
+    External links
+    #+BEGIN_EXAMPLE
+    [[link][description]]
+    #+END_EXAMPLE
 
-   Internal links
-   #+BEGIN_EXAMPLE
-   [[lnk]]
-   #+END_EXAMPLE
+    Internal links
+    #+BEGIN_EXAMPLE
+    [[lnk]]
+    #+END_EXAMPLE
 
-   Jump to link target
-   #+BEGIN_EXAMPLE
-   C-c C-o
-   #+END_EXAMPLE
+    Jump to link target
+    #+BEGIN_EXAMPLE
+    C-c C-o
+    #+END_EXAMPLE
 
-** Internal links
-   Setp1: define a target
-   #+BEGIN_EXAMPLE
-   <<My Target>>
-   or
-   #+NAME
-   #+END_EXAMPLE
-   #+NAME: My Target
-   | a  | b  |
-   |----+----|
-   | v1 | v2 |
+*** Internal links
+    Setp1: define a target
+    #+BEGIN_EXAMPLE
+    <<My Target>>
+    or
+    #+NAME
+    #+END_EXAMPLE
+    #+NAME: My Target
+    | a  | b  |
+    |----+----|
+    | v1 | v2 |
 
-   Step2: add a link
-   #+BEGIN_EXAMPLE
-   [[My Target]]
-   #+END_EXAMPLE
-   Here is an example: [[Internal Link1]] [[My Target]]
+    Step2: add a link
+    #+BEGIN_EXAMPLE
+    [[My Target]]
+    #+END_EXAMPLE
+    Here is an example: [[Internal Link1]] [[My Target]]
 
-   Tips: back to internal link text
-   #+BEGIN_EXAMPLE
-   C-c &
-   or
-   M-x org-mark-ring-goto
-   #+END_EXAMPLE
+    Tips: back to internal link text
+    #+BEGIN_EXAMPLE
+    C-c &
+    or
+    M-x org-mark-ring-goto
+    #+END_EXAMPLE
 
-** External link
-   Here are some examples:
-   #+BEGIN_EXAMPLE
-   http://www.astro.uva.nl/~dominik             on the web
-   doi:10.1000/182                              DOI for an electronic resource
-   file:/home/dominik/images/jupiter.jpg        file, absolute path
-   /home/dominik/images/jupiter.jpg             same as above
-   file:papers/last.pdf                         file, relative path
-   ./papers/last.pdf                            same as above
-   file:/ssh:myself@some.where:papers/last.pdf  file, path on remote machine
-   /ssh:myself@some.where:papers/last.pdf       same as above
-   file:sometextfile::NNN                       file, jump to line number
-   file:projects.org                            another Org file
-   file:projects.org::some words                text search in Org file(1)
-   file:projects.org::*task title               heading search in Org file(2)
-   docview:papers/last.pdf::NNN                 open in doc-view mode at page
-   id:B7423F4D-2E8A-471B-8810-C40F074717E9      Link to heading by ID
-   news:comp.emacs                              Usenet link
-   mailto:adent@galaxy.net                      Mail link
-   mhe:folder                                   MH-E folder link
-   mhe:folder#id                                MH-E message link
-   rmail:folder                                 RMAIL folder link
-   rmail:folder#id                              RMAIL message link
-   gnus:group                                   Gnus group link
-   gnus:group#id                                Gnus article link
-   bbdb:R.*Stallman                             BBDB link (with regexp)
-   irc:/irc.com/#emacs/bob                      IRC link
-   info:org#External links                      Info node or index link
-   shell:ls *.org                               A shell command
-   elisp:org-agenda                             Interactive Elisp command
-   elisp:(find-file-other-frame "Elisp.org")    Elisp form to evaluate
-   #+END_EXAMPLE
+*** External link
+    Here are some examples:
+    #+BEGIN_EXAMPLE
+    http://www.astro.uva.nl/~dominik             on the web
+    doi:10.1000/182                              DOI for an electronic resource
+    file:/home/dominik/images/jupiter.jpg        file, absolute path
+    /home/dominik/images/jupiter.jpg             same as above
+    file:papers/last.pdf                         file, relative path
+    ./papers/last.pdf                            same as above
+    file:/ssh:myself@some.where:papers/last.pdf  file, path on remote machine
+    /ssh:myself@some.where:papers/last.pdf       same as above
+    file:sometextfile::NNN                       file, jump to line number
+    file:projects.org                            another Org file
+    file:projects.org::some words                text search in Org file(1)
+    file:projects.org::*task title               heading search in Org file(2)
+    docview:papers/last.pdf::NNN                 open in doc-view mode at page
+    id:B7423F4D-2E8A-471B-8810-C40F074717E9      Link to heading by ID
+    news:comp.emacs                              Usenet link
+    mailto:adent@galaxy.net                      Mail link
+    mhe:folder                                   MH-E folder link
+    mhe:folder#id                                MH-E message link
+    rmail:folder                                 RMAIL folder link
+    rmail:folder#id                              RMAIL message link
+    gnus:group                                   Gnus group link
+    gnus:group#id                                Gnus article link
+    bbdb:R.*Stallman                             BBDB link (with regexp)
+    irc:/irc.com/#emacs/bob                      IRC link
+    info:org#External links                      Info node or index link
+    shell:ls *.org                               A shell command
+    elisp:org-agenda                             Interactive Elisp command
+    elisp:(find-file-other-frame "Elisp.org")    Elisp form to evaluate
+    #+END_EXAMPLE
    
-   Youcan also add hyperlink types: [[elisp:(info-other-window%20"(org)Adding%20hyperlink%20types")][See Here]]
+    Youcan also add hyperlink types: [[elisp:(info-other-window%20"(org)Adding%20hyperlink%20types")][See Here]]
 
-** Handling links
-  | function                 | key         | description                                  | support                                                      |
-  |--------------------------+-------------+----------------------------------------------+--------------------------------------------------------------|
-  | org-store-link           | <SPC> a o l | store alink to the current location          | Org mode buggers, Email/News client, Web browsers, BBDB, IRC |
-  | org-insert-link          | <, i l>     | insert a link. if cursor in a link, edit it  | insert stored links, completion support                      |
-  | org-toggle-inline-images | C-c C-x C-v | toggle the inline display of linked images   |                                                              |
-  | org-mark-ring-push       | C-c %       | push the current position onto the mark ring |                                                              |
-  | org-mark-ring-goto       | C-c &       | jmp back to a recorded position              |                                                              |
-  | org-next-link            | C-c C-x C-n | move forward to the next link in the buffer  |                                                              |
-  | org-previous-link        | C-c C-x C-p | move backward to the next link in the buffer |                                                              |
+*** Handling links
+   | function                 | key         | description                                  | support                                                      |
+   |--------------------------+-------------+----------------------------------------------+--------------------------------------------------------------|
+   | org-store-link           | <SPC> a o l | store alink to the current location          | Org mode buggers, Email/News client, Web browsers, BBDB, IRC |
+   | org-insert-link          | <, i l>     | insert a link. if cursor in a link, edit it  | insert stored links, completion support                      |
+   | org-toggle-inline-images | C-c C-x C-v | toggle the inline display of linked images   |                                                              |
+   | org-mark-ring-push       | C-c %       | push the current position onto the mark ring |                                                              |
+   | org-mark-ring-goto       | C-c &       | jmp back to a recorded position              |                                                              |
+   | org-next-link            | C-c C-x C-n | move forward to the next link in the buffer  |                                                              |
+   | org-previous-link        | C-c C-x C-p | move backward to the next link in the buffer |                                                              |
 
-** Useing link outside Org
-   You can insert and follow links an any Emacs buffer, youmay suitable global keys:
-   #+BEGIN_KEY
-   (global-set-key "\C-c L" 'org-insert-link-global)
-   (global-set-key "\C-c o" 'org-open-at-point-global)
-   #+END_KEY
+*** Useing link outside Org
+    You can insert and follow links an any Emacs buffer, youmay suitable global keys:
+    #+BEGIN_KEY
+    (global-set-key "\C-c L" 'org-insert-link-global)
+    (global-set-key "\C-c o" 'org-open-at-point-global)
+    #+END_KEY
 
-** Link abbreviations
-   Long URLs can be cumbersome to type, some usually use needed in a document. An abbreviations link looks like this:
-   #+BEGIN_EXAMPLE
-   [[linkword:tag][desc]]
-   #+END_EXAMPLE
+*** Link abbreviations
+    Long URLs can be cumbersome to type, some usually use needed in a document. An abbreviations link looks like this:
+    #+BEGIN_EXAMPLE
+    [[linkword:tag][desc]]
+    #+END_EXAMPLE
 
-   The linkword must be a word, starting with a letter, followed by letters, numbers, ‘-’, and ‘_’.
-   And you can set the global variable 'org-link-abbrev-alist' like:
-   #+BEGIN_EXAMPLE
-   (setq org-link-abbrev-alist
-       '(("bugzilla"  . "http://10.1.2.9/bugzilla/show_bug.cgi?id=")
-         ("url-to-ja" . "http://translate.google.fr/translate?sl=en&tl=ja&u=%h")
-         ("google"    . "http://www.google.com/search?q=")
-         ("gmap"      . "http://maps.google.com/maps?q=%s")
-         ("omap"      . "http://nominatim.openstreetmap.org/search?q=%s&polygon=1")
-         ("ads"       . "http://adsabs.harvard.edu/cgi-bin/nph-abs_connect?author=%s&db_key=AST")))
+    The linkword must be a word, starting with a letter, followed by letters, numbers, ‘-’, and ‘_’.
+    And you can set the global variable 'org-link-abbrev-alist' like:
+    #+BEGIN_EXAMPLE
+    (setq org-link-abbrev-alist
+        '(("bugzilla"  . "http://10.1.2.9/bugzilla/show_bug.cgi?id=")
+          ("url-to-ja" . "http://translate.google.fr/translate?sl=en&tl=ja&u=%h")
+          ("google"    . "http://www.google.com/search?q=")
+          ("gmap"      . "http://maps.google.com/maps?q=%s")
+          ("omap"      . "http://nominatim.openstreetmap.org/search?q=%s&polygon=1")
+          ("ads"       . "http://adsabs.harvard.edu/cgi-bin/nph-abs_connect?author=%s&db_key=AST")))
 
-   --------------------------------      
-   replacement:
+    --------------------------------      
+    replacement:
  
-         %s        ->   string
-         %h        ->   url-encode string
-   %(my-function)  ->   pass the tag to a custom function
-   --------------------------------
-   use:
+          %s        ->   string
+          %h        ->   url-encode string
+    %(my-function)  ->   pass the tag to a custom function
+    --------------------------------
+    use:
 
-   [[bugzilla:129]]
-   [[google:OrgMode]]
-   #+END_EXAMPLE
-   
-   Also you can set values in current org file:
-   #+BEGIN_EXAMPLE
-   #+LINK: bugzilla  http://10.1.2.9/bugzilla/show_bug.cgi?id=
-   #+LINK: google    http://www.google.com/search?q=%s
-   #+END_EXAMPLE
-   
-** Search options in file links
-   Here is the cyntax of the different ways to attach a search to a file link:
-   #+BEGIN_EXAMPLE
-  |     link with search             | description                                   |
-  |----------------------------------+-----------------------------------------------|
-  | [[file:~/code/main.c::255]]      | Jump to line 255                              |
-  | [[file:~/code/main.c::255]]      | search for a link target                      |
-  | [[file:~/xx.org::*My Target]]    | in an org file, restrict search to headlines  |
-  | [[file:~/xx.org::#my-custom-id]] | link to a heading with a 'CUSTOM_ID' property |
-  | [[file:~/xx.org::/regexp/]]      | do a regular expression search for 'regexp'   |
-   #+END_EXAMPLE
-
-** Custom Searches
-   The doc link: [[info:org#Custom%20searches][info:org#Custom searches]]
-* DONE [[elisp:(info-other-window%20"(org)TODO%20items")][5 TODO items]]  
-  CLOSED: [2018-09-20 四 21:35]
-  - State "DONE"       from "DOING"      [2018-09-20 四 21:35] \\
-    get org todo knowlege
-  - State "DOING"      from "TODO"       [2018-09-20 四 17:09]
-** Basic TODO functionality                                       :@key_map:
-  | function                | key         | description                                     | spacemacs   |
-  |-------------------------+-------------+-------------------------------------------------+-------------|
-  | org-todo                | C-c C-t     | Rotate the TODO state of the current item among | <t>         |
-  |                         | C-u C-c C-t |                                                 |             |
-  |                         | S-<RIGHT>   | select the following TODO state                 |             |
-  |                         | S-<LEFT>    | select the preceding TODO state                 |             |
-  | org-show-todo-tree      | C-c / t     | view TODO items in a spparse tree               | <, T>       |
-  |                         | C-c / T     | search for specific TODO                        |             |
-  | org-todo-list           | C-c a t     | show the global TODO list                       | <SPC a o t> |
-  | org-insert-todo-heading | S-M-<RET>   | insert a new TODO entry below current one       |             |
-
-** Extended use of TODO keywords
-   Org mode allows you to classify TODO items in more complex ways with TODO keywords (stored in 'org-todo-keywords')
-
-*** Wrokflow states
-    indicate different sequential states:
-    #+BEGIN_EXAMPLE
-    (setq org-todo-keywords
-      '((sequence "TODO" "FEEDBACK" "VERIFY" "|" "DONE" "DELEGATED")))
-    #+END_EXAMPLE
-    
-*** 'TODO' keywords as types
-    indicate different types of action items:
-    #+BEGIN_EXAMPLE
-    (setq org-todo-keywords '((type "Fred" "Sara" "Lucy" "|" "DONE")))
-    #+END_EXAMPLE
-
-*** Multiple keywords sets in one file
-    Different workflow may have different sequence. Your setup would then look like this:
-    #+BEGIN_EXAMPLE
-    (setq org-todo-keywords
-           '((sequence "TODO" "|" "DONE")
-             (sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")
-             (sequence "|" "CANCELED")))
-    #+END_EXAMPLE
-
-*** Fast access to TODO states
-    You can press 'C-c C-t' to fast access to select TODO state.
-
-*** Setting up keywords for individual files
-    A setup for using several sets in parallel would be:
-    #+BEGIN_EXAMPLE
-    #+TODO: TODO | DONE
-    #+TODO: REPORT BUG KNOWNCAUSE | FIXED
-    #+TODO: | CANCELED
-    #+END_EXAMPLE
-
-*** Faces for TODO keywords
-    You may want to use special faces for some of 'org-todo' and 'org-done' state.
-    #+BEGIN_EXAMPLE
-     (setq org-todo-keyword-faces
-           '(("TODO" . org-warning) ("STARTED" . "yellow")
-             ("CANCELED" . (:foreground "blue" :weight bold))))
-    #+END_EXAMPLE
-    
-*** 'TODO' dependencies
-    Usually, a parent TODO task should not be marked DONE until all subtasks are marked as DONE.
-    
-    If you want this feature, you should set:
-    #+BEGIN_EXAMPLE
-    # set parent state block by children tasks
-    (setq org-enforce-todo-dependencies t)
-    
-    # track the value of this property with a tag for better visibility
-    (setq org-track-ordered-property-with-tag t)
-
-    # set TODO entries cannot be closed
-    (setq org-agenda-dim-blocked-tasks t)
-
-    # block changes of TODO states by looking at checkbox
-    (setq org-enforce-todo-checkbox-dependencies)
-    #+END_EXAMPLE
-
-    You should customize the option 'org-enforce-todo-dependencies'.
-   | function                    | key       | description                                        |
-   |-----------------------------+-----------+----------------------------------------------------|
-   | org-toggle-ordered-property | C-c C-x o | toggle the 'ORDERED' property of the current entry |
-
-** Progress logging
-   Org mode can automatically record timestamp/note when you change the state of a TODO item.
-   Like the log info.
-
-*** Closing items
-    track item finish timestamp
-    #+BEGIN_EXAMPLE
-    # default is nil. 'CLOSED: [timestamp]' will be inserted after headline
-    (setq org-log-down 'time)
-
-    # for you can set in current org file
-    #+STARTUP: logdone
-    #+END_EXAMPLE
-
-    record a note along with the timestamp
-    #+BEGIN_EXAMPLE
-    (setq org-log-done 'note)
-    
-    #+STARTUP: lognotedone
+    [[bugzilla:129]]
+    [[google:OrgMode]]
     #+END_EXAMPLE
    
-*** Tracking TODO state changes
+    Also you can set values in current org file:
+    #+BEGIN_EXAMPLE
+    #+LINK: bugzilla  http://10.1.2.9/bugzilla/show_bug.cgi?id=
+    #+LINK: google    http://www.google.com/search?q=%s
+    #+END_EXAMPLE
+   
+*** Search options in file links
+    Here is the cyntax of the different ways to attach a search to a file link:
+    #+BEGIN_EXAMPLE
+   |     link with search             | description                                   |
+   |----------------------------------+-----------------------------------------------|
+   | [[file:~/code/main.c::255]]      | Jump to line 255                              |
+   | [[file:~/code/main.c::255]]      | search for a link target                      |
+   | [[file:~/xx.org::*My Target]]    | in an org file, restrict search to headlines  |
+   | [[file:~/xx.org::#my-custom-id]] | link to a heading with a 'CUSTOM_ID' property |
+   | [[file:~/xx.org::/regexp/]]      | do a regular expression search for 'regexp'   |
+    #+END_EXAMPLE
+
+*** Custom Searches
+    The doc link: [[info:org#Custom%20searches][info:org#Custom searches]]
+** DONE [[elisp:(info-other-window%20"(org)TODO%20items")][5 TODO items]]  
+   CLOSED: [2018-09-20 四 21:35]
+   - State "DONE"       from "DOING"      [2018-09-20 四 21:35] \\
+     get org todo knowlege
+   - State "DOING"      from "TODO"       [2018-09-20 四 17:09]
+*** Basic TODO functionality                                       :@key_map:
+   | function                | key         | description                                     | spacemacs   |
+   |-------------------------+-------------+-------------------------------------------------+-------------|
+   | org-todo                | C-c C-t     | Rotate the TODO state of the current item among | <t>         |
+   |                         | C-u C-c C-t |                                                 |             |
+   |                         | S-<RIGHT>   | select the following TODO state                 |             |
+   |                         | S-<LEFT>    | select the preceding TODO state                 |             |
+   | org-show-todo-tree      | C-c / t     | view TODO items in a spparse tree               | <, T>       |
+   |                         | C-c / T     | search for specific TODO                        |             |
+   | org-todo-list           | C-c a t     | show the global TODO list                       | <SPC a o t> |
+   | org-insert-todo-heading | S-M-<RET>   | insert a new TODO entry below current one       |             |
+
+*** Extended use of TODO keywords
+    Org mode allows you to classify TODO items in more complex ways with TODO keywords (stored in 'org-todo-keywords')
+
+**** Wrokflow states
+     indicate different sequential states:
+     #+BEGIN_EXAMPLE
+     (setq org-todo-keywords
+       '((sequence "TODO" "FEEDBACK" "VERIFY" "|" "DONE" "DELEGATED")))
+     #+END_EXAMPLE
+    
+**** 'TODO' keywords as types
+     indicate different types of action items:
+     #+BEGIN_EXAMPLE
+     (setq org-todo-keywords '((type "Fred" "Sara" "Lucy" "|" "DONE")))
+     #+END_EXAMPLE
+
+**** Multiple keywords sets in one file
+     Different workflow may have different sequence. Your setup would then look like this:
+     #+BEGIN_EXAMPLE
+     (setq org-todo-keywords
+            '((sequence "TODO" "|" "DONE")
+              (sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")
+              (sequence "|" "CANCELED")))
+     #+END_EXAMPLE
+
+**** Fast access to TODO states
+     You can press 'C-c C-t' to fast access to select TODO state.
+
+**** Setting up keywords for individual files
+     A setup for using several sets in parallel would be:
+     #+BEGIN_EXAMPLE
+     #+TODO: TODO | DONE
+     #+TODO: REPORT BUG KNOWNCAUSE | FIXED
+     #+TODO: | CANCELED
+     #+END_EXAMPLE
+
+**** Faces for TODO keywords
+     You may want to use special faces for some of 'org-todo' and 'org-done' state.
+     #+BEGIN_EXAMPLE
+      (setq org-todo-keyword-faces
+            '(("TODO" . org-warning) ("STARTED" . "yellow")
+              ("CANCELED" . (:foreground "blue" :weight bold))))
+     #+END_EXAMPLE
+    
+**** 'TODO' dependencies
+     Usually, a parent TODO task should not be marked DONE until all subtasks are marked as DONE.
+    
+     If you want this feature, you should set:
+     #+BEGIN_EXAMPLE
+     # set parent state block by children tasks
+     (setq org-enforce-todo-dependencies t)
+    
+     # track the value of this property with a tag for better visibility
+     (setq org-track-ordered-property-with-tag t)
+
+     # set TODO entries cannot be closed
+     (setq org-agenda-dim-blocked-tasks t)
+
+     # block changes of TODO states by looking at checkbox
+     (setq org-enforce-todo-checkbox-dependencies)
+     #+END_EXAMPLE
+
+     You should customize the option 'org-enforce-todo-dependencies'.
+    | function                    | key       | description                                        |
+    |-----------------------------+-----------+----------------------------------------------------|
+    | org-toggle-ordered-property | C-c C-x o | toggle the 'ORDERED' property of the current entry |
+
+*** Progress logging
+    Org mode can automatically record timestamp/note when you change the state of a TODO item.
+    Like the log info.
+
+**** Closing items
+     track item finish timestamp
+     #+BEGIN_EXAMPLE
+     # default is nil. 'CLOSED: [timestamp]' will be inserted after headline
+     (setq org-log-down 'time)
+
+     # for you can set in current org file
+     #+STARTUP: logdone
+     #+END_EXAMPLE
+
+     record a note along with the timestamp
+     #+BEGIN_EXAMPLE
+     (setq org-log-done 'note)
+    
+     #+STARTUP: lognotedone
+     #+END_EXAMPLE
+   
+**** Tracking TODO state changes
+     :PROPERTIES:
+     :END:
+     You might want to keep track of state changes(timestamp or note).
+     You can customize 'org-log-into-drawer' to get this behavior.
+    
+     support mark
+     | mark symbol | description                      | example        |
+     |-------------+----------------------------------+----------------|
+     | '!'         | record timestamp                 | "PAUSE(p!)"    |
+     | '@'         | recode a note                    | "CANCLED(c@)"  |
+     | '@/!'       | recode both timestamp and a note | "FINISH(f@/!)" |
+
+     1.global setting:
+     #+BEGIN_EXAMPLE
+     (setq org-todo-keywords
+        '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)")))
+     #+END_EXAMPLE
+
+     2.current org file setting:
+     #+BEGIN_EXAMPLE
+     #+TODO: TODO(t) WAIT(w@/!) | DONE(d!) CANCELED(c@)
+     #+END_EXAMPLE
+
+     3.current todo item setting:
+     Step1:
+     #+BEGIN_EXAMPLE
+     # add todo properties
+     C-c C-x o
+     #+END_EXAMPLE
+
+     Step2:
+     #+BEGIN_EXAMPLE
+     # cursor move to 'PROPERTIES', type
+     C-c C-c
+     #+END_EXAMPLE
+
+     Step3:
+     Select 'LOGGING' and insert the value, result like:
+     #+BEGIN_EXAMPLE
+     * TODO Log each state with only a time
+        :PROPERTIES:
+        :LOGGING: TODO(!) WAIT(!) DONE(!) CANCELED(!)
+        :END:
+     #+END_EXAMPLE
+
+**** Tracking your habits
+     :PROPERTIES:
+     :END:
+     Org has the ability to track the consistency of a special category of TODOs, called "habits".
+
+     First, enable 'habits' module, and has these properties:
+     1. 'STYLE' is 'habit'
+     2. 'SCHEDULED: <2009-10-17 Sat .+2d/4d>' means repeat interval.
+
+     Example:
+     #+BEGIN_EXAMPLE
+     ** TODO Shave
+         SCHEDULED: <2009-10-17 Sat .+2d/4d>
+         :PROPERTIES:
+         :STYLE:    habit
+         :LAST_REPEAT: [2009-10-19 Mon 00:36]
+         :END:
+         - State "DONE"       from "TODO"       [2009-10-15 Thu]
+         - State "DONE"       from "TODO"       [2009-10-12 Mon]
+         - State "DONE"       from "TODO"       [2009-10-10 Sat]
+         - State "DONE"       from "TODO"       [2009-10-04 Sun]
+         - State "DONE"       from "TODO"       [2009-10-02 Fri]
+         - State "DONE"       from "TODO"       [2009-09-29 Tue]
+         - State "DONE"       from "TODO"       [2009-09-25 Fri]
+         - State "DONE"       from "TODO"       [2009-09-19 Sat]
+         - State "DONE"       from "TODO"       [2009-09-16 Wed]
+         - State "DONE"       from "TODO"       [2009-09-12 Sat]
+     #+END_EXAMPLE
+
+*** Priorities
+    Priorities make a difference only for sorting in the agenda.
+    A TODO item with priorities like this:
+    #+BEGIN_EXAMPLE
+    *** TODO [#A] Do something
+    #+END_EXAMPLE
+
+    Org mode support three priorities: 'A', 'B', and 'C'. default: A>B>C, also you can change like this:
+    #+BEGIN_EXAMPLE
+    #+PRIORITIES: A C B
+    #+END_EXAMPLE
+   
+   | function          | key      | description                           |
+   |-------------------+----------+---------------------------------------|
+   | org-priority      | C-c ,    | set priority of current headline      |
+   | org-priority-up   | S-<UP>   | increase priority of current headline |
+   | org-priority-down | S-<DOWN> | decrease priority of current headline |
+
+*** Breaking tasks down into subtask
     :PROPERTIES:
     :END:
-    You might want to keep track of state changes(timestamp or note).
-    You can customize 'org-log-into-drawer' to get this behavior.
-    
-    support mark
-    | mark symbol | description                      | example        |
-    |-------------+----------------------------------+----------------|
-    | '!'         | record timestamp                 | "PAUSE(p!)"    |
-    | '@'         | recode a note                    | "CANCLED(c@)"  |
-    | '@/!'       | recode both timestamp and a note | "FINISH(f@/!)" |
+    Purpose:
+    1.Break down large tasks into smaller, manageable subtasks.
+    2.Keep overview over the fraction of subtasks that are already completed.
 
-    1.global setting:
+    Syntax:
+    1.Add "[%]" or "[/]" at the end or the parent task line.
+    2.Value will update when type 'C-c C-c' or when subtask TODO states change.
+
+    Here is example:
     #+BEGIN_EXAMPLE
-    (setq org-todo-keywords
-       '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)")))
+    * Organize Party [33%]
+    ** TODO Call people [1/2]
+    *** TODO Peter
+    *** DONE Sarah
+    ** TODO Buy food
+    ** DONE Talk to neighbor
     #+END_EXAMPLE
 
-    2.current org file setting:
+    Statistics cookie count any subtasks, configure 'org-hierarchical-todo-statistics'.
+    You should set 'COOKIE_DATA' to 'recursive' like this:
     #+BEGIN_EXAMPLE
-    #+TODO: TODO(t) WAIT(w@/!) | DONE(d!) CANCELED(c@)
+    * Parent capturing statistics [2/20]
+      :PROPERTIES:
+      :COOKIE_DATA: todo recursive
+      :END:
     #+END_EXAMPLE
 
-    3.current todo item setting:
-    Step1:
+    Parent task automatically DONE when all children are done. You should write this to conifg.
     #+BEGIN_EXAMPLE
-    # add todo properties
-    C-c C-x o
+    (defun org-summary-todo (n-done n-not-done)
+      "Switch entry to DONE when all subentries are done, to TODO otherwise."
+      (let (org-log-done org-log-states)   ; turn off logging
+        (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+
+    (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
     #+END_EXAMPLE
 
-    Step2:
+*** Checkbox
+    Example:
     #+BEGIN_EXAMPLE
-    # cursor move to 'PROPERTIES', type
-    C-c C-c
+    * TODO Organize party [2/4]
+      - [-] call people [1/3]
+        - [ ] Peter
+        - [X] Sarah
+        - [ ] Sam
+      - [X] order food
+      - [ ] think about what music to play
+      - [X] talk to the neighbors
     #+END_EXAMPLE
 
-    Step3:
-    Select 'LOGGING' and insert the value, result like:
-    #+BEGIN_EXAMPLE
-    * TODO Log each state with only a time
-       :PROPERTIES:
-       :LOGGING: TODO(!) WAIT(!) DONE(!) CANCELED(!)
-       :END:
-    #+END_EXAMPLE
+    If you want check all subtasks states.You can use 'COOKIE_DATA' to either 'checkbox' or 'todo' to resolve this issue.
+   
+    Here are checkbox commands:
+   | function                     | key         | description                                               |
+   |------------------------------+-------------+-----------------------------------------------------------|
+   | org-toggle-checkbox          | C-c C-c     | Toggle checkbox status or checkbox presence at point      |
+   | org-toggle-checkbox          | C-c C-x C-b |                                                           |
+   | org-insert-todo-heading      | M-S-<RET>   | insert a new item with a checkbox                         |
+   | org-toggle-ordered-property  | C-c C-x o   | toggle the 'ORDERED' property of the entry                |
+   | org-update-statistics-cookie | C-c #       | update the statistics cookie in the current outline entry |
 
-*** Tracking your habits
-    :PROPERTIES:
-    :END:
-    Org has the ability to track the consistency of a special category of TODOs, called "habits".
+** DONE [[elisp:(info-other-window%20"(org)Tags")][6 Tags]]
+   CLOSED: [2018-09-20 四 23:51]
+   - State "DONE"       from "DOING"      [2018-09-20 四 23:51] \\
+     Tags functions and varibles.
+   - State "DOING"      from "TODO"       [2018-09-20 四 22:52]
 
-    First, enable 'habits' module, and has these properties:
-    1. 'STYLE' is 'habit'
-    2. 'SCHEDULED: <2009-10-17 Sat .+2d/4d>' means repeat interval.
+*** Tag inheritance
+    Tags make use of the hierarchical structure of outline trees.
 
     Example:
     #+BEGIN_EXAMPLE
-    ** TODO Shave
-        SCHEDULED: <2009-10-17 Sat .+2d/4d>
+    * Meeting with the French group      :work:
+    ** Summary by Frank                  :boss:notes:
+    *** TODO Prepare slides for him      :action:
+    #+END_EXAMPLE
+    The final heading will have the tags ':work:', ':boss:', ':notes:', and ':action:'
+
+    Set tags all entries ina file:
+    #+BEGIN_EXAMPLE
+    #+FILETAGS: :Peter:Boss:Secret:
+    #+END_EXAMPLE
+
+    Varibles:
+   | variable                          | description                                                  |
+   |-----------------------------------+--------------------------------------------------------------|
+   | org-tags-exclude-from-inheritance | limit tag inheritance to specific tags                       |
+   | org-use-tag-inheritance           | turn inheritance off entrirely                               |
+   | org-tags-match-list-sublevels     | only show the first tags match in a subtrss(not recommended) |
+   | org-agenda-use-tag-inheritance    | the tags correctly set in the agenda for filter.             |
+   |                                   | set value 'nil' can really speed up agenda generation        |
+   
+*** Setting tags 
+    Functions:
+    | function             | key     | description                                      | spacemacs |
+    |----------------------+---------+--------------------------------------------------+-----------|
+    | org-set-tags-command | C-c C-q | enter new tags for the current headline          |           |
+    |                      | C-c C-c | when cursor is in a head line, same as 'C-c C-q' |           |
+    | org-set-tags         | M-RET : | add tags to the current headline                 | <, :>     |
+
+    Varibles:'org-tag-alist'
+
+    Set for global tags:
+    #+BEGIN_EXAMPLE
+    (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("laptop" . ?l)))
+
+    ----------------------
+    set 'org-tag-alist', use ':startgroup', ':endgroup':
+    (setq org-tag-alist '((:startgroup . nil)
+                          ("@work" . ?w) ("@home" . ?h)
+                          ("@tennisclub" . ?t)
+                          (:endgroup . nil)
+                          ("laptop" . ?l) ("pc" . ?p)))
+    #+END_EXAMPLE
+
+    Set for current files:
+    #+BEGIN_EXAMPLE
+    #+TAGS: @work(w)  @home(h)  @tennisclub(t)  laptop(l)  pc(p)
+
+    ----------------------
+    '\n' start a new line:
+    #+TAGS: @work(w)  @home(h)  @tennisclub(t) \n laptop(l)  pc(p)
+
+    ----------------------
+    write in two lines:
+    #+TAGS: @work(w)  @home(h)  @tennisclub(t)
+    #+TAGS: laptop(l)  pc(p)
+
+    ----------------------
+    group together tags:
+    #+TAGS: { @work(w)  @home(h)  @tennisclub(t) }  laptop(l)  pc(p)
+
+    ----------------------
+   
+    #+END_EXAMPLE
+
+*** Tag hierarchy
+    Tags can be defined in hierarchies.
+    Tags can be defined as a group tag for a set of other tags. Group can be set "broader term".
+   
+    You can set group tags like this in a org file:
+    #+BEGIN_EXAMPLE
+    GTD is group tag
+    @+TAGS: [ GTD: Control Persp ]
+   
+    -------------------------
+    create a hierarchy of tags:
+    #+TAGS: [ Control : Context Task ]
+    #+TAGS: [ Persp : Vision Goal AOF Project ]
+    #+END_EXAMPLE
+
+    The hierarchy:
+    #+BEGIN_EXAMPLE
+    - GTD
+      - Persp
+        - Vision
+        - Goal
+        - AOF
+        - Project
+      - Control
+        - Context
+        - Task
+    #+END_EXAMPLE
+
+    Or set variable in config file:
+    #+BEGIN_EXAMPLE
+    You can use the ':startgrouptag', ':grouptags' and ':endgrouptag' like:
+    (setq org-tag-alist '((:startgrouptag)
+                          ("GTD")
+                          (:grouptags)
+                          ("Control")
+                          ("Persp")
+                          (:endgrouptag)
+                          (:startgrouptag)
+                          ("Control")
+                          (:grouptags)
+                          ("Context")
+                          ("Task")
+                          (:endgrouptag)))
+    #+END_EXAMPLE
+   
+    Tags in a group can be mutually exclusive:
+    #+BEGIN_EXAMPLE
+    #+TAGS: { Context : @Home @Work @Call }
+    #+END_EXAMPLE
+
+    Tags can also be regular expressions like this:
+    #+BEGIN_EXAMPLE
+    #+TAGS: [ Vision : {V@.+} ]
+    #+TAGS: [ Goal : {G@.+} ]
+    #+TAGS: [ AOF : {AOF@.+} ]
+    #+TAGS: [ Project : {P@.+} ]
+    #+END_EXAMPLE
+
+*** Tag searches
+    Functions:
+    | function              | key       | description                                               |
+    |-----------------------+-----------+-----------------------------------------------------------|
+    | org-match-sparse-tree | C-c /     | create a sparse tree with all headlings matching a        |
+    |                       | C-c \     | tags/property/TODO search                                 |
+    |                       | C-u C-c / | ignore headlies not a TODO line                           |
+    | org-tags-view         | C-c a m   | create a global list of tag matches form all agenda files |
+    | org-tags-view         | C-c a M   | like 'C-c a m', but not only TODO items                   |
+
+** DONE [[elisp:(info-other-window%20"(org)Properties%20and%20columns")][7 Properties and columns]]
+   CLOSED: [2018-09-21 Fri 01:23]
+   - State "DONE"       from "DOING"      [2018-09-21 Fri 01:23] \\
+     Column view not finish read.
+   - State "DOING"      from "TODO"       [2018-09-20 四 23:52]
+    
+*** Property syntax
+    :PROPERTIES:
+    :END:
+
+    A property is a key-value pair associated with an entry.
+    Properties are like tags, but with a value.
+   
+    The keyword is "PROPERTIES". Here is an example:
+    #+BEGIN_EXAMPLE
+    * CD collection
+    ** Classic
+    *** Goldberg Variations
         :PROPERTIES:
-        :STYLE:    habit
-        :LAST_REPEAT: [2009-10-19 Mon 00:36]
+        :Title:     Goldberg Variations
+        :Composer:  J.S. Bach
+        :Artist:    Glen Gould
+        :Publisher: Deutsche Grammophon
+        :NDisks:    1
         :END:
-        - State "DONE"       from "TODO"       [2009-10-15 Thu]
-        - State "DONE"       from "TODO"       [2009-10-12 Mon]
-        - State "DONE"       from "TODO"       [2009-10-10 Sat]
-        - State "DONE"       from "TODO"       [2009-10-04 Sun]
-        - State "DONE"       from "TODO"       [2009-10-02 Fri]
-        - State "DONE"       from "TODO"       [2009-09-29 Tue]
-        - State "DONE"       from "TODO"       [2009-09-25 Fri]
-        - State "DONE"       from "TODO"       [2009-09-19 Sat]
-        - State "DONE"       from "TODO"       [2009-09-16 Wed]
-        - State "DONE"       from "TODO"       [2009-09-12 Sat]
+    #+END_EXAMPLE
+    Property is inherited. You can define the allowed values for a particular property ':Xyz:' by setting a property ':XyzAll:'.
+
+    Functions:
+    | function                            | key       | description                                                   | spacemacs |
+    |-------------------------------------+-----------+---------------------------------------------------------------+-----------|
+    | pcomplete                           | M-<TAB>   | complete property keys                                        | <C-M-i>   |
+    | org-set-property                    | C-c C-x p | set a property                                                | <, p>     |
+    |                                     | C-c C-c s | set a property using completion                               |           |
+    | org-insert-drawer                   |           | insert a property drawer into the current entry               |           |
+    | org-property-action                 | C-c C-c   | with a cursor in a property drawer, execute property commands |           |
+    | org-property-next-allowed-value     | S-<RIGHT> | switch property at cursor to the next allowed value           |           |
+    | org-property-previous-allowed-value | S-<LEFT>  | switch property at cursor to the previous allowed value       |           |
+    | org-delete-property                 | C-c C-c d | remove a property form the current entry                      |           |
+    | org-delete-property-globally        | C-c C-c D | globally remove a property                                    |           |
+
+
+   
+*** Special properties
+    #+BEGIN_EXAMPLE
+    ALLTAGS      All tags, including inherited ones.
+    BLOCKED      "t" if task is currently blocked by children or siblings.
+    CLOCKSUM     The sum of CLOCK intervals in the subtree.  ‘org-clock-sum’
+                   must be run first to compute the values in the current buffer.
+    CLOCKSUM_T   The sum of CLOCK intervals in the subtree for today.
+                 ‘org-clock-sum-today’ must be run first to compute the
+                 values in the current buffer.
+    CLOSED       When was this entry closed?
+    DEADLINE     The deadline time string, without the angular brackets.
+    FILE         The filename the entry is located in.
+    ITEM         The headline of the entry.
+    PRIORITY     The priority of the entry, a string with a single letter.
+    SCHEDULED    The scheduling timestamp, without the angular brackets.
+    TAGS         The tags defined directly in the headline.
+    TIMESTAMP    The first keyword-less timestamp in the entry.
+    TIMESTAMP_IA The first inactive timestamp in the entry.
+    TODO         The TODO keyword of the entry.
     #+END_EXAMPLE
 
-    
-** Priorities
-   Priorities make a difference only for sorting in the agenda.
-   A TODO item with priorities like this:
-   #+BEGIN_EXAMPLE
-   *** TODO [#A] Do something
-   #+END_EXAMPLE
+*** Property searches
+    Functions
+    | function              | key         | description                                                        |
+    |-----------------------+-------------+--------------------------------------------------------------------|
+    | org-match-sparse-tree | C-c / m     | create a sparse tree with all matching ectries                     |
+    |                       | C-c \       | create a sparse tree with all matching ectries                     |
+    |                       | C-u C-c / m | ignore headlines not a TODO line                                   |
+    | org-tags-view         | C-c a m     | create a global list of tag/property matches from all agenda files |
+    |                       | C-c a M     | check only TODO items and force checking of subitems               |
+    |                       |             |                                                                    |
+    | org-sparse-tree       | C-c / p     | create a sparse tree based on the value of a property              |
 
-   Org mode support three priorities: 'A', 'B', and 'C'. default: A>B>C, also you can change like this:
-   #+BEGIN_EXAMPLE
-   #+PRIORITIES: A C B
-   #+END_EXAMPLE
+*** Property Inheritance
+    If the parent in a tree has a certain property, the children can inherit this property.
+    Org mode does not turn this on by default, because it can slow down property searches.
+    You can open it:
+    #+BEGIN_EXAMPLE
+    (setq org-use-property-inheritance t)
+    #+END_EXAMPLE
    
-  | function          | key      | description                           |
-  |-------------------+----------+---------------------------------------|
-  | org-priority      | C-c ,    | set priority of current headline      |
-  | org-priority-up   | S-<UP>   | increase priority of current headline |
-  | org-priority-down | S-<DOWN> | decrease priority of current headline |
+    Org mode has a few properties for whicn inheritance is hard-coded.
+    | property   | description                                    |
+    |------------+------------------------------------------------|
+    | 'COLUMNS'  | Column view                                    |
+    | 'CATEGORY' | applies to the entire subtree                  |
+    | 'ARCHIVE'  | define the archive location for entire subtree |
+    | 'LOGGING'  |                                                |
 
-** Breaking tasks down into subtask
-   :PROPERTIES:
-   :END:
-   Purpose:
-   1.Break down large tasks into smaller, manageable subtasks.
-   2.Keep overview over the fraction of subtasks that are already completed.
-
-   Syntax:
-   1.Add "[%]" or "[/]" at the end or the parent task line.
-   2.Value will update when type 'C-c C-c' or when subtask TODO states change.
-
-   Here is example:
-   #+BEGIN_EXAMPLE
-   * Organize Party [33%]
-   ** TODO Call people [1/2]
-   *** TODO Peter
-   *** DONE Sarah
-   ** TODO Buy food
-   ** DONE Talk to neighbor
-   #+END_EXAMPLE
-
-   Statistics cookie count any subtasks, configure 'org-hierarchical-todo-statistics'.
-   You should set 'COOKIE_DATA' to 'recursive' like this:
-   #+BEGIN_EXAMPLE
-   * Parent capturing statistics [2/20]
-     :PROPERTIES:
-     :COOKIE_DATA: todo recursive
-     :END:
-   #+END_EXAMPLE
-
-   Parent task automatically DONE when all children are done. You should write this to conifg.
-   #+BEGIN_EXAMPLE
-   (defun org-summary-todo (n-done n-not-done)
-     "Switch entry to DONE when all subentries are done, to TODO otherwise."
-     (let (org-log-done org-log-states)   ; turn off logging
-       (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
-
-   (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
-   #+END_EXAMPLE
-
-** Checkbox
-   Example:
-   #+BEGIN_EXAMPLE
-   * TODO Organize party [2/4]
-     - [-] call people [1/3]
-       - [ ] Peter
-       - [X] Sarah
-       - [ ] Sam
-     - [X] order food
-     - [ ] think about what music to play
-     - [X] talk to the neighbors
-   #+END_EXAMPLE
-
-   If you want check all subtasks states.You can use 'COOKIE_DATA' to either 'checkbox' or 'todo' to resolve this issue.
+*** Column View
+    A greate way to view and edit properties in an outline tree is column view.
    
-   Here are checkbox commands:
-  | function                     | key         | description                                               |
-  |------------------------------+-------------+-----------------------------------------------------------|
-  | org-toggle-checkbox          | C-c C-c     | Toggle checkbox status or checkbox presence at point      |
-  | org-toggle-checkbox          | C-c C-x C-b |                                                           |
-  | org-insert-todo-heading      | M-S-<RET>   | insert a new item with a checkbox                         |
-  | org-toggle-ordered-property  | C-c C-x o   | toggle the 'ORDERED' property of the entry                |
-  | org-update-statistics-cookie | C-c #       | update the statistics cookie in the current outline entry |
-
-* DONE [[elisp:(info-other-window%20"(org)Tags")][6 Tags]]
-  CLOSED: [2018-09-20 四 23:51]
-  - State "DONE"       from "DOING"      [2018-09-20 四 23:51] \\
-    Tags functions and varibles.
-  - State "DOING"      from "TODO"       [2018-09-20 四 22:52]
-
-** Tag inheritance
-   Tags make use of the hierarchical structure of outline trees.
-
-   Example:
-   #+BEGIN_EXAMPLE
-   * Meeting with the French group      :work:
-   ** Summary by Frank                  :boss:notes:
-   *** TODO Prepare slides for him      :action:
-   #+END_EXAMPLE
-   The final heading will have the tags ':work:', ':boss:', ':notes:', and ':action:'
-
-   Set tags all entries ina file:
-   #+BEGIN_EXAMPLE
-   #+FILETAGS: :Peter:Boss:Secret:
-   #+END_EXAMPLE
-
-   Varibles:
-  | variable                          | description                                                  |
-  |-----------------------------------+--------------------------------------------------------------|
-  | org-tags-exclude-from-inheritance | limit tag inheritance to specific tags                       |
-  | org-use-tag-inheritance           | turn inheritance off entrirely                               |
-  | org-tags-match-list-sublevels     | only show the first tags match in a subtrss(not recommended) |
-  | org-agenda-use-tag-inheritance    | the tags correctly set in the agenda for filter.             |
-  |                                   | set value 'nil' can really speed up agenda generation        |
-   
-** Setting tags 
-   Functions:
-   | function             | key     | description                                      | spacemacs |
-   |----------------------+---------+--------------------------------------------------+-----------|
-   | org-set-tags-command | C-c C-q | enter new tags for the current headline          |           |
-   |                      | C-c C-c | when cursor is in a head line, same as 'C-c C-q' |           |
-   | org-set-tags         | M-RET : | add tags to the current headline                 | <, :>     |
-
-   Varibles:'org-tag-alist'
-
-   Set for global tags:
-   #+BEGIN_EXAMPLE
-   (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("laptop" . ?l)))
-
-   ----------------------
-   set 'org-tag-alist', use ':startgroup', ':endgroup':
-   (setq org-tag-alist '((:startgroup . nil)
-                         ("@work" . ?w) ("@home" . ?h)
-                         ("@tennisclub" . ?t)
-                         (:endgroup . nil)
-                         ("laptop" . ?l) ("pc" . ?p)))
-   #+END_EXAMPLE
-
-   Set for current files:
-   #+BEGIN_EXAMPLE
-   #+TAGS: @work(w)  @home(h)  @tennisclub(t)  laptop(l)  pc(p)
-
-   ----------------------
-   '\n' start a new line:
-   #+TAGS: @work(w)  @home(h)  @tennisclub(t) \n laptop(l)  pc(p)
-
-   ----------------------
-   write in two lines:
-   #+TAGS: @work(w)  @home(h)  @tennisclub(t)
-   #+TAGS: laptop(l)  pc(p)
-
-   ----------------------
-   group together tags:
-   #+TAGS: { @work(w)  @home(h)  @tennisclub(t) }  laptop(l)  pc(p)
-
-   ----------------------
-   
-   #+END_EXAMPLE
-
-** Tag hierarchy
-   Tags can be defined in hierarchies.
-   Tags can be defined as a group tag for a set of other tags. Group can be set "broader term".
-   
-   You can set group tags like this in a org file:
-   #+BEGIN_EXAMPLE
-   GTD is group tag
-   @+TAGS: [ GTD: Control Persp ]
-   
-   -------------------------
-   create a hierarchy of tags:
-   #+TAGS: [ Control : Context Task ]
-   #+TAGS: [ Persp : Vision Goal AOF Project ]
-   #+END_EXAMPLE
-
-   The hierarchy:
-   #+BEGIN_EXAMPLE
-   - GTD
-     - Persp
-       - Vision
-       - Goal
-       - AOF
-       - Project
-     - Control
-       - Context
-       - Task
-   #+END_EXAMPLE
-
-   Or set variable in config file:
-   #+BEGIN_EXAMPLE
-   You can use the ':startgrouptag', ':grouptags' and ':endgrouptag' like:
-   (setq org-tag-alist '((:startgrouptag)
-                         ("GTD")
-                         (:grouptags)
-                         ("Control")
-                         ("Persp")
-                         (:endgrouptag)
-                         (:startgrouptag)
-                         ("Control")
-                         (:grouptags)
-                         ("Context")
-                         ("Task")
-                         (:endgrouptag)))
-   #+END_EXAMPLE
-   
-   Tags in a group can be mutually exclusive:
-   #+BEGIN_EXAMPLE
-   #+TAGS: { Context : @Home @Work @Call }
-   #+END_EXAMPLE
-
-   Tags can also be regular expressions like this:
-   #+BEGIN_EXAMPLE
-   #+TAGS: [ Vision : {V@.+} ]
-   #+TAGS: [ Goal : {G@.+} ]
-   #+TAGS: [ AOF : {AOF@.+} ]
-   #+TAGS: [ Project : {P@.+} ]
-   #+END_EXAMPLE
-
-** Tag searches
-   Functions:
-   | function              | key       | description                                               |
-   |-----------------------+-----------+-----------------------------------------------------------|
-   | org-match-sparse-tree | C-c /     | create a sparse tree with all headlings matching a        |
-   |                       | C-c \     | tags/property/TODO search                                 |
-   |                       | C-u C-c / | ignore headlies not a TODO line                           |
-   | org-tags-view         | C-c a m   | create a global list of tag matches form all agenda files |
-   | org-tags-view         | C-c a M   | like 'C-c a m', but not only TODO items                   |
-
-* DONE [[elisp:(info-other-window%20"(org)Properties%20and%20columns")][7 Properties and columns]]
-  CLOSED: [2018-09-21 Fri 01:23]
-  - State "DONE"       from "DOING"      [2018-09-21 Fri 01:23] \\
-    Column view not finish read.
-  - State "DOING"      from "TODO"       [2018-09-20 四 23:52]
-    
-** Property syntax
-   :PROPERTIES:
-   :END:
-
-   A property is a key-value pair associated with an entry.
-   Properties are like tags, but with a value.
-   
-   The keyword is "PROPERTIES". Here is an example:
-   #+BEGIN_EXAMPLE
-   * CD collection
-   ** Classic
-   *** Goldberg Variations
-       :PROPERTIES:
-       :Title:     Goldberg Variations
-       :Composer:  J.S. Bach
-       :Artist:    Glen Gould
-       :Publisher: Deutsche Grammophon
-       :NDisks:    1
-       :END:
-   #+END_EXAMPLE
-   Property is inherited. You can define the allowed values for a particular property ':Xyz:' by setting a property ':XyzAll:'.
-
-   Functions:
-   | function                            | key       | description                                                   | spacemacs |
-   |-------------------------------------+-----------+---------------------------------------------------------------+-----------|
-   | pcomplete                           | M-<TAB>   | complete property keys                                        | <C-M-i>   |
-   | org-set-property                    | C-c C-x p | set a property                                                | <, p>     |
-   |                                     | C-c C-c s | set a property using completion                               |           |
-   | org-insert-drawer                   |           | insert a property drawer into the current entry               |           |
-   | org-property-action                 | C-c C-c   | with a cursor in a property drawer, execute property commands |           |
-   | org-property-next-allowed-value     | S-<RIGHT> | switch property at cursor to the next allowed value           |           |
-   | org-property-previous-allowed-value | S-<LEFT>  | switch property at cursor to the previous allowed value       |           |
-   | org-delete-property                 | C-c C-c d | remove a property form the current entry                      |           |
-   | org-delete-property-globally        | C-c C-c D | globally remove a property                                    |           |
-
-
-   
-   
-** Special properties
-   #+BEGIN_EXAMPLE
-   ALLTAGS      All tags, including inherited ones.
-   BLOCKED      "t" if task is currently blocked by children or siblings.
-   CLOCKSUM     The sum of CLOCK intervals in the subtree.  ‘org-clock-sum’
-                  must be run first to compute the values in the current buffer.
-   CLOCKSUM_T   The sum of CLOCK intervals in the subtree for today.
-                ‘org-clock-sum-today’ must be run first to compute the
-                values in the current buffer.
-   CLOSED       When was this entry closed?
-   DEADLINE     The deadline time string, without the angular brackets.
-   FILE         The filename the entry is located in.
-   ITEM         The headline of the entry.
-   PRIORITY     The priority of the entry, a string with a single letter.
-   SCHEDULED    The scheduling timestamp, without the angular brackets.
-   TAGS         The tags defined directly in the headline.
-   TIMESTAMP    The first keyword-less timestamp in the entry.
-   TIMESTAMP_IA The first inactive timestamp in the entry.
-   TODO         The TODO keyword of the entry.
-   #+END_EXAMPLE
-
-** Property searches
-   Functions
-   | function              | key         | description                                                        |
-   |-----------------------+-------------+--------------------------------------------------------------------|
-   | org-match-sparse-tree | C-c / m     | create a sparse tree with all matching ectries                     |
-   |                       | C-c \       | create a sparse tree with all matching ectries                     |
-   |                       | C-u C-c / m | ignore headlines not a TODO line                                   |
-   | org-tags-view         | C-c a m     | create a global list of tag/property matches from all agenda files |
-   |                       | C-c a M     | check only TODO items and force checking of subitems               |
-   |                       |             |                                                                    |
-   | org-sparse-tree       | C-c / p     | create a sparse tree based on the value of a property              |
-
-** Property Inheritance
-   If the parent in a tree has a certain property, the children can inherit this property.
-   Org mode does not turn this on by default, because it can slow down property searches.
-   You can open it:
-   #+BEGIN_EXAMPLE
-   (setq org-use-property-inheritance t)
-   #+END_EXAMPLE
-   
-   Org mode has a few properties for whicn inheritance is hard-coded.
-   | property   | description                                    |
-   |------------+------------------------------------------------|
-   | 'COLUMNS'  | Column view                                    |
-   | 'CATEGORY' | applies to the entire subtree                  |
-   | 'ARCHIVE'  | define the archive location for entire subtree |
-   | 'LOGGING'  |                                                |
-
-** Column View
-   A greate way to view and edit properties in an outline tree is column view.
-   
-*** Defining columns
-**** Scope of column definitions
-     To define a column format for an entire file, use a line like:
-     #+BEGIN_EXAMPLE
-     #+COLUMNS: %25ITEM %TAGS %PRIORITY %TODO
-     #+END_EXAMPLE
+**** Defining columns
+***** Scope of column definitions
+      To define a column format for an entire file, use a line like:
+      #+BEGIN_EXAMPLE
+      #+COLUMNS: %25ITEM %TAGS %PRIORITY %TODO
+      #+END_EXAMPLE
      
-**** Column attributes
-     The general definition looks like this:
-     #+BEGIN_EXAMPLE
-     %[WIDTH]PROPERTY[(TITLE)][{SUMMARY-TYPE}]
-     #+END_EXAMPLE
+***** Column attributes
+      The general definition looks like this:
+      #+BEGIN_EXAMPLE
+      %[WIDTH]PROPERTY[(TITLE)][{SUMMARY-TYPE}]
+      #+END_EXAMPLE
      
-     Here is available contnet:
-     #+BEGIN_EXAMPLE
-     WIDTH           An integer specifying the width of the column in characters.
-                     If omitted, the width will be determined automatically.
-     PROPERTY        The property that should be edited in this column.
-                     Special properties representing meta data are allowed here
-                     as well (*note Special properties::)
-     TITLE           The header text for the column.  If omitted, the property
-                     name is used.
-     {SUMMARY-TYPE}  The summary type.  If specified, the column values for
-                     parent nodes are computed from the children(1).
-                     Supported summary types are:
-                     {+}       Sum numbers in this column.
-                     {+;%.1f}  Like ‘+’, but format result with ‘%.1f’.
-                     {$}       Currency, short for ‘+;%.2f’.
-                     {min}     Smallest number in column.
-                     {max}     Largest number.
-                     {mean}    Arithmetic mean of numbers.
-                     {X}       Checkbox status, ‘[X]’ if all children are ‘[X]’.
-                     {X/}      Checkbox status, ‘[n/m]’.
-                     {X%}      Checkbox status, ‘[n%]’.
-                     {:}       Sum times, HH:MM, plain numbers are
-                     hours(2).
-                     {:min}    Smallest time value in column.
-                     {:max}    Largest time value.
-                     {:mean}   Arithmetic mean of time values.
-                     {@min}    Minimum age(3) (in
-                     days/hours/mins/seconds).
-                     {@max}    Maximum age (in days/hours/mins/seconds).
-                     {@mean}   Arithmetic mean of ages (in days/hours/mins/seconds).
-                     {est+}    Add ‘low-high’ estimates.
+      Here is available contnet:
+      #+BEGIN_EXAMPLE
+      WIDTH           An integer specifying the width of the column in characters.
+                      If omitted, the width will be determined automatically.
+      PROPERTY        The property that should be edited in this column.
+                      Special properties representing meta data are allowed here
+                      as well (*note Special properties::)
+      TITLE           The header text for the column.  If omitted, the property
+                      name is used.
+      {SUMMARY-TYPE}  The summary type.  If specified, the column values for
+                      parent nodes are computed from the children(1).
+                      Supported summary types are:
+                      {+}       Sum numbers in this column.
+                      {+;%.1f}  Like ‘+’, but format result with ‘%.1f’.
+                      {$}       Currency, short for ‘+;%.2f’.
+                      {min}     Smallest number in column.
+                      {max}     Largest number.
+                      {mean}    Arithmetic mean of numbers.
+                      {X}       Checkbox status, ‘[X]’ if all children are ‘[X]’.
+                      {X/}      Checkbox status, ‘[n/m]’.
+                      {X%}      Checkbox status, ‘[n%]’.
+                      {:}       Sum times, HH:MM, plain numbers are
+                      hours(2).
+                      {:min}    Smallest time value in column.
+                      {:max}    Largest time value.
+                      {:mean}   Arithmetic mean of time values.
+                      {@min}    Minimum age(3) (in
+                      days/hours/mins/seconds).
+                      {@max}    Maximum age (in days/hours/mins/seconds).
+                      {@mean}   Arithmetic mean of ages (in days/hours/mins/seconds).
+                      {est+}    Add ‘low-high’ estimates.
 
-     #+END_EXAMPLE
+      #+END_EXAMPLE
      
-     An example:
+      An example:
+      #+BEGIN_EXAMPLE
+      :COLUMNS:  %25ITEM %9Approved(Approved?){X} %Owner %11Status \(4)
+                         %10Time_Estimate{:} %CLOCKSUM %CLOCKSUM_T
+      :Owner_ALL:    Tammy Mark Karl Lisa Don
+      :Status_ALL:   "In progress" "Not started yet" "Finished" ""
+      :Approved_ALL: "[ ]" "[X]"
+      #+END_EXAMPLE
+
+**** Using coumn view
+     read:[[info:org#Using%20column%20view][Link]] 
+
+**** Capturing column view
+     read:[[info:org#Capturing%20column%20view][Link]] 
+
+*** Using property API
+    Here is the doc: [[info:org#Using%20the%20property%20API][Property API DOC]]
+** DOING [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
+   - State "DOING"      from "TODO"       [2018-09-21 五 12:25]
+*** Timestamps
+   
+    PLAIN TIMESTAMP; EVENT; APPOINTMENT
+    #+BEGIN_EXAMPLE
+     * Meet Peter at the movies
+       <2006-11-01 Wed 19:15>
+     * Discussion on climate change
+       <2006-11-02 Thu 20:00-22:00>
+    #+END_EXAMPLE
+   
+    TIMESTAMP WITH REPEATER INTERVAL
+    #+BEGIN_EXAMPLE
+    * Pick up Sam at school
+      <2007-05-16 Wed 12:30 +1w>
+    #+END_EXAMPLE
+
+    DIARY-STYLE SEXP ENTRIES
+    #+BEGIN_EXAMPLE
+    * 22:00-23:00 The nerd meeting on every 2nd Thursday of the month
+      <%%(diary-float t 4 2)>
+    #+END_EXAMPLE
+
+    TIME/DATE RANGE
+    #+BEGIN_EXAMPLE
+    ** Meeting in Amsterdam
+      <2004-08-23 Mon>--<2004-08-26 Thu>
+    #+END_EXAMPLE
+    <2004-08-23 Mon>--<2004-08-26 Thu>
+
+    INACTIVE TIMESTAMP
+    #+BEGIN_EXAMPLE
+    * Gillian comes late for the fifth time
+      [2006-11-01 Wed]
+    #+END_EXAMPLE
+
+*** Creating timestamps
+   
+    #+NAME: Timestamp functions
+    | function                       | key         | description                                                               |
+    |--------------------------------+-------------+---------------------------------------------------------------------------|
+    | org-time-stamp                 | C-c .       | prompt for a date and insert a corresponding timestamp                    |
+    |                                | C-u C-c .   | like 'C-c .' but contains date and time                                   |
+    | org-time-stamp-inactive        | C-c !       | like 'C-c .' but insert an inactive timestamp(not cause an agenda entry)  |
+    |                                | C-u C-c !   | like 'C-c !' but contains date and time                                   |
+    | org-ctrl-c-ctrl-c              | C-c C-c     | normalize time stamp                                                      |
+    | org-date-from-calendar         | C-c <       | insert a timestamp corresponding to the cursor date in the calendar       |
+    | org-goto-calendar              | C-c >       | access the emacs calendar for the current date(or goto current timestamp) |
+    | org-open-at-point              | C-c C-o     | access the agenda for the date given by the timestamp                     |
+    | org-timestamp-down-day         | S-<LEFT>    | increase date by 1 day                                                    |
+    | org-timestamp-up-days          | S-<RIGHT>   | decrease date by 1 day                                                    |
+    | org-timestamp-up               | S-<UP>      | increase the item under the curosr in a timestamp[year, month, date...]   |
+    | org-timestamp-down             | S-<DOWN>    | decrease the item under the curosr in a timestamp[year, month, date...]   |
+    | org-eveluate-time-range        | C-c C-y     | evaluate a time range by computing the difference between start and end   |
+    | org-toggle-time-stamp-overlays | C-c C-x C-t | toggle the display of custom formats for dates and time                   |
+   
+    How to use the date/time prompt
+    #+BEGIN_EXAMPLE
+    # usage for the date input buffer
+
+    3-2-5         ⇒ 2003-02-05
+    2/5/3         ⇒ 2003-02-05
+    14            ⇒ 2006-06-14
+    12            ⇒ 2006-07-12
+    2/5           ⇒ 2007-02-05
+    Fri           ⇒ nearest Friday after the default date
+    sep 15        ⇒ 2006-09-15
+    feb 15        ⇒ 2007-02-15
+    sep 12 9      ⇒ 2009-09-12
+    12:45         ⇒ 2006-06-13 12:45
+    22 sept 0:34  ⇒ 2006-09-22 00:34
+    w4            ⇒ ISO week four of the current year 2006
+    2012 w4 fri   ⇒ Friday of ISO week 4 in 2012
+    2012-w04-5    ⇒ Same as above
+    -----------------------------------
+    # use '+', '-', '.'
+
+    +0            ⇒ today
+    .             ⇒ today
+    +4d           ⇒ four days from today
+    +4            ⇒ same as above
+    +2w           ⇒ two weeks from today
+    ++5           ⇒ five days from default date
+    +2tue         ⇒ second Tuesday from now
+    -wed          ⇒ last Wednesday
+    -----------------------------------
+    # use time
+   
+    11am-1:15pm    ⇒ 11:00-13:15
+    11am--1:15pm   ⇒ same as above
+    11am+2:15      ⇒ same as above
+    -----------------------------------
+    # usage for the date select buffer
+   
+    <RET>              Choose date at cursor in calendar.
+    mouse-1            Select date by clicking on it.
+    S-<RIGHT>/<LEFT>   One day forward/backward.
+    S-<DOWN>/<UP>      One week forward/backward.
+    M-S-<RIGHT>/<LEFT> One month forward/backward.
+    > / <              Scroll calendar forward/backward by one month.
+    M-v / C-v          Scroll calendar forward/backward by 3 months.
+    M-S-<DOWN>/<UP>    Scroll calendar forward/backward by one year.
+    #+END_EXAMPLE
+   
+*** Deadlines and scheduling
+    A timestamp may be preceded by sppecial keywords to facilitate planning.
+
+**** Syantax
+     DEADLINE
      #+BEGIN_EXAMPLE
-     :COLUMNS:  %25ITEM %9Approved(Approved?){X} %Owner %11Status \(4)
-                        %10Time_Estimate{:} %CLOCKSUM %CLOCKSUM_T
-     :Owner_ALL:    Tammy Mark Karl Lisa Don
-     :Status_ALL:   "In progress" "Not started yet" "Finished" ""
-     :Approved_ALL: "[ ]" "[X]"
+     DEADLINE: <2018-09-21 五>
+     #+END_EXAMPLE
+    
+     SCHEDULED
+     #+BEGIN_EXAMPLE
+     SCHEDULED:<2018-09-21 五>
      #+END_EXAMPLE
 
-*** Using coumn view
-    read:[[info:org#Using%20column%20view][Link]] 
+**** Inserting deadlines or schedules
 
-*** Capturing column view
-    read:[[info:org#Capturing%20column%20view][Link]] 
+     #+NAME: Deadlines/Schedules function
+     | fuction               | key         | description                                                       |
+     |-----------------------+-------------+-------------------------------------------------------------------|
+     | org-deadline          | C-c C-d     | insert 'DEADLINE' keyword along with a stamp.                     |
+     |                       |             | Any CLOSED timestamp will be removed                              |
+     | org-schedule          | C-c C-s     | insert 'SCHEDULE' keyword along with a stamp                      |
+     |                       |             | Any CLOSED timestamp will be removed                              |
+     | org-check-deadlines   | C-c / d     | create a sparse tree with all deadlines that are either past-due. |
+     |                       | C-u C-c / d | show all deadlines in the file                                    |
+     |                       | C-1 C-c /d  | show all deadlines due tomorrow(with 'C-{NUMBER}' )               |
+     | org-check-before-date | C-c / b     | sparse tree for deadlines and schedule items before a given date  |
+     | org-check-after-date  | C-c / a     | sparse tree for deadlines and schedule items after a given date   |
 
-** Using property API
-   Here is the doc: [[info:org#Using%20the%20property%20API][Property API DOC]]
-* DOING [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
-  - State "DOING"      from "TODO"       [2018-09-21 五 12:25]
-** Timestamps
-   
-   PLAIN TIMESTAMP; EVENT; APPOINTMENT
-   #+BEGIN_EXAMPLE
-    * Meet Peter at the movies
-      <2006-11-01 Wed 19:15>
-    * Discussion on climate change
-      <2006-11-02 Thu 20:00-22:00>
-   #+END_EXAMPLE
-   
-   TIMESTAMP WITH REPEATER INTERVAL
-   #+BEGIN_EXAMPLE
-   * Pick up Sam at school
-     <2007-05-16 Wed 12:30 +1w>
-   #+END_EXAMPLE
+     Some 'STARTUP' values:
+     Variable: 'org-log-redeadline'. Is a CLOSED timestamp will be removed or not.
+     1.loadredeadline
+     2.lognoteredeadline
+     3.nologredeadline
 
-   DIARY-STYLE SEXP ENTRIES
-   #+BEGIN_EXAMPLE
-   * 22:00-23:00 The nerd meeting on every 2nd Thursday of the month
-     <%%(diary-float t 4 2)>
-   #+END_EXAMPLE
-
-   TIME/DATE RANGE
-   #+BEGIN_EXAMPLE
-   ** Meeting in Amsterdam
-     <2004-08-23 Mon>--<2004-08-26 Thu>
-   #+END_EXAMPLE
-   <2004-08-23 Mon>--<2004-08-26 Thu>
-
-   INACTIVE TIMESTAMP
-   #+BEGIN_EXAMPLE
-   * Gillian comes late for the fifth time
-     [2006-11-01 Wed]
-   #+END_EXAMPLE
-
-** Creating timestamps
-   
-   #+NAME: Timestamp functions
-   | function                       | key         | description                                                               |
-   |--------------------------------+-------------+---------------------------------------------------------------------------|
-   | org-time-stamp                 | C-c .       | prompt for a date and insert a corresponding timestamp                    |
-   |                                | C-u C-c .   | like 'C-c .' but contains date and time                                   |
-   | org-time-stamp-inactive        | C-c !       | like 'C-c .' but insert an inactive timestamp(not cause an agenda entry)  |
-   |                                | C-u C-c !   | like 'C-c !' but contains date and time                                   |
-   | org-ctrl-c-ctrl-c              | C-c C-c     | normalize time stamp                                                      |
-   | org-date-from-calendar         | C-c <       | insert a timestamp corresponding to the cursor date in the calendar       |
-   | org-goto-calendar              | C-c >       | access the emacs calendar for the current date(or goto current timestamp) |
-   | org-open-at-point              | C-c C-o     | access the agenda for the date given by the timestamp                     |
-   | org-timestamp-down-day         | S-<LEFT>    | increase date by 1 day                                                    |
-   | org-timestamp-up-days          | S-<RIGHT>   | decrease date by 1 day                                                    |
-   | org-timestamp-up               | S-<UP>      | increase the item under the curosr in a timestamp[year, month, date...]   |
-   | org-timestamp-down             | S-<DOWN>    | decrease the item under the curosr in a timestamp[year, month, date...]   |
-   | org-eveluate-time-range        | C-c C-y     | evaluate a time range by computing the difference between start and end   |
-   | org-toggle-time-stamp-overlays | C-c C-x C-t | toggle the display of custom formats for dates and time                   |
-   
-   How to use the date/time prompt
-   #+BEGIN_EXAMPLE
-   # usage for the date input buffer
-
-   3-2-5         ⇒ 2003-02-05
-   2/5/3         ⇒ 2003-02-05
-   14            ⇒ 2006-06-14
-   12            ⇒ 2006-07-12
-   2/5           ⇒ 2007-02-05
-   Fri           ⇒ nearest Friday after the default date
-   sep 15        ⇒ 2006-09-15
-   feb 15        ⇒ 2007-02-15
-   sep 12 9      ⇒ 2009-09-12
-   12:45         ⇒ 2006-06-13 12:45
-   22 sept 0:34  ⇒ 2006-09-22 00:34
-   w4            ⇒ ISO week four of the current year 2006
-   2012 w4 fri   ⇒ Friday of ISO week 4 in 2012
-   2012-w04-5    ⇒ Same as above
-   -----------------------------------
-   # use '+', '-', '.'
-
-   +0            ⇒ today
-   .             ⇒ today
-   +4d           ⇒ four days from today
-   +4            ⇒ same as above
-   +2w           ⇒ two weeks from today
-   ++5           ⇒ five days from default date
-   +2tue         ⇒ second Tuesday from now
-   -wed          ⇒ last Wednesday
-   -----------------------------------
-   # use time
-   
-   11am-1:15pm    ⇒ 11:00-13:15
-   11am--1:15pm   ⇒ same as above
-   11am+2:15      ⇒ same as above
-   -----------------------------------
-   # usage for the date select buffer
-   
-   <RET>              Choose date at cursor in calendar.
-   mouse-1            Select date by clicking on it.
-   S-<RIGHT>/<LEFT>   One day forward/backward.
-   S-<DOWN>/<UP>      One week forward/backward.
-   M-S-<RIGHT>/<LEFT> One month forward/backward.
-   > / <              Scroll calendar forward/backward by one month.
-   M-v / C-v          Scroll calendar forward/backward by 3 months.
-   M-S-<DOWN>/<UP>    Scroll calendar forward/backward by one year.
-   #+END_EXAMPLE
-   
-** Deadlines and scheduling
-   A timestamp may be preceded by sppecial keywords to facilitate planning.
-
-*** Syantax
-    DEADLINE
-    #+BEGIN_EXAMPLE
-    DEADLINE: <2018-09-21 五>
-    #+END_EXAMPLE
+**** Repeated tasks
+     Some tasks need to be repeated again and again.
+     You can using a so-called repeater in a 'DEADLINE', 'SCHEDULED', or plain timestamp.
+     #+BEGIN_EXAMPLE
+     ** TODO Pay the rent
+       DEADLINE: <2005-10-01 Sat +1m>
+     #+END_EXAMPLE
+     The "+1m" is a reapter.You can use 'y/m/w/d/h' as a repeater.
     
-    SCHEDULED
-    #+BEGIN_EXAMPLE
-    SCHEDULED:<2018-09-21 五>
-    #+END_EXAMPLE
+     Or you want repeater and a warning period:
+     #+BEGIN_EXAMPLE
+     DEADLINE: <2005-10-01 Sat +1m -3d>
+     #+END_EXAMPLE
 
-*** Inserting deadlines or schedules
-
-    #+NAME: Deadlines/Schedules function
-    | fuction               | key         | description                                                       |
-    |-----------------------+-------------+-------------------------------------------------------------------|
-    | org-deadline          | C-c C-d     | insert 'DEADLINE' keyword along with a stamp.                     |
-    |                       |             | Any CLOSED timestamp will be removed                              |
-    | org-schedule          | C-c C-s     | insert 'SCHEDULE' keyword along with a stamp                      |
-    |                       |             | Any CLOSED timestamp will be removed                              |
-    | org-check-deadlines   | C-c / d     | create a sparse tree with all deadlines that are either past-due. |
-    |                       | C-u C-c / d | show all deadlines in the file                                    |
-    |                       | C-1 C-c /d  | show all deadlines due tomorrow(with 'C-{NUMBER}' )               |
-    | org-check-before-date | C-c / b     | sparse tree for deadlines and schedule items before a given date  |
-    | org-check-after-date  | C-c / a     | sparse tree for deadlines and schedule items after a given date   |
-
-    Some 'STARTUP' values:
-    Variable: 'org-log-redeadline'. Is a CLOSED timestamp will be removed or not.
-    1.loadredeadline
-    2.lognoteredeadline
-    3.nologredeadline
-
-*** Repeated tasks
-    Some tasks need to be repeated again and again.
-    You can using a so-called repeater in a 'DEADLINE', 'SCHEDULED', or plain timestamp.
-    #+BEGIN_EXAMPLE
-    ** TODO Pay the rent
-      DEADLINE: <2005-10-01 Sat +1m>
-    #+END_EXAMPLE
-    The "+1m" is a reapter.You can use 'y/m/w/d/h' as a repeater.
+     Set the repeat TODO entry status:
+     You cannot use 'C-c C-t' to set the TODO entry 'DONE'. To mark a task with a repeater as 'DONE', you should use:
+     #+BEGIN_EXAMPLE
+     C-- 1 C-c C-t
+     #+END_EXAMPLE
+     And repeat task
     
-    Or you want repeater and a warning period:
+     When you set a repeat task `DONE`, it will immediately set the entry state back to `TODO`.
+     The target state is taken from, in this sequence, the `REPEATTOSSTATE` property or the variable `org-todo-repeat-to-state`.
+     If neither of these is specified, the target state defaults to the first state of the TODO state sequence.
+    
+     When you use repeater like `+1m`, may you will have this problem:
+     #+BEGIN_EXAMPLE
+     # current date is 2018-10-10
+     *** TODO Make Call
+       DEADLINE:<2018-05-04 五 +1m>
+    
+     # If set this task 'DONE', it will be
+     *** TODO Make Call
+       DEADLINE:<2018-06-04 五 +1m>
+
+     # but you actually want shift the date to  is:
+     *** TODO Make Call
+       DEADLINE:<2018-10-04 五 +1m>
+
+     #+END_EXAMPLE
+     you can use special repeaters: `++` and `.+` to do this:
+     #+BEGIN_EXAMPLE
+     * TODO Make Call2
+       DEADLINE:<2018-10-04 四 ++1m>
+    
+     * TODO Make Call2
+       DEADLINE:<2018-10-21 日 .+1m>
+     #+END_EXAMPLE
+
+*** Clocking work time
+    Org mode allows you to clock the time you spend on specific tasks in a project.
     #+BEGIN_EXAMPLE
-    DEADLINE: <2005-10-01 Sat +1m -3d>
+    Start Working(Clock start)  ---->  Stop Working/Task done(Clock stop)
     #+END_EXAMPLE
 
-    Set the repeat TODO entry status:
-    You cannot use 'C-c C-t' to set the TODO entry 'DONE'. To mark a task with a repeater as 'DONE', you should use:
-    #+BEGIN_EXAMPLE
-    C-- 1 C-c C-t
-    #+END_EXAMPLE
-    And repeat task
+    To save the clock history accross Emacs session, use:
+    #+BEGIN_SRC elisp
+    (setq org-clock-persist 'history)
+    (org-clock-persistence-insinuate)
+    #+END_SRC
+
+    To resume the clock under the assumption you worked on task while outside Emacs, use
+    #+BEGIN_SRC elisp
+    (setq org-clock-persist t)
+    #+END_SRC
+**** Clocking commands
+
+     #+NAME: Clocking Functions
+     | function                         | key                     | description                                                                  | spacemacs   |
+     |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+     | org-clock-in                     | C-c C-x C-i             | Start the clock on the current item                                          | <, I>       |
+     |                                  | C-u C-c C-x C-i         | Select the task from a list of recently clocked tasks                        |             |
+     |                                  | C-u C-u C-c C-x C-i     | Clock into the task at point and mark it as the default task                 |             |
+     |                                  | C-u C-u C-u C-c C-x C-i | Force continuous clocking by starting the clock when the last clock stopped. |             |
+     |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+     | org-clock-out                    | C-c C-x C-o             | Stop the clock                                                               | <SPC a o O> |
+     |                                  |                         | variable 'org-log-note-clock-out' for record an additional note              |             |
+     |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+     | org-clock-in-last                | C-c C-x C-x             | Reclock the last locked task                                                 |             |
+     |                                  | C-u C-c C-x C-x         | Select the task from the clock history                                       |             |
+     |                                  | C-u C-u C-c C-x C-x     | Force continuous clocking by starting the clock when the last clock stopped. |             |
+     |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+     | org-clock-modify-effort-estimate | C-c C-x C-e             | Update the effort estimate for the current clock task                        |             |
+     |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+     | org-evaluate-time-range          | C-c C-c                 | Recompute the time interval after changing one of the timestamp              |             |
+     |                                  | C-c C-y                 |                                                                              |             |
+     |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+     | org-clock-timestamp-up           | C-S-<up>                | Increase both timestamp                                                      |             |
+     | org-clock-timestamp-down         | C-S-<down>              | Decrease both timestamp                                                      |             |
+     |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+     | org-timestamp-up                 | S-M-<up>                | Increase the timestamp at point and the one of previous timestamp            |             |
+     | org-timestamp-down               | S-M-<down>              | Decrease the timestamp at point and the one of previous timestamp            |             |
+     |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
+     | org-todo                         | C-c C-t                 | Changing the TODO state of an item to DONE automatically stop the clock      |             |
+     | org-clock-cancel                 | C-c C-x C-q             | Cancel the current clock                                                     |             |
+     | org-clock-goto                   | C-c C-x C-j             | Jump to the headline of the currently clocked in task                        |             |
+     | org-clock-display                | C-c C-x C-d             | Display time summaries for each subtree in the current buffer                |             |
+
+     #+NAME: Clocking variables
+     | variable                          | type          | description                                                          |
+     |                                   | [V: Variable] |                                                                      |
+     |                                   | [P: PROPERTY] |                                                                      |
+     |-----------------------------------+---------------+----------------------------------------------------------------------|
+     | org-clock-into-drawer             | V             | the multiple 'CLOCK' lines will be wrapped into a ':LOGBOOK:' drawer |
+     | CLOCKINTODRAWER                   | P             |                                                                      |
+     | LOGINTODRAWER                     | P             |                                                                      |
+     |-----------------------------------+---------------+----------------------------------------------------------------------|
+     | CLOCKMODELINETOTAL                | P             | 'current' to show only the current clocking instance                 |
+     |                                   |               | 'today' to show all time clocked on this task today                  |
+     |                                   |               | 'all' to include all time                                            |
+     |                                   |               | 'auto' is default                                                    |
+     |-----------------------------------+---------------+----------------------------------------------------------------------|
+     | org-extend-today-until            | V             | same as 'CLOCKMODELINETOTAL: today'                                  |
+     | org-remove-highlights-with-change | V             | use visibility cycling to study the tree                             |
+
+**** The clock table
+     [[info:org#The%20clock%20table][The Clock Table Properties]]
+     Org mode can produce quite complex reports based on the time clocking information.
+
+     Clock table example:
+     #+BEGIN_EXAMPLE
+     #+BEGIN: clocktable :scope file :maxlevel 3
+     #+CAPTION: Clock summary at [2018-09-21 Fri 22:37]
+     | Headline     | Time   |
+     |--------------+--------|
+     | *Total time* | *0:00* |
+     #+END:
+     #+END_EXAMPLE
+
+     #+NAME: Clock table Function
+     | function                 | key             | description                                                  |
+     |--------------------------+-----------------+--------------------------------------------------------------|
+     | org-clock-report         | C-c C-x C-r     | Insert a dynamic block containing a clock report as an table |
+     |--------------------------+-----------------+--------------------------------------------------------------|
+     | org-dblock-update        | C-c C-c         | update dynamic block at point                                |
+     |                          | C-c C-x C-u     |                                                              |
+     |--------------------------+-----------------+--------------------------------------------------------------|
+     | org-update-all-dblock    | C-u C-c C-x C-u | Update all dynamic blocks                                    |
+     |--------------------------+-----------------+--------------------------------------------------------------|
+     | org-clocktable-try-shift | S-<LEFT>        | Shift the current ':block' interval and update the table     |
+     |                          | S-<RIGHT>       |                                                              |
+
+**** Resolving idle time
+     [[info:org#Resolving%20idle%20time][Goto resolving idle time doc]] 
     
-    When you set a repeat task `DONE`, it will immediately set the entry state back to `TODO`.
-    The target state is taken from, in this sequence, the `REPEATTOSSTATE` property or the variable `org-todo-repeat-to-state`.
-    If neither of these is specified, the target state defaults to the first state of the TODO state sequence.
-    
-    When you use repeater like `+1m`, may you will have this problem:
-    #+BEGIN_EXAMPLE
-    # current date is 2018-10-10
-    *** TODO Make Call
-      DEADLINE:<2018-05-04 五 +1m>
-    
-    # If set this task 'DONE', it will be
-    *** TODO Make Call
-      DEADLINE:<2018-06-04 五 +1m>
+**** Effort estimates
 
-    # but you actually want shift the date to  is:
-    *** TODO Make Call
-      DEADLINE:<2018-10-04 五 +1m>
-
-    #+END_EXAMPLE
-    you can use special repeaters: `++` and `.+` to do this:
-    #+BEGIN_EXAMPLE
-    * TODO Make Call2
-      DEADLINE:<2018-10-04 四 ++1m>
-    
-    * TODO Make Call2
-      DEADLINE:<2018-10-21 日 .+1m>
-    #+END_EXAMPLE
-
-** Clocking work time
-   Org mode allows you to clock the time you spend on specific tasks in a project.
-   #+BEGIN_EXAMPLE
-   Start Working(Clock start)  ---->  Stop Working/Task done(Clock stop)
-   #+END_EXAMPLE
-
-   To save the clock history accross Emacs session, use:
-   #+BEGIN_SRC elisp
-   (setq org-clock-persist 'history)
-   (org-clock-persistence-insinuate)
-   #+END_SRC
-
-   To resume the clock under the assumption you worked on task while outside Emacs, use
-   #+BEGIN_SRC elisp
-   (setq org-clock-persist t)
-   #+END_SRC
-*** Clocking commands
-
-    #+NAME: Clocking Functions
-    | function                         | key                     | description                                                                  | spacemacs   |
-    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
-    | org-clock-in                     | C-c C-x C-i             | Start the clock on the current item                                          | <, I>       |
-    |                                  | C-u C-c C-x C-i         | Select the task from a list of recently clocked tasks                        |             |
-    |                                  | C-u C-u C-c C-x C-i     | Clock into the task at point and mark it as the default task                 |             |
-    |                                  | C-u C-u C-u C-c C-x C-i | Force continuous clocking by starting the clock when the last clock stopped. |             |
-    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
-    | org-clock-out                    | C-c C-x C-o             | Stop the clock                                                               | <SPC a o O> |
-    |                                  |                         | variable 'org-log-note-clock-out' for record an additional note              |             |
-    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
-    | org-clock-in-last                | C-c C-x C-x             | Reclock the last locked task                                                 |             |
-    |                                  | C-u C-c C-x C-x         | Select the task from the clock history                                       |             |
-    |                                  | C-u C-u C-c C-x C-x     | Force continuous clocking by starting the clock when the last clock stopped. |             |
-    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
-    | org-clock-modify-effort-estimate | C-c C-x C-e             | Update the effort estimate for the current clock task                        |             |
-    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
-    | org-evaluate-time-range          | C-c C-c                 | Recompute the time interval after changing one of the timestamp              |             |
-    |                                  | C-c C-y                 |                                                                              |             |
-    |----------------------------------+-------------------------+------------------------------------------------------------------------------+-------------|
-    | org-clock-timestamps-up          | C-S-<up>                |                                                                              |             |
-    | org                              |                         |                                                                              |             |
-
-    #+NAME: Clocking variables
-    | variable               | type          | description                                                          |
-    |                        | [V: Variable] |                                                                      |
-    |                        | [P: PROPERTY] |                                                                      |
-    |------------------------+---------------+----------------------------------------------------------------------|
-    | org-clock-into-drawer  | V             | the multiple 'CLOCK' lines will be wrapped into a ':LOGBOOK:' drawer |
-    | CLOCKINTODRAWER        | P             |                                                                      |
-    | LOGINTODRAWER          | P             |                                                                      |
-    |------------------------+---------------+----------------------------------------------------------------------|
-    | CLOCKMODELINETOTAL     | P             | 'current' to show only the current clocking instance                 |
-    |                        |               | 'today' to show all time clocked on this task today                  |
-    |                        |               | 'all' to include all time                                            |
-    |                        |               | 'auto' is default                                                    |
-    |------------------------+---------------+----------------------------------------------------------------------|
-    | org-extend-today-until | V             | same as 'CLOCKMODELINETOTAL: today'                                  |
-    |                        |               |                                                                      |
+** TODO [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
+** TODO [#A] [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
+** TODO [[elisp:(info-other-window%20"(org)Markup")][11 Markup]]
+** TODO [#C] [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
+** TODO [[elisp:(info-other-window%20"(org)Publishing")][13 Publishing]]
+** TODO [[elisp:(info-other-window%20"(org)Working%20with%20source%20code")][14 Working with source code]]
+** TODO [[elisp:(info-other-window%20"(org)Miscellaneous")][15 Miscellaneous]]
+** TODO [[elisp:(info-other-window%20"(org)Hacking")][16 Hacking]]
 
 
 
-* TODO [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
-* TODO [#A] [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
-* TODO [[elisp:(info-other-window%20"(org)Markup")][11 Markup]]
-* TODO [#C] [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
-* TODO [[elisp:(info-other-window%20"(org)Publishing")][13 Publishing]]
-* TODO [[elisp:(info-other-window%20"(org)Working%20with%20source%20code")][14 Working with source code]]
-* TODO [[elisp:(info-other-window%20"(org)Miscellaneous")][15 Miscellaneous]]
-* TODO [[elisp:(info-other-window%20"(org)Hacking")][16 Hacking]]
