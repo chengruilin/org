@@ -1034,7 +1034,166 @@
 
 ** Using property API
    Here is the doc: [[info:org#Using%20the%20property%20API][Property API DOC]]
-* TODO [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
+* DOING [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
+  - State "DOING"      from "TODO"       [2018-09-21 五 12:25]
+** Timestamps
+   
+   PLAIN TIMESTAMP; EVENT; APPOINTMENT
+   #+BEGIN_EXAMPLE
+    * Meet Peter at the movies
+      <2006-11-01 Wed 19:15>
+    * Discussion on climate change
+      <2006-11-02 Thu 20:00-22:00>
+   #+END_EXAMPLE
+   
+   TIMESTAMP WITH REPEATER INTERVAL
+   #+BEGIN_EXAMPLE
+   * Pick up Sam at school
+     <2007-05-16 Wed 12:30 +1w>
+   #+END_EXAMPLE
+
+   DIARY-STYLE SEXP ENTRIES
+   #+BEGIN_EXAMPLE
+   * 22:00-23:00 The nerd meeting on every 2nd Thursday of the month
+     <%%(diary-float t 4 2)>
+   #+END_EXAMPLE
+
+   TIME/DATE RANGE
+   #+BEGIN_EXAMPLE
+   ** Meeting in Amsterdam
+     <2004-08-23 Mon>--<2004-08-26 Thu>
+   #+END_EXAMPLE
+   <2004-08-23 Mon>--<2004-08-26 Thu>
+
+   INACTIVE TIMESTAMP
+   #+BEGIN_EXAMPLE
+   * Gillian comes late for the fifth time
+     [2006-11-01 Wed]
+   #+END_EXAMPLE
+
+** Creating timestamps
+   
+   #+NAME: Timestamp functions
+   | function                       | key         | description                                                               |
+   |--------------------------------+-------------+---------------------------------------------------------------------------|
+   | org-time-stamp                 | C-c .       | prompt for a date and insert a corresponding timestamp                    |
+   |                                | C-u C-c .   | like 'C-c .' but contains date and time                                   |
+   | org-time-stamp-inactive        | C-c !       | like 'C-c .' but insert an inactive timestamp(not cause an agenda entry)  |
+   |                                | C-u C-c !   | like 'C-c !' but contains date and time                                   |
+   | org-ctrl-c-ctrl-c              | C-c C-c     | normalize time stamp                                                      |
+   | org-date-from-calendar         | C-c <       | insert a timestamp corresponding to the cursor date in the calendar       |
+   | org-goto-calendar              | C-c >       | access the emacs calendar for the current date(or goto current timestamp) |
+   | org-open-at-point              | C-c C-o     | access the agenda for the date given by the timestamp                     |
+   | org-timestamp-down-day         | S-<LEFT>    | increase date by 1 day                                                    |
+   | org-timestamp-up-days          | S-<RIGHT>   | decrease date by 1 day                                                    |
+   | org-timestamp-up               | S-<UP>      | increase the item under the curosr in a timestamp[year, month, date...]   |
+   | org-timestamp-down             | S-<DOWN>    | decrease the item under the curosr in a timestamp[year, month, date...]   |
+   | org-eveluate-time-range        | C-c C-y     | evaluate a time range by computing the difference between start and end   |
+   | org-toggle-time-stamp-overlays | C-c C-x C-t | toggle the display of custom formats for dates and time                   |
+   
+   How to use the date/time prompt
+   #+BEGIN_EXAMPLE
+   # usage for the date input buffer
+
+   3-2-5         ⇒ 2003-02-05
+   2/5/3         ⇒ 2003-02-05
+   14            ⇒ 2006-06-14
+   12            ⇒ 2006-07-12
+   2/5           ⇒ 2007-02-05
+   Fri           ⇒ nearest Friday after the default date
+   sep 15        ⇒ 2006-09-15
+   feb 15        ⇒ 2007-02-15
+   sep 12 9      ⇒ 2009-09-12
+   12:45         ⇒ 2006-06-13 12:45
+   22 sept 0:34  ⇒ 2006-09-22 00:34
+   w4            ⇒ ISO week four of the current year 2006
+   2012 w4 fri   ⇒ Friday of ISO week 4 in 2012
+   2012-w04-5    ⇒ Same as above
+   -----------------------------------
+   # use '+', '-', '.'
+
+   +0            ⇒ today
+   .             ⇒ today
+   +4d           ⇒ four days from today
+   +4            ⇒ same as above
+   +2w           ⇒ two weeks from today
+   ++5           ⇒ five days from default date
+   +2tue         ⇒ second Tuesday from now
+   -wed          ⇒ last Wednesday
+   -----------------------------------
+   # use time
+   
+   11am-1:15pm    ⇒ 11:00-13:15
+   11am--1:15pm   ⇒ same as above
+   11am+2:15      ⇒ same as above
+   -----------------------------------
+   # usage for the date select buffer
+   
+   <RET>              Choose date at cursor in calendar.
+   mouse-1            Select date by clicking on it.
+   S-<RIGHT>/<LEFT>   One day forward/backward.
+   S-<DOWN>/<UP>      One week forward/backward.
+   M-S-<RIGHT>/<LEFT> One month forward/backward.
+   > / <              Scroll calendar forward/backward by one month.
+   M-v / C-v          Scroll calendar forward/backward by 3 months.
+   M-S-<DOWN>/<UP>    Scroll calendar forward/backward by one year.
+   #+END_EXAMPLE
+   
+** Deadlines and scheduling
+   A timestamp may be preceded by sppecial keywords to facilitate planning.
+
+*** Syantax
+    DEADLINE
+    #+BEGIN_EXAMPLE
+    DEADLINE: <2018-09-21 五>
+    #+END_EXAMPLE
+    
+    SCHEDULED
+    #+BEGIN_EXAMPLE
+    SCHEDULED:<2018-09-21 五>
+    #+END_EXAMPLE
+
+*** Inserting deadlines or schedules
+
+    #+NAME: Deadlines/Schedules function
+    | fuction               | key         | description                                                       |
+    |-----------------------+-------------+-------------------------------------------------------------------|
+    | org-deadline          | C-c C-d     | insert 'DEADLINE' keyword along with a stamp.                     |
+    |                       |             | Any CLOSED timestamp will be removed                              |
+    | org-schedule          | C-c C-s     | insert 'SCHEDULE' keyword along with a stamp                      |
+    |                       |             | Any CLOSED timestamp will be removed                              |
+    | org-check-deadlines   | C-c / d     | create a sparse tree with all deadlines that are either past-due. |
+    |                       | C-u C-c / d | show all deadlines in the file                                    |
+    |                       | C-1 C-c /d  | show all deadlines due tomorrow(with 'C-{NUMBER}' )               |
+    | org-check-before-date | C-c / b     | sparse tree for deadlines and schedule items before a given date  |
+    | org-check-after-date  | C-c / a     | sparse tree for deadlines and schedule items after a given date   |
+
+    Some 'STARTUP' values:
+    Variable: 'org-log-redeadline'. Is a CLOSED timestamp will be removed or not.
+    1.loadredeadline
+    2.lognoteredeadline
+    3.nologredeadline
+
+*** Repeated tasks
+    Some tasks need to be repeated again and again.
+    You can using a so-called repeater in a 'DEADLINE', 'SCHEDULED', or plain timestamp.
+    #+BEGIN_EXAMPLE
+    ** TODO Pay the rent
+      DEADLINE: <2005-10-01 Sat +1m>
+    #+END_EXAMPLE
+    The "+1m" is a reapter.You can use 'y/m/w/d/h' as a repeater.
+    
+    Or you want repeater and a warning period:
+    #+BEGIN_EXAMPLE
+    DEADLINE: <2005-10-01 Sat +1m -3d>
+    #+END_EXAMPLE
+    
+    Set the repeat TODO entry status:
+    You cannot use 'C-c C-t' to set the TODO entry 'DONE'. To mark a task with a repeater as 'DONE', you should use:
+    #+BEGIN_EXAMPLE
+    C-- 1 C-c C-t
+    #+END_EXAMPLE
+    
 * TODO [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
 * TODO [#A] [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
 * TODO [[elisp:(info-other-window%20"(org)Markup")][11 Markup]]
