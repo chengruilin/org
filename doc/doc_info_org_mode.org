@@ -1,5 +1,5 @@
 #+TITLE: Info Document For Org Mode
-#+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e@)
+#+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e)
 #+STARTUP: overview logrepeat
 #+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
 #+OPTIONS: toc:t
@@ -1187,13 +1187,44 @@
     #+BEGIN_EXAMPLE
     DEADLINE: <2005-10-01 Sat +1m -3d>
     #+END_EXAMPLE
-    
+
     Set the repeat TODO entry status:
     You cannot use 'C-c C-t' to set the TODO entry 'DONE'. To mark a task with a repeater as 'DONE', you should use:
     #+BEGIN_EXAMPLE
     C-- 1 C-c C-t
     #+END_EXAMPLE
+    And repeat task
     
+    When you set a repeat task `DONE`, it will immediately set the entry state back to `TODO`.
+    The target state is taken from, in this sequence, the `REPEATTOSSTATE` property or the variable `org-todo-repeat-to-state`.
+    If neither of these is specified, the target state defaults to the first state of the TODO state sequence.
+    
+    When you use repeater like `+1m`, may you will have this problem:
+    #+BEGIN_EXAMPLE
+    # current date is 2018-10-10
+    *** TODO Make Call
+      DEADLINE:<2018-05-04 五 +1m>
+    
+    # If set this task 'DONE', it will be
+    *** TODO Make Call
+      DEADLINE:<2018-06-04 五 +1m>
+
+    # but you actually want shift the date to  is:
+    *** TODO Make Call
+      DEADLINE:<2018-10-04 五 +1m>
+
+    #+END_EXAMPLE
+    you can use special repeaters: `++` and `.+` to do this:
+    #+BEGIN_EXAMPLE
+    * TODO Make Call2
+      DEADLINE:<2018-10-04 四 ++1m>
+    
+    * TODO Make Call2
+      DEADLINE:<2018-10-21 日 .+1m>
+    #+END_EXAMPLE
+
+    
+
 * TODO [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
 * TODO [#A] [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
 * TODO [[elisp:(info-other-window%20"(org)Markup")][11 Markup]]
