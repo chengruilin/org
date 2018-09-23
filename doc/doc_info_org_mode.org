@@ -4,7 +4,7 @@
 #+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
 #+OPTIONS: toc:t
 
-* Org Mode
+* Org Mode [8/16]
 ** DONE [[elisp:(info-other-window%20"(org)Introduction")][1 Introduction]]
    CLOSED: [2018-09-19 三 16:42]
    - State "DONE"       from "DOING"      [2018-09-19 三 16:42] \\
@@ -915,8 +915,6 @@
     | org-delete-property                 | C-c C-c d | remove a property form the current entry                      |           |
     | org-delete-property-globally        | C-c C-c D | globally remove a property                                    |           |
 
-
-   
 *** Special properties
     #+BEGIN_EXAMPLE
     ALLTAGS      All tags, including inherited ones.
@@ -967,6 +965,7 @@
     | 'LOGGING'  |                                                |
 
 *** Column View
+    <<Column View>>
     A greate way to view and edit properties in an outline tree is column view.
    
 **** Defining columns
@@ -1033,7 +1032,8 @@
 
 *** Using property API
     Here is the doc: [[info:org#Using%20the%20property%20API][Property API DOC]]
-** DOING [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
+** DONE [[elisp:(info-other-window%20"(org)Dates%20and%20times")][8 Dates and times]]
+   CLOSED: [2018-09-23 Sun 15:39]
    - State "DOING"      from "TODO"       [2018-09-21 五 12:25]
 *** Timestamps
    
@@ -1152,7 +1152,7 @@
      SCHEDULED:<2018-09-21 五>
      #+END_EXAMPLE
 
-**** Inserting deadlines or schedules
+**** Inserting Deadlines or schedules
 
      #+NAME: Deadlines/Schedules function
      | fuction               | key         | description                                                       |
@@ -1319,8 +1319,105 @@
      [[info:org#Resolving%20idle%20time][Goto resolving idle time doc]] 
     
 **** Effort estimates
+     Purpose:
+     1.Plan your work in a very detailed way
+     2.Need to produce offers with quotations of the estimated
+     3.You may want to assign effort estimates to entries
+     4.You may later want to compare the planned effort with the actual working time
 
-** TODO [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
+     #+NAME: Effort functions
+     | function                         | key       | description                                   |
+     |----------------------------------+-----------+-----------------------------------------------|
+     | org-set-effort                   | C-c C-x e | Set the effort estimate for the current entry |
+     | org-clock-modify-effort-estimate | C-c C-x e |                                               |
+
+     Clearly the best way to work with effort estimates is through [[Column View]].
+     #+BEGIN_EXAMPLE
+     #+PROPERTY: Effort_ALL 0 0:10 0:30 1:00 2:00 3:00 4:00 5:00 6:00 7:00
+     #+COLUMNS: %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM
+     #+END_EXAMPLE
+
+     To get an overview of the entire part of the day that is committed, you can set the option:
+     #+BEGIN_EXAMPLE
+     org-agenda-columns-add-appointments-to-effort-sum
+     #+END_EXAMPLE
+     
+*** Timer
+    Org provides two types of timers
+    1.Relative timer
+    2.Countdown timer
+    
+    #+NAME: Timer Function
+    | function                     | key               | description                                                                              |
+    |------------------------------+-------------------+------------------------------------------------------------------------------------------|
+    | org-timer-start              | C-c C-x 0         | Start or reset the relative timer                                                        |
+    |                              | C-u C-c C-x 0     | Prompt the user for a starting offset                                                    |
+    |                              | C-u C-u C-c C-x 0 | Change all timer strings in the active region by a certain amount                        |
+    | org-timer-set-timer          | C-c C-x           | Start a countdown timer                                                                  |
+    | org-timer                    | C-c C-x           | Insert the value of the current relative or countdown timer into the buffer              |
+    | org-timer-item               | C-c C-x -         | Insert a description list item with the value of the current relative of countdown timer |
+    | org-insert-heading           | M-<RET>           | Insert new timer items                                                                   |
+    | org-timer-pause-or-continure | C-c C-x ,         | Pause the timer, or continue it if it is already paused                                  |
+    | org-timer-stop               | C-c C-x _         | Stop the timer                                                                           |
+    
+** DOING [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
+   - State "DOING"      from "TODO"       [2018-09-23 Sun 15:40]
+     
+*** Capture
+    Capture lets you quickly store notes with little interruption of you work flow.
+
+**** Setting up capture
+     Set a default file for notes:
+     #+BEGIN_SRC elisp
+     (setq org-default-notes-file (concat org-directory "/notes.org"))
+     (define-key global-map "\C-cc" 'org-capture)
+     #+END_SRC
+
+**** Using capture
+     #+NAME: Capture Functions
+     | function             | key           | description                                                            |
+     |----------------------+---------------+------------------------------------------------------------------------|
+     | org-capture          | C-c c         | Call the command 'org-capture'                                         |
+     |                      | C-u C-c c     | Visit the target location of a capture template                        |
+     |                      | C-u C-u C-c c | Visit the last stored capture item in ites buffer                      |
+     |                      | C-0 C-c c     | To insert the capture at point in an org buffer.                       |
+     |----------------------+---------------+------------------------------------------------------------------------|
+     | org-capture-finalize | C-c C-c       | Finish entering information into the capture                           |
+     | org-capture-refile   | C-c C-w       | Finalize the capture process by refiling the note to a different place |
+     | org-capture-kill     | C-c C-k       | Abort the capture process and return to the previous state             |
+
+**** Capture templates
+     You can use templates for different types of capture items, and for different target locations.
+     Goto org-capture then type 'C':
+     #+BEGIN_EXAMPLE
+     # Customize the variable 'org-capture-templates'
+     C-c c C
+     #+END_EXAMPLE
+
+     Add capture config in emcas's config:
+     #+BEGIN_SRC elisp
+      (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+               "* TODO %?\n  %i\n  %a")
+          ("j" "Journal" entry (file+olp+datetree "~/org/journal.org")
+               "* %?\nEntered on %U\n  %i\n  %a")))
+     #+END_SRC
+
+     To define special keys to capture to a particular template without going through the interactive template selection:
+     #+BEGIN_SRC elisp
+     (define-key global-map "\C-cx"
+        (lambda () (interactive) (org-capture nil "x")))
+     #+END_SRC
+     
+*** Attachments
+
+*** RSS feeds
+
+*** Protocols
+
+*** Refile and copy
+
+*** Archiving
 ** TODO [#A] [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
 ** TODO [[elisp:(info-other-window%20"(org)Markup")][11 Markup]]
 ** TODO [#C] [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
