@@ -1409,12 +1409,108 @@
         (lambda () (interactive) (org-capture nil "x")))
      #+END_SRC
      
+***** Template elements
+     [[info:org#Template%20elements][Capture template elements DOC]]
+
+     Template Example:
+     #+BEGIN_EXAMPLE
+     ("KEYS" "DESCRIPTION" TYPE (TARGET) "TEMPLATE")
+     #+END_EXAMPLE
+     
+     #+NAME Capture Template Syantax
+     | KEYS | DESCRIPTION    | TYPE       | TARGET                                                     | TEMPLATE           | PROPERTIES        |
+     |------+----------------+------------+------------------------------------------------------------+--------------------+-------------------|
+     | "t"  | A short string | entry      | (file "path")                                              |                    | :prepend          |
+     | "d"  | describing the | item       | (id "id of existing org entry")                            |                    | :immediate-finish |
+     |      | template.      | checkitem  | (flie+headline "path" "node headline")                     |                    | :empty-lines      |
+     |      |                | table-line | (file+olp "path" "level 1 headline" "level 2")             |                    | :clock-in         |
+     |      |                | plain      | (file+regexp "path" "regexp to find location")             |                    | :clock-keep       |
+     |      |                |            | (file+olp+datetree "path" [ "level 1 headline" "level 2"]) |                    | :clock-resume     |
+     |      |                |            | (file+function "path" function-finding-location)           | [[info:org#Template%20expansion][Template Expansion]] | :time-prompt      |
+     |      |                |            | (clock)                                                    |                    | :tree-type        |
+     |      |                |            | (function function-finding-location)                       |                    | :unnarrowed       |
+     |      |                |            |                                                            |                    | :table-line-pos   |
+     |      |                |            |                                                            |                    | :kill-buffer      |
+     |------+----------------+------------+------------------------------------------------------------+--------------------+-------------------|
+
 *** Attachments
+    It is often useful to associate reference material with an outline node/task.
+    #+NAME: Org Attachments
+    | function   | key     | description                                                  |
+    |------------+---------+--------------------------------------------------------------|
+    | org-attach | C-c C-a | The dispatcher for commands related to the attachment system |
 
 *** RSS feeds
+    Org can add and change entries based on information found in RSS feeds and Atom feeds.
+    
+    You can configure the variable 'org-feed-alist':
+    #+BEGIN_SRC elisp
+    (setq org-feed-alist
+         '(("Slashdot"
+            "http://rss.slashdot.org/Slashdot/slashdot"
+            "~/txt/org/feeds.org" "Slashdot Entries")))
+    #+END_SRC
+
+    Here is commands for RSS feeds:
+    #+NAME: Org RSS feeds
+    | function            | key       | description                                                                   |
+    |---------------------+-----------+-------------------------------------------------------------------------------|
+    | org-feed-update-all | C-c C-x g | Collect items from the feeds configured in 'org-feed-alist' and act upon them |
+    | org-feed-goto-index | C-c C-x G | Prompt for a feed name and go to the inbox configured for this feed           |
 
 *** Protocols
+    Org protocol is a mean to trigger custom actions in Emacs from external applications.
+    In order to use Org protocol from an application, you need to register 'org-protocol://' as a valid scheme-handler.
+    #+BEGIN_SRC shell
+    emacsclient org-protocol://PROTOCOL?key1=val1&key2=val2
+    #+END_SRC
+    
+    Emacs calls the handler associated to 'PROTOCOL' with argument '(:key1 val1 :key2 val2)'
+    You can configure 'org-protocol-protocol-alist' to define your settings.
 
+**** store-link protocol
+     Using 'store-link' handler, you can copy links, insertable through 'M-x org-insert-link' or yanking thereafter.
+     
+     The command:
+     #+BEGIN_EXAMPLE
+     emacsclient org-protocol://store-link?url=URL&title=TITLE
+     #+END_EXAMPLE
+     stores the following links:
+     #+BEGIN_EXAMPLE
+     [[URL][TITLE]]
+     #+END_EXAMPLE
+
+     Here is an example use from a browser:
+     #+BEGIN_SRC javascript
+     javascript:location.href='org-protocol://store-link?url='+
+           encodeURIComponent(location.href)
+     #+END_SRC
+
+**** capture protocol
+     Activating 'capture' handler pops up a 'Capture' buffer and fills the capture template associated to the 'X' key with them.
+     #+BEGIN_SRC shell
+     emacsclient org-protocol://capture?template=X?url=URL?title=TITLE?body=BODY
+     #+END_SRC
+
+     Usage example:
+     #+BEGIN_SRC javascript
+     javascript:location.href='org-protocol://capture?template=x'+
+           '&url='+encodeURIComponent(window.location.href)+
+           '&title='+encodeURIComponent(document.title)+
+           '&body='+encodeURIComponent(window.getSelection());
+     #+END_SRC
+     The result depends on the capture template used, which is set in the bookmark itself, as in the example above, or in
+     'org-protocol-default-template-key'.
+     
+     The following template placeholders are available:
+     #+BEGIN_EXAMPLE
+     %:link          The URL
+     %:description   The webpage title
+     %:annotation    Equivalent to [[%:link][%:description]]
+     %i              The selected text
+     #+END_EXAMPLE
+
+**** open-source protocol
 *** Refile and copy
 
 *** Archiving
