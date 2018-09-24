@@ -4,7 +4,7 @@
 #+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
 #+OPTIONS: toc:t
 
-* Org Mode [8/16]
+* Org Mode [9/16]
 ** DONE [[elisp:(info-other-window%20"(org)Introduction")][1 Introduction]]
    CLOSED: [2018-09-19 三 16:42]
    - State "DONE"       from "DOING"      [2018-09-19 三 16:42] \\
@@ -1360,7 +1360,8 @@
     | org-timer-pause-or-continure | C-c C-x ,         | Pause the timer, or continue it if it is already paused                                  |
     | org-timer-stop               | C-c C-x _         | Stop the timer                                                                           |
     
-** DOING [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
+** DONE [[elisp:(info-other-window%20"(org)Capture%20-%20Refile%20-%20Archive")][9 Capture - Refile - Archive]]
+   CLOSED: [2018-09-24 Mon 23:41]
    - State "DOING"      from "TODO"       [2018-09-23 Sun 15:40]
      
 *** Capture
@@ -1511,10 +1512,189 @@
      #+END_EXAMPLE
 
 **** open-source protocol
+     The 'open-source' handler is designed to help with editing local sources when reading a document.
+     To that effect, you can use a bookmark with the following location:
+     #+BEGIN_SRC javascript
+     javascript:location.href='org-protocol://open-source?&url='+
+           encodeURIComponent(location.href)
+     #+END_SRC
+
+     The variable 'org-protocol-project-alist' maps URLs to local file names:
+     #+BEGIN_SRC elisp
+     (setq org-protocol-project-alist
+           '(("Worg"
+     	 :base-url "https://orgmode.org/worg/"
+     	 :working-directory "/home/user/worg/"
+     	 :online-suffix ".html"
+     	 :working-suffix ".org")))
+     #+END_SRC
+     
+     Such an entry in 'org-protocol-project-alist' may hold an additional property ':rewrites'
+     #+BEGIN_SRC elisp
+     (setq org-protocol-project-alist
+           '(("example.com"
+              :base-url "http://example.com/"
+              :working-directory "/home/user/example/"
+              :online-suffix ".php"
+              :working-suffix ".php"
+              :rewrites (("example.com/print/" . "products.php")
+                         ("example.com/$" . "index.php")))))
+     #+END_SRC
+
 *** Refile and copy
+    When reviewing the captured data, you may want to refile or to copy some of the entries into a different list.
+    Cutting, finding the right location, and then pasting the note is cumbersome.
+
+    Here is the refile and copy commands:
+    #+NAME: Refile and copy function
+    | function                    | key                 | description                                                           |
+    |-----------------------------+---------------------+-----------------------------------------------------------------------|
+    | org-copy                    | C-c M-w             | Copying works like refiling, except that the original note is deleted |
+    | org-refile                  | C-c C-w             | Refile the entry or region at point                                   |
+    |                             | C-u C-c C-w         | Use the refile interface to jump to a heading                         |
+    |                             | C-2 C-c C-w         | Refile as the child of the item currently being clocked               |
+    |                             | C-3 C-c C-w         | Refile and keep the entry in place                                    |
+    |-----------------------------+---------------------+-----------------------------------------------------------------------|
+    | org-refile-goto-last-stored | C-u C-u C-c C-w     | Jump to the location where 'org-refile' last moved a tree to          |
+    |-----------------------------+---------------------+-----------------------------------------------------------------------|
+    | org-refile-cache-clear      | C-0 C-c C-w         | Clear the target cache                                                |
+    |                             | C-u C-u C-u C-c C-w |                                                                       |
 
 *** Archiving
-** TODO [#A] [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
+    When a project represented by a (sub)tree is finished, you may want to move the tree out of the way and
+    to stop if from contributing to the agenda.
+    | function                    | key         | description                                                                                         |
+    |-----------------------------+-------------+-----------------------------------------------------------------------------------------------------|
+    | org-archive-subtree-default | C-c C-x C-a | Archive the current entry using the command specified in the variable 'org-archive-default-command' |
+    
+**** Moving subtrees
+     The most common archiving action is to move a project tree to another file, the archive file.
+     | function            | key                 | description                                                                                         |
+     |---------------------+---------------------+-----------------------------------------------------------------------------------------------------|
+     | org-archive-subtree | C-c C-x C-s         | Archive the subtree starting at the cursor position to the location given by 'org-archive-location' |
+     |                     | C-c $               |                                                                                                     |
+     |                     | C-u C-c C-x C-s     | Check for open TODO entries                                                                         |
+     |                     | C-u C-u C-c C-x C-s | Check subtree for timestamps instead of TODO entries                                                |
+     
+     In-buffer option for setting this variable:
+     #+BEGIN_EXAMPLE
+     #+ARCHIVE: %s_done::
+     #+END_EXAMPLE
+
+     Special ARCHIVE location for a single entry:
+     #+BEGIN_EXAMPLE
+     ** Moving subtrees
+        :PROPERTIES:
+        :ARCHIVE: value 
+        :END:
+     #+END_EXAMPLE
+
+**** Internal archiving
+     If you don't want to moving finish entries to a different file, you can use the archive tag.
+
+     #+NAME: Variables
+     | variable                            | description                                                                             |
+     |-------------------------------------+-----------------------------------------------------------------------------------------|
+     | org-cycle-open-archived-trees       | force cycling archived subtrees                                                         |
+     | org-sparse-tree-open-archived-trees | expose the archived subtrees during sparse tree                                         |
+     | org-agenda-skip-archived-trees      | show the content of archived trees during agenda view                                   |
+     | org-export-with-archived-trees      | Archived trees are not exported, only the headline is                                   |
+     | org-columns-skip-archived-trees     | Archived trees are excluded from column view unless the variable is configured to 'nil' |
+     
+     #+NAME: Internal archiving functions
+     | function                       | key           | description                                                             |
+     |--------------------------------+---------------+-------------------------------------------------------------------------|
+     | org-toggle-archive-tag         | C-c C-x a     | Toggle the ARCHIVE tag for the current headline                         |
+     |                                | C-u C-c C-x a | Check if any direct children of the current headline should be archived |
+     | org-force-cycle-archived       | C-<TAB>       | Cycle a tree even if it is tagged with ARCHIVE                          |
+     | org-archive-to-archive-sibling | C-c C-x A     | Move the current entry to the Archive Sibling                           |
+
+** DOING [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
+   - State "DOING"      from "TODO"       [2018-09-24 Mon 23:42]
+
+*** About
+    To get an overview of open action items, or of events that are important for a partivular date, this information
+    must be collected, stored and displayed in an organized way.
+    
+*** Agenda files
+    The information to be shown is normally collected from all agenda files, the files listed in the variable 'org-agenda-files'.
+    
+    Easiest way to maintain it is througn the following commands:
+    | functions                | key                   | description                                                       |
+    |--------------------------+-----------------------+-------------------------------------------------------------------|
+    | org-agenda-file-to-front | C-c [                 | Add current file to the list of agenda files                      |
+    | org-remove-file          | C-c ]                 | Remove current file from the list of agenda files                 |
+    | org-cycle-agenda-files   | C-'                   | Cycle through agenda file list, visiting one file after the other |
+    |                          | C-,                   |                                                                   |
+    | org-switchb              | M-x org-switchb <RET> | Interface to switch to and between Org buffers                    |
+
+    Focus the agenda temporarily on a file not in this list(even only a subtree).
+    Here is commands in Agenda dispatcher:
+    | functions                           | key                       | description                                             |
+    |-------------------------------------+---------------------------+---------------------------------------------------------|
+    | org-agenda-set-restriction-lock     | C-c C-x <                 | Permanently restrict the agenda to the current subtree  |
+    | org-agenda-remove-restriction-lock  | C-c C-x >                 | Remove the permanent restriction created by 'C-c C-x <' |
+    | org-speedbar-set-agenda-restriction | '<' in the speedbar frame |                                                         |
+    | org-agenda-remove-restriction-lock  | '>' in the speedbar frame | List the restriction                                    |
+
+*** Agenda dispatcher
+    The views are created through a dispatcher, which should be bound to a global key 'C-c a'.
+    
+    The dispatcher offers the folloing default commnads:
+    | additional letter | description                                           |
+    |-------------------+-------------------------------------------------------|
+    | 'a'               | Create the calendar-like agenda                       |
+    | 't' / 'T'         | Create a list of all TODO items                       |
+    | 'm' / 'M'         | Create a list of headlines matching a TAGS expression |
+    | 's'               |                                                       |
+    | '/'               | Search for a regular expression in all agenda files   |
+    | '#' / '!'         | Create a list of stuck projects                       |
+    | '<'               | Restrict an agenda command to the current buffer      |
+    | '< <'             |                                                       |
+    | '*'               | Toggle sticky agenda views                            |
+
+*** Built-in agenda views
+**** Weekly/daily agenda
+     Purpose: showing all the tasks for the current week or day:
+     | function        | key             | description                                                           |
+     |-----------------+-----------------+-----------------------------------------------------------------------|
+     | org-agenda-list | C-c a a         | Compile an agenda for the current week from a list of Org files       |
+     |                 | C-u 2 1 C-c a a | With a numeric prefix, you may set the number of days to be displayed |
+     
+     Variables
+     | variable                    | value                              | description                                                  |
+     |-----------------------------+------------------------------------+--------------------------------------------------------------|
+     | org-agenda-span             | day                                | The default number of days displayed in the agenda           |
+     |                             | week                               |                                                              |
+     |                             | month                              |                                                              |
+     |                             | year                               |                                                              |
+     |-----------------------------+------------------------------------+--------------------------------------------------------------|
+     | org-agenda-start-on-weekday |                                    | For weekly agendas, the default start day(default is monday) |
+     | org-agenda-start-day        | (setq org-agenda-start-day "+10d") | start the agenda ten days from today in the future           |
+     
+***** Calendar/Diary integration
+      In order to include entries from the Emacs diary into Org mode's agenda:
+      #+BEGIN_SRC elisp
+      (setq org-agenda-inlcude-diary t)
+      #+END_SRC
+      
+**** Global TODO list
+
+**** Matching tags and properties
+
+**** Search view
+
+**** Stuck projects
+
+*** Presentation and sorting
+
+*** Agenda commands
+
+*** Custom agenda views
+
+*** Exporting agenda views
+
+*** Agenda volumn view
 ** TODO [[elisp:(info-other-window%20"(org)Markup")][11 Markup]]
 ** TODO [#C] [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
 ** TODO [[elisp:(info-other-window%20"(org)Publishing")][13 Publishing]]
