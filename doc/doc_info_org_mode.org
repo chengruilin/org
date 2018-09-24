@@ -1048,7 +1048,7 @@
     TIMESTAMP WITH REPEATER INTERVAL
     #+BEGIN_EXAMPLE
     * Pick up Sam at school
-      <2007-05-16 Wed 12:30 +1w>
+      \<2007-05-16 Wed 12:30 +1w\>
     #+END_EXAMPLE
 
     DIARY-STYLE SEXP ENTRIES
@@ -1677,12 +1677,88 @@
       #+BEGIN_SRC elisp
       (setq org-agenda-inlcude-diary t)
       #+END_SRC
+
+      The following segment of an Org file will be processed and entries will be made in the agenda:
+      #+BEGIN_EXAMPLE
+       * Holidays
+         :PROPERTIES:
+         :CATEGORY: Holiday
+         :END:
+       %%(org-calendar-holiday)   ; special function for holiday names
+
+       * Birthdays
+         :PROPERTIES:
+         :CATEGORY: Ann
+         :END:
+       %%(org-anniversary 1956  5 14)(2) Arthur Dent is %d years old
+       %%(org-anniversary 1869 10  2) Mahatma Gandhi would be %d years old
+      #+END_EXAMPLE
       
+***** Anniversaries from BBDB
+      BBDB => Big Brothers Database
+      Org support anniversaries store in BBDB, and will show BBDB anniversaries as part of the agenda:
+      #+BEGIN_EXAMPLE
+      * Anniversaries
+        :PROPERTIES:
+        :CATEGORY: Anniv
+        :END:
+      %%(org-bbdb-anniversaries)
+      #+END_EXAMPLE
+
+***** Appointment remiders
+      Use the command
+      #+BEGIN_SRC elisp
+      org-agenda-to-appt
+      appt-message-warning-time
+      #+END_SRC
+
 **** Global TODO list
+     The global TODO list contains all unfinished TODO items.
+
+     #+NAME: Agenda TODO list
+     | function      | key     | description                                                 |
+     |---------------+---------+-------------------------------------------------------------|
+     | org-todo-list | C-c a t | Show the global TODO list                                   |
+     |               | C-c a T | Like above, but allows selection of a specific TODO keyword |
+
+     #+NAME: Agenda TODO list variables
+     | variable                          | description |
+     |-----------------------------------+-------------|
+     | org-agenda-todo-ignore-schedule   |             |
+     | org-agenda-todo-ignore-deadlines  |             |
+     | org-agenda-toto-ignore-teimestamp |             |
+     | org-agenda-todo-ignore-with-date  |             |
+     | org-agenda-todo-list-sublevels    |             |
 
 **** Matching tags and properties
+     Select headlines based on the metadata and collect them into an agenda buffer.
+     With 'C-c / m'
 
+     #+NAME: Agenda TAG function
+     | function      | key     | description                                                        |
+     |---------------+---------+--------------------------------------------------------------------|
+     | org-tags-view | C-c a m | Produce a list of all headlines that match a given set of tags     |
+     |               | C-c a M | Like 'C-c a m', but only select headlines that are also TODO items |
+
+     #+NAME: Agenda TAG variable
+     | variable                                  | description                     |
+     |-------------------------------------------+---------------------------------|
+     | org-tags-match-list-sublevels             | force checking subitems         |
+     | org-agenda-tags-todo-honor-ignore-options | exclude schedule/deadline items |
+
+     Match syntas
+     | Boolean operator | example                                |
+     |------------------+----------------------------------------|
+     | OR               |                                        |
+     | AND              |                                        |
+     | +                | syntactic sugar for positive selection |
+     | -                | select against it                      |
+     
 **** Search view
+     #+NAME: Agenda Search view
+     | function        | key     | description                                   |
+     |-----------------+---------+-----------------------------------------------|
+     | org-search-view | C-c a s | A special search that lets you select entries |
 
 **** Stuck projects
 
