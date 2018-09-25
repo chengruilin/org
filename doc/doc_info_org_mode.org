@@ -4,7 +4,7 @@
 #+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
 #+OPTIONS: toc:t
 
-* Org Mode [9/17]
+* Org Mode [10/16]
 ** DONE [[elisp:(info-other-window%20"(org)Introduction")][1 Introduction]]
    CLOSED: [2018-09-19 三 16:42]
    - State "DONE"       from "DOING"      [2018-09-19 三 16:42] \\
@@ -22,7 +22,7 @@
 *** Headlines
     org-footnote-section
     Clean view 'org-cycle-separator-lines'
-*** Visibility cycling                                             :@key_map:
+*** Visibility cycling                                                                                                                           :@key_map:
     | function                    | key               | description                                    | spacemacs |
     |-----------------------------+-------------------+------------------------------------------------+-----------|
     | org-cycle                   | <TAB>             | subtree cycling                                |           |
@@ -36,7 +36,7 @@
     | org-copy-visible            | C-c C-x v         | copy the visible text in the region            |           |
 
     org "#+STARTUP" in (overview, content, showall, showeverything)
-*** Motion                                                         :@key_map:
+*** Motion                                                                                                                                       :@key_map:
     | function                     | key     | description                      | spacemacs |
     |------------------------------+---------+----------------------------------+-----------|
     | org-next-visible-heading     | C-c C-n | next heading                     |           |
@@ -45,7 +45,7 @@
     | org-backward-same-level      | C-c C-b | backward to higher level heading |           |
     | org-goto                     | C-c C-j | jump                             |           |
 
-*** Structure editing                                              :@key_map:
+*** Structure editing                                                                                                                            :@key_map:
     basic
     | function                                | key         | description                                | spacemacs |
     |-----------------------------------------+-------------+--------------------------------------------+-----------|
@@ -77,7 +77,7 @@
     | widen                             | C-x n w     | widen buffer to remove narrowing                           | <SPC n w> |
     | org-toggle-heading                | C-c *       | toggle (plaint list item or a headline)                    |           |
 
-*** Sparse trees                                                   :@key_map:
+*** Sparse trees                                                                                                                                 :@key_map:
     | function        | key     | description                                     | spacemacs |
     |-----------------+---------+-------------------------------------------------+-----------|
     | org-sparse-tree | C-c /   | select a sparse-tree creating command           | <, />     |
@@ -111,7 +111,7 @@
     You can set "STARTUP":
     - #+STARTUP: hideblocks
     - #+STARTUP: nohideblocks
-*** Footnotes                                                      :@key_map:
+*** Footnotes                                                                                                                                    :@key_map:
     A footnote start with 'fn:', like these:
     - "[fn:name]"
     - "[fn::This is the inline definition of this footnote]"
@@ -139,7 +139,7 @@
    - State "RESUME"     from "PAUSE"      [2018-09-19 三 21:57]
    - State "PAUSE"      from "DOING"      [2018-09-19 三 20:34]
    - State "DOING"      from "TODO"       [2018-09-19 Wed 20:15]
-*** Table editor                                                   :@key_map:
+*** Table editor                                                                                                                                 :@key_map:
     enter this and press <TAB>
     #+BEGIN_EXAMPLE
     |Name|Phone|Age|
@@ -474,7 +474,7 @@
    - State "DONE"       from "DOING"      [2018-09-20 四 21:35] \\
      get org todo knowlege
    - State "DOING"      from "TODO"       [2018-09-20 四 17:09]
-*** Basic TODO functionality                                       :@key_map:
+*** Basic TODO functionality                                                                                                                     :@key_map:
    | function                | key         | description                                     | spacemacs   |
    |-------------------------+-------------+-------------------------------------------------+-------------|
    | org-todo                | C-c C-t     | Rotate the TODO state of the current item among | <t>         |
@@ -575,8 +575,8 @@
      #+END_EXAMPLE
    
 **** Tracking TODO state changes
-     :PROPERTIES:
-     :END:
+                                                                                                                                               :PROPERTIES:
+                                                                                                                                                      :END:
      You might want to keep track of state changes(timestamp or note).
      You can customize 'org-log-into-drawer' to get this behavior.
     
@@ -615,14 +615,14 @@
      Select 'LOGGING' and insert the value, result like:
      #+BEGIN_EXAMPLE
      * TODO Log each state with only a time
-        :PROPERTIES:
+                                                                                                                                               :PROPERTIES:
         :LOGGING: TODO(!) WAIT(!) DONE(!) CANCELED(!)
-        :END:
+                                                                                                                                                      :END:
      #+END_EXAMPLE
 
 **** Tracking your habits
-     :PROPERTIES:
-     :END:
+                                                                                                                                               :PROPERTIES:
+                                                                                                                                                      :END:
      Org has the ability to track the consistency of a special category of TODOs, called "habits".
 
      First, enable 'habits' module, and has these properties:
@@ -633,10 +633,10 @@
      #+BEGIN_EXAMPLE
      ** TODO Shave
          SCHEDULED: <2009-10-17 Sat .+2d/4d>
-         :PROPERTIES:
+                                                                                                                                               :PROPERTIES:
          :STYLE:    habit
          :LAST_REPEAT: [2009-10-19 Mon 00:36]
-         :END:
+                                                                                                                                                      :END:
          - State "DONE"       from "TODO"       [2009-10-15 Thu]
          - State "DONE"       from "TODO"       [2009-10-12 Mon]
          - State "DONE"       from "TODO"       [2009-10-10 Sat]
@@ -668,8 +668,8 @@
    | org-priority-down | S-<DOWN> | decrease priority of current headline |
 
 *** Breaking tasks down into subtask
-    :PROPERTIES:
-    :END:
+                                                                                                                                               :PROPERTIES:
+                                                                                                                                                      :END:
     Purpose:
     1.Break down large tasks into smaller, manageable subtasks.
     2.Keep overview over the fraction of subtasks that are already completed.
@@ -692,9 +692,9 @@
     You should set 'COOKIE_DATA' to 'recursive' like this:
     #+BEGIN_EXAMPLE
     * Parent capturing statistics [2/20]
-      :PROPERTIES:
+                                                                                                                                               :PROPERTIES:
       :COOKIE_DATA: todo recursive
-      :END:
+                                                                                                                                                      :END:
     #+END_EXAMPLE
 
     Parent task automatically DONE when all children are done. You should write this to conifg.
@@ -742,15 +742,15 @@
 
     Example:
     #+BEGIN_EXAMPLE
-    * Meeting with the French group      :work:
-    ** Summary by Frank                  :boss:notes:
-    *** TODO Prepare slides for him      :action:
+    * Meeting with the French group                                                                                                                  :work:
+    ** Summary by Frank                                                                                                                        :boss:notes:
+    *** TODO Prepare slides for him                                                                                                                :action:
     #+END_EXAMPLE
     The final heading will have the tags ':work:', ':boss:', ':notes:', and ':action:'
 
     Set tags all entries ina file:
     #+BEGIN_EXAMPLE
-    #+FILETAGS: :Peter:Boss:Secret:
+    #+FILETAGS:                                                                                                                         :Peter:Boss:Secret:
     #+END_EXAMPLE
 
     Varibles:
@@ -881,8 +881,8 @@
    - State "DOING"      from "TODO"       [2018-09-20 四 23:52]
     
 *** Property syntax
-    :PROPERTIES:
-    :END:
+                                                                                                                                               :PROPERTIES:
+                                                                                                                                                      :END:
 
     A property is a key-value pair associated with an entry.
     Properties are like tags, but with a value.
@@ -892,13 +892,13 @@
     * CD collection
     ** Classic
     *** Goldberg Variations
-        :PROPERTIES:
+                                                                                                                                               :PROPERTIES:
         :Title:     Goldberg Variations
         :Composer:  J.S. Bach
         :Artist:    Glen Gould
         :Publisher: Deutsche Grammophon
         :NDisks:    1
-        :END:
+                                                                                                                                                      :END:
     #+END_EXAMPLE
     Property is inherited. You can define the allowed values for a particular property ':Xyz:' by setting a property ':XyzAll:'.
 
@@ -1568,8 +1568,8 @@
     | org-archive-subtree-default | C-c C-x C-a | Archive the current entry using the command specified in the variable 'org-archive-default-command' |
     
 **** Moving subtrees
-     :PROPERTIES:
-     :END:
+                                                                                                                                               :PROPERTIES:
+                                                                                                                                                      :END:
      The most common archiving action is to move a project tree to another file, the archive file.
      | function            | key                 | description                                                                                         |
      |---------------------+---------------------+-----------------------------------------------------------------------------------------------------|
@@ -1586,9 +1586,9 @@
      Special ARCHIVE location for a single entry:
      #+BEGIN_EXAMPLE
      ** Moving subtrees
-        :PROPERTIES:
+                                                                                                                                               :PROPERTIES:
         :ARCHIVE: value 
-        :END:
+                                                                                                                                                      :END:
      #+END_EXAMPLE
 
 **** Internal archiving
@@ -1611,7 +1611,8 @@
      | org-force-cycle-archived       | C-<TAB>       | Cycle a tree even if it is tagged with ARCHIVE                          |
      | org-archive-to-archive-sibling | C-c C-x A     | Move the current entry to the Archive Sibling                           |
 
-** DOING [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
+** DONE [[elisp:(info-other-window%20"(org)Agenda%20views")][10 Agenda views]]
+   CLOSED: [2018-09-25 二 21:42]
    - State "DOING"      from "TODO"       [2018-09-24 Mon 23:42]
 
 *** About
@@ -1675,8 +1676,8 @@
      | org-agenda-start-day        | (setq org-agenda-start-day "+10d") | start the agenda ten days from today in the future           |
      
 ***** Calendar/Diary integration
-      :PROPERTIES:
-      :END:
+                                                                                                                                               :PROPERTIES:
+                                                                                                                                                      :END:
       In order to include entries from the Emacs diary into Org mode's agenda:
       #+BEGIN_SRC elisp
       (setq org-agenda-inlcude-diary t)
@@ -1685,29 +1686,29 @@
       The following segment of an Org file will be processed and entries will be made in the agenda:
       #+BEGIN_EXAMPLE
        * Holidays
-         :PROPERTIES:
+                                                                                                                                               :PROPERTIES:
          :CATEGORY: Holiday
-         :END:
+                                                                                                                                                      :END:
        %%(org-calendar-holiday)   ; special function for holiday names
 
        * Birthdays
-         :PROPERTIES:
+                                                                                                                                               :PROPERTIES:
          :CATEGORY: Ann
-         :END:
+                                                                                                                                                      :END:
        %%(org-anniversary 1956  5 14)(2) Arthur Dent is %d years old
        %%(org-anniversary 1869 10  2) Mahatma Gandhi would be %d years old
       #+END_EXAMPLE
       
 ***** Anniversaries from BBDB
-      :PROPERTIES:
-      :END:
+                                                                                                                                               :PROPERTIES:
+                                                                                                                                                      :END:
       BBDB => Big Brothers Database
       Org support anniversaries store in BBDB, and will show BBDB anniversaries as part of the agenda:
       #+BEGIN_EXAMPLE
       * Anniversaries
-        :PROPERTIES:
+                                                                                                                                               :PROPERTIES:
         :CATEGORY: Anniv
-        :END:
+                                                                                                                                                      :END:
       %%(org-bbdb-anniversaries)
       #+END_EXAMPLE
 
@@ -1806,9 +1807,9 @@
      Property-Level category
      #+BEGIN_EXAMPLE
       * Birthdays
-         :PROPERTIES:
+                                                                                                                                               :PROPERTIES:
          :CATEGORY: Ann
-         :END:
+                                                                                                                                                      :END:
      #+END_EXAMPLE
 
 **** Time of day specifications
@@ -1835,15 +1836,131 @@
 **** Filtering/limiting agenda items
      Agenda filters and limits provide two ways of dynamically narrowing down the list of agenda entries: filters and limits.
 ***** Filtering in the agenda
+      #+NAME: Action in agenda buffer
+      | function                 | key | description                                                          |
+      |--------------------------+-----+----------------------------------------------------------------------|
+      | org-agenda-filter-by-tag | /   | Filter the agenda view with respect to a tag and/or effort estimates |
       
+      Second '/' at the prompt will turn off the filter and unhide any hidden entries.
+      '+' switch between filtering
+      '-' excluding the next tag
 
+      'org-agenda-auto-exclude-function'. Org also supports automatic, context-aware tag filtering.
+      #+BEGIN_SRC elisp
+      (defun org-my-auto-exclude-function (tag)
+        (and (cond
+              ((string= tag "Net")
+               (/= 0 (call-process "/sbin/ping" nil nil nil
+                                   "-c1" "-q" "-t1" "mail.gnu.org")))
+              ((or (string= tag "Errand") (string= tag "Call"))
+               (let ((hour (nth 2 (decode-time))))
+                 (or (< hour 8) (> hour 21)))))
+             (concat "-" tag)))
+
+      (setq org-agenda-auto-exclude-function 'org-my-auto-exclude-function)
+      #+END_SRC
+***** Setting limits for the agenda
+      A list of options you can set for agenda buffer:
+      | option                 | description                                            |
+      |------------------------+--------------------------------------------------------|
+      | org-agenda-max-entries | Limit the number of entries                            |
+      | org-agenda-max-effort  | Limit the duration of accumulated efforts (as minutes) |
+      | org-agenda-max-todos   | Limit the number of entries with TODO keywords         |
+      | org-agenda-max-tags    | Limit the number of tagged entries                     |
 *** Agenda commands
-
+    [[info:org#Agenda%20commands][The Coomands Doc]]
 *** Custom agenda views
+    Purpose:
+    1.Store and quickly access frequently used TODO and tags searched.
+    2.create special composite agenda buffers.
+**** Storing searches
+     #+NAME:Here is example:
+     #+BEGIN_SRC elisp
+          (setq org-agenda-custom-commands
+           '(("x" agenda)
+             ("y" agenda*)
+             ("w" todo "WAITING")
+             ("W" todo-tree "WAITING")
+             ("u" tags "+boss-urgent")
+             ("v" tags-todo "+boss-urgent")
+             ("U" tags-tree "+boss-urgent")
+             ("f" occur-tree "\\<FIXME\\>")
+             ("h" . "HOME+Name tags searches") ; description for "h" prefix
+             ("hl" tags "+home+Lisa")
+             ("hp" tags "+home+Peter")
+             ("hk" tags "+home+Kim")))
 
+     #+END_SRC
+**** Block agenda
+     #+NAME: Block agenda example
+     #+BEGIN_SRC elisp
+          (setq org-agenda-custom-commands
+           '(("h" "Agenda and Home-related tasks"
+              ((agenda "")
+               (tags-todo "home")
+               (tags "garden")))
+             ("o" "Agenda and Office-related tasks"
+              ((agenda "")
+               (tags-todo "work")
+               (tags "office")))))
+     #+END_SRC
+**** Setting options
+     #+NAME:
+     #+BEGIN_SRC elisp
+          (setq org-agenda-custom-commands
+           '(("w" todo "WAITING"
+              ((org-agenda-sorting-strategy '(priority-down))
+               (org-agenda-prefix-format "  Mixed: ")))
+             ("U" tags-tree "+boss-urgent"
+              ((org-show-context-detail 'minimal)))
+             ("N" search ""
+              ((org-agenda-files '("~org/notes.org"))
+               (org-agenda-text-search-extra-files nil)))))
+     #+END_SRC
 *** Exporting agenda views
+    If you are away from your computer, it can be very useful to have a printed version of some agenda views to carry around.
+    | function         | key     | description                     |
+    |------------------+---------+---------------------------------|
+    | org-agenda-write | C-x C-w | Write the agenda view to a file |
 
-*** Agenda volumn view
+    Set options for 'ps-print' and for 'htmlize' (you need install 'htmlize.el')
+    #+BEGIN_SRC elisp
+              (setq org-agenda-exporter-settings
+                '((ps-number-of-columns 2)
+                  (ps-landscape-mode t)
+                  (org-agenda-add-entry-text-maxlines 5)
+                  (htmlize-output-type 'css)))
+    #+END_SRC
+
+    Export any custom agenda.
+    #+BEGIN_SRC elisp
+         (setq org-agenda-custom-commands
+           '(("X" agenda "" nil ("agenda.html" "agenda.ps"))
+             ("Y" alltodo "" nil ("todo.html" "todo.txt" "todo.ps"))
+             ("h" "Agenda and Home-related tasks"
+              ((agenda "")
+               (tags-todo "home")
+               (tags "garden"))
+              nil
+              ("~/views/home.html"))
+             ("o" "Agenda and Office-related tasks"
+              ((agenda)
+               (tags-todo "work")
+               (tags "office"))
+              nil
+              ("~/views/office.ps" "~/calendars/office.ics"))))
+    #+END_SRC
+
+*** Agenda column view
+    #+NAME: Agenda column view
+    | function          | key         | description                       |
+    |-------------------+-------------+-----------------------------------|
+    | org-agenda-column | C-c C-x C-c | Turn on column view in the agenda |
+
+    Column format:
+    1.org-agenda-overriding-columns-format
+    2.org-columns-default-format
+
 ** TODO [[elisp:(info-other-window%20"(org)Markup")][11 Markup]]
 ** TODO [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
 ** TODO [[elisp:(info-other-window%20"(org)Publishing")][13 Publishing]]
@@ -1851,14 +1968,4 @@
 ** TODO [[elisp:(info-other-window%20"(org)Miscellaneous")][15 Miscellaneous]]
 ** TODO [[elisp:(info-other-window%20"(org)Hacking")][16 Hacking]]
 
-** TODO [#C] test1
-   DEADLINE: <2018-09-26 三 11:30>
 
-** TODO [#A] test2
-   DEADLINE: <2018-09-26 三 20:00>
-
-** TODO [#B] Test3
-   SCHEDULED: <2018-09-27 四 20:00>
-
-** TODO [#C] Test4
-   SCHEDULED: <2018-09-27 四 10:00>
