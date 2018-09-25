@@ -1,10 +1,10 @@
 #+TITLE: Info Document For Org Mode
-#+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e)
+#+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
 #+STARTUP: overview logrepeat
 #+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
 #+OPTIONS: toc:t
 
-* Org Mode [10/16]
+* Org Mode [16/16]
 ** DONE [[elisp:(info-other-window%20"(org)Introduction")][1 Introduction]]
    CLOSED: [2018-09-19 三 16:42]
    - State "DONE"       from "DOING"      [2018-09-19 三 16:42] \\
@@ -1961,11 +1961,32 @@
     1.org-agenda-overriding-columns-format
     2.org-columns-default-format
 
-** TODO [[elisp:(info-other-window%20"(org)Markup")][11 Markup]]
-** TODO [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
-** TODO [[elisp:(info-other-window%20"(org)Publishing")][13 Publishing]]
-** TODO [[elisp:(info-other-window%20"(org)Working%20with%20source%20code")][14 Working with source code]]
-** TODO [[elisp:(info-other-window%20"(org)Miscellaneous")][15 Miscellaneous]]
-** TODO [[elisp:(info-other-window%20"(org)Hacking")][16 Hacking]]
+** DONE [[elisp:(info-other-window%20"(org)Markup")][11 Markup]]
+   CLOSED: [2018-09-25 二 21:49]
+   - State "DOING"      from "TODO"       [2018-09-25 二 21:43]
+*** Emphasis and monospace
+    - *blld*
+    - /italic/
+    - +verbatim+
+    - ~code~
+    - +strick-through+
+
+*** Images
+    #+BEGIN_EXAMPLE
+    #+CAPTION: This is the caption for the next figure link (or table)
+    #+NAME:   fig:SED-HR4049
+    [[./img/a.jpg]]
+    #+END_EXAMPLE
+
+** LATER [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
+   CLOSED: [2018-09-25 二 21:54]
+** LATER [[elisp:(info-other-window%20"(org)Publishing")][13 Publishing]]
+   CLOSED: [2018-09-25 二 21:54]
+** LATER [[elisp:(info-other-window%20"(org)Working%20with%20source%20code")][14 Working with source code]]
+   CLOSED: [2018-09-25 二 21:54]
+** LATER [[elisp:(info-other-window%20"(org)Miscellaneous")][15 Miscellaneous]]
+   CLOSED: [2018-09-25 二 21:54]
+** LATER [[elisp:(info-other-window%20"(org)Hacking")][16 Hacking]]
+   CLOSED: [2018-09-25 二 21:54]
 
 

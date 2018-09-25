@@ -23,7 +23,10 @@
 ** DOING [[file:books/being_friends_with_time.org][把时间当作朋友]]                                              :@read:
    - State "DOING"      from "TODO"       [2018-09-21 五 11:54]
 
-** DOING [[file:doc/doc_info_org_mode.org][Org Mode Document]]                                           :@read:
+** DONE [[file:doc/doc_info_org_mode.org][Org Mode Document]]                                             :@read:
+   CLOSED: [2018-09-25 二 21:54]
+   - State "DONE"       from "DOING"      [2018-09-25 二 21:54] \\
+     Finish reading org-mode ducoment. Some chapter read when use.
    - State "DOING"      from "TODO"       [2018-09-21 五 11:54]
 
 ** TODO [[file:doc/doc_info_elisp.org][Elisp Document]]                                               :@read:
