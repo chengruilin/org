@@ -4,7 +4,7 @@
 #+TAGS: @work(w) @read(r) @discuss(d) @source_code(s) @emacs(e) @key_map(k)
 #+OPTIONS: toc:t
 
-* Org Mode [9/16]
+* Org Mode [9/17]
 ** DONE [[elisp:(info-other-window%20"(org)Introduction")][1 Introduction]]
    CLOSED: [2018-09-19 三 16:42]
    - State "DONE"       from "DOING"      [2018-09-19 三 16:42] \\
@@ -1568,6 +1568,8 @@
     | org-archive-subtree-default | C-c C-x C-a | Archive the current entry using the command specified in the variable 'org-archive-default-command' |
     
 **** Moving subtrees
+     :PROPERTIES:
+     :END:
      The most common archiving action is to move a project tree to another file, the archive file.
      | function            | key                 | description                                                                                         |
      |---------------------+---------------------+-----------------------------------------------------------------------------------------------------|
@@ -1673,6 +1675,8 @@
      | org-agenda-start-day        | (setq org-agenda-start-day "+10d") | start the agenda ten days from today in the future           |
      
 ***** Calendar/Diary integration
+      :PROPERTIES:
+      :END:
       In order to include entries from the Emacs diary into Org mode's agenda:
       #+BEGIN_SRC elisp
       (setq org-agenda-inlcude-diary t)
@@ -1695,6 +1699,8 @@
       #+END_EXAMPLE
       
 ***** Anniversaries from BBDB
+      :PROPERTIES:
+      :END:
       BBDB => Big Brothers Database
       Org support anniversaries store in BBDB, and will show BBDB anniversaries as part of the agenda:
       #+BEGIN_EXAMPLE
@@ -1761,10 +1767,75 @@
      | function        | key     | description                                   |
      |-----------------+---------+-----------------------------------------------|
      | org-search-view | C-c a s | A special search that lets you select entries |
+     
+     The search example
+     #+BEGIN_EXAMPLE
+     # search for entries contain the keywords 'computer' and 'wifi', but not 'ethernet'
+     +computer +wifi -ethernet
+     #+END_EXAMPLE
+     The command alse search files list in variable: 'org-agenda-text-search-extra-files'
 
 **** Stuck projects
+     A stuck project is a project that has no defined next actions.
+     #+NAME: Agenda Stuck projects
+     | function                       | key     | description                                                                                      |
+     |--------------------------------+---------+--------------------------------------------------------------------------------------------------|
+     | org-agenda-list-stuck-projects | C-c a # | List projects that are stuck                                                                     |
+     |                                | C-c a ! | Customize the variable 'org-stuck-projects' to define what a stuck project is and how to find it |
+
+     Use tips:
+     Identify projects with a tag PROJECT, and that you use a TODO keyword MAYBE to indeicate a project should not be considered yet.
+     
+     Here is the Case:
+     1.Start by identifying eligible projects with a tag "+PROJECT/-MAYBE-DONE"
+     2.Check for TODO, NEXT, @SHOP and IGNORE in the subtree to identify projects that are not stuck.
+     Here is the variable config:
+     #+BEGIN_SRC elisp
+     (setq org-stuck-projects '("+PROJECT/-MAYBE-DONE" ("NEXT" "TODO") ("@SHOP") "\\<IGNORE\\>"))
+     #+END_SRC
 
 *** Presentation and sorting
+**** Categories
+     The category is a broad label assigned to each agenda item.
+     
+     Org-File-Lvel category
+     #+BEGIN_EXAMPLE
+     #+CATEGORY: Thesis
+     #+END_EXAMPLE
+
+     Property-Level category
+     #+BEGIN_EXAMPLE
+      * Birthdays
+         :PROPERTIES:
+         :CATEGORY: Ann
+         :END:
+     #+END_EXAMPLE
+
+**** Time of day specifications
+     Org mode checks each agenda item for a time-of-day specification.
+     
+     #+NAME: Agenda time grid variables
+     | variable                 | description           |
+     |--------------------------+-----------------------|
+     | org-agenda-use-time-grid | Turn on/off time grid |
+     | org-agenda-time-grid     | Config time grid      |
+   
+**** Sorting agenda items
+     Before being inserted into a view, the items are sorted.
+
+     Daily/weekly agenda view:
+     Items are sorted by time and priority(A,B,C).
+     
+     TODO list view:
+     Sorted by priority.
+
+     Tags matches view:
+     Appear in the suequence in which they are found in the agenda files.
+
+**** Filtering/limiting agenda items
+     Agenda filters and limits provide two ways of dynamically narrowing down the list of agenda entries: filters and limits.
+***** Filtering in the agenda
+      
 
 *** Agenda commands
 
@@ -1774,11 +1845,20 @@
 
 *** Agenda volumn view
 ** TODO [[elisp:(info-other-window%20"(org)Markup")][11 Markup]]
-** TODO [#C] [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
+** TODO [[elisp:(info-other-window%20"(org)Exporting")][12 Exporting]]
 ** TODO [[elisp:(info-other-window%20"(org)Publishing")][13 Publishing]]
 ** TODO [[elisp:(info-other-window%20"(org)Working%20with%20source%20code")][14 Working with source code]]
 ** TODO [[elisp:(info-other-window%20"(org)Miscellaneous")][15 Miscellaneous]]
 ** TODO [[elisp:(info-other-window%20"(org)Hacking")][16 Hacking]]
 
+** TODO [#C] test1
+   DEADLINE: <2018-09-26 三 11:30>
 
+** TODO [#A] test2
+   DEADLINE: <2018-09-26 三 20:00>
 
+** TODO [#B] Test3
+   SCHEDULED: <2018-09-27 四 20:00>
+
+** TODO [#C] Test4
+   SCHEDULED: <2018-09-27 四 10:00>
