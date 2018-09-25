@@ -1,7 +1,7 @@
 #+TITLE: My GTDs
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e@)
 #+STARTUP: overview
-#+TAGS: @work(w) @read(r) @discuss(d) @code(c) @emacs(e) @key_map(k)
+#+TAGS: @work(w) @read(r) @code(c) @emacs(e) @key_map(k) @develop(d)
 
 * Work
 
@@ -20,7 +20,7 @@
 ** DOING [[file:books/the_art_of_unix_programming.org][The Art of UNIX Programming]]                                 :@read:
    - State "DOING"      from "TODO"       [2018-09-21 五 11:54]
 
-** DOING [[file:books/being_friends_with_time.org][把时间当作朋友-李笑来]]                                       :@read:
+** DOING [[file:books/being_friends_with_time.org][把时间当作朋友]]                                              :@read:
    - State "DOING"      from "TODO"       [2018-09-21 五 11:54]
 
 ** DOING [[file:doc/doc_info_org_mode.org][Org Mode Document]]                                           :@read:
@@ -29,11 +29,16 @@
 ** TODO [[file:doc/doc_info_elisp.org][Elisp Document]]                                               :@read:
 
 * Source Code
-
 ** TODO [[file:code/read_weex_source_code.org][Weex]]                                                         :@code:
+   DEADLINE: <2018-11-09 五>
 
 ** TODO [[file:code/read_flutter_source_code.org][Flutter]]                                                      :@code:
+   DEADLINE: <2018-11-23 五>
 
+* Develop
+** TODO Ebiz Core Android Studio Plugin                           :@develop:
+   DEADLINE: <2018-12-07 五>
+   
 * Workspace
-
-
+** TODO Android 开发入门分享                                         :@work:
+   DEADLINE: <2018-11-02 五>

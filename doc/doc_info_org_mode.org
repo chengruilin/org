@@ -1755,6 +1755,8 @@
      | -                | select against it                      |
      
 **** Search view
+     This agenda view is a general text search facility for Org mode entries
+
      #+NAME: Agenda Search view
      | function        | key     | description                                   |
      |-----------------+---------+-----------------------------------------------|
