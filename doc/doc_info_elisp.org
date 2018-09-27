@@ -1,12 +1,13 @@
 #+TITLE: Info Document Elisp
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
 
-* TODO Emacs Lisp Document [1/41]
+* DOING Emacs Lisp Document [1/41]
+  - State "DOING"      from "TODO"       [2018-09-27 四 12:17]
 
-** DONE [[elisp:(info-other-window%20"(info)Introduction")][1.Introduction]]
+** DONE [[elisp:(info-other-window%20"(elisp)Introduction")][1.Introduction]]
    CLOSED: [2018-09-27 四 00:10]
    - State "DOING"      from "TODO"       [2018-09-26 三 23:41]
-** DOING 2.Lisp Data Types
+** DOING [[elisp:(info-other-window "(elisp)Lisp Data Types")][2.Lisp Data Types]
    - State "DOING"      from "TODO"       [2018-09-27 四 00:10]
 *** Primitive types
     Each object blongs to one and only one primitive type.
@@ -21,45 +22,45 @@
     - byte-code function
     - record
     - buffer
-    
+
     Such type declarations do not exist in Emacs Lisp.
-    
-** TODO 3.Numbers
-** TODO 4.Strings and Characters
-** TODO 5.List
-** TODO 6.Sequences, Arrays, and Vectors
-** TODO 7.Records
-** TODO 8.Hash Tables
-** TODO 9.Symbols
-** TODO 10.Evaluation
-** TODO 11.Control Structure
-** TODO 12.Variables
-** TODO 13.Functions
-** TODO 14.Macros
-** TODO 15.Customization Settings
-** TODO 16.Loading
-** TODO 17.Byte Compilation
-** TODO 18.Debugging Lisp Programs
-** TODO 19.Reading and Printing List Objects
-** TODO 20.Minibuffers
-** TODO 21.Command Loop
-** TODO 22.Keymaps
-** TODO 23.Major and Minor Modes
-** TODO 24.Documentation
-** TODO 25.Files
-** TODO 26.Backups and Auto-Saving
-** TODO 27.Buffers
-** TODO 28.Windows
-** TODO 29.Frames
-** TODO 30.Positions
-** TODO 31.Markers
-** TODO 32.Text
-** TODO 33.Non-ASCII Characters
-** TODO 34.Searching and Matching
-** TODO 35.Syntax Tables
-** TODO 36.Abbrevs and Abbrev Expansion
-** TODO 37.Threads
-** TODO 38.Processes
-** TODO 39.Emacs Display
-** TODO 40.Operating System Interface
-** TODO 41.Preparing Lisp code for distribution
+
+** TODO [[elisp:(info-other-window "(elisp)Numbers")][3.Numbers]]
+** TODO [[elisp:(info-other-window "(elisp)Strings and Characters")][4.Strings and Characters]]
+** TODO [[elisp:(info-other-window "(elisp)List")][5.List]]
+** TODO [[elisp:(info-other-window "(elisp)Sequences Arrays Vectors")][6.Sequences, Arrays, and Vectors]]
+** TODO [[elisp:(info-other-window "(elisp)Records")][7.Records]]
+** TODO [[elisp:(info-other-window "(elisp)Hash Tables")][8.Hash Tables]]
+** TODO [[elisp:(info-other-window "(elisp)Symbols")][9.Symbols]]
+** TODO [[elisp:(info-other-window "(elisp)Evaluation")][10.Evaluation]]
+** TODO [[elisp:(info-other-window "(elisp)Structure")][11.Control Structure]]
+** TODO [[elisp:(info-other-window "(elisp)Variables")][12.Variables]]
+** TODO [[elisp:(info-other-window "(elisp)Functions")][13.Functions]]
+** TODO [[elisp:(info-other-window "(elisp)Macros")][14.Macros]]
+** TODO [[elisp:(info-other-window "(elisp)Customization Settings")][15.Customization Settings]]
+** TODO [[elisp:(info-other-window "(elisp)Loading")][16.Loading]]
+** TODO [[elisp:(info-other-window "(elisp)Byte Compilation")][17.Byte Compilation]]
+** TODO [[elisp:(info-other-window%20"(elisp)Debugging")][18.Debugging Lisp Programs]]
+** TODO [[elisp:(info-other-window "(elisp)Read and Print")][19.Reading and Printing List Objects]]
+** TODO [[elisp:(info-other-window "(elisp)Minibuffers")][20.Minibuffers]]
+** TODO [[elisp:(info-other-window "(elisp)Command Loop")][21.Command Loop]]
+** TODO [[elisp:(info-other-window "(elisp)Keymaps")][22.Keymaps]]
+** TODO [[elisp:(info-other-window "(elisp)Modes")][23.Major and Minor Modes]]
+** TODO [[elisp:(info-other-window "(elisp)Documentation")][24.Documentation]]
+** TODO [[elisp:(info-other-window "(elisp)Files")][25.Files]]
+** TODO [[elisp:(info-other-window "(elisp)Backups and Auto-Saving")][26.Backups and Auto-Saving]]
+** TODO [[elisp:(info-other-window "(elisp)Buffers")][27.Buffers]]
+** TODO [[elisp:(info-other-window "(elisp)Windows")][28.Windows]]
+** TODO [[elisp:(info-other-window "(elisp)Frames")][29.Frames]]
+** TODO [[elisp:(info-other-window "(elisp)Positions")][30.Positions]]
+** TODO [[elisp:(info-other-window "(elisp)Markers")][31.Markers]]
+** TODO [[elisp:(info-other-window "(elisp)Text")][32.Text]]
+** TODO [[elisp:(info-other-window "(elisp)Non-ASCII Characters")][33.Non-ASCII Characters]]
+** TODO [[elisp:(info-other-window "(elisp)Searching and Matching")][34.Searching and Matching]]
+** TODO [[elisp:(info-other-window "(elisp)Syntax Tables")][35.Syntax Tables]]
+** TODO [[elisp:(info-other-window "(elisp)Abbrevs")][36.Abbrevs and Abbrev Expansion]]
+** TODO [[elisp:(info-other-window "(elisp)Threads")][37.Threads]]
+** TODO [[elisp:(info-other-window "(elisp)Processes")][38.Processes]]
+** TODO [[elisp:(info-other-window "(elisp)Display")][39.Emacs Display]]
+** TODO [[elisp:(info-other-window "(elisp)Operating Interface")][40.Operating System Interface]]
+** TODO [[elisp:(info-other-window "(elisp)Packaging")][41.Preparing Lisp code for distribution]]
