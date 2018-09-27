@@ -1,1 +1,65 @@
 #+TITLE: Info Document Elisp
+#+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
+
+* TODO Emacs Lisp Document [1/41]
+
+** DONE [[elisp:(info-other-window%20"(info)Introduction")][1.Introduction]]
+   CLOSED: [2018-09-27 四 00:10]
+   - State "DOING"      from "TODO"       [2018-09-26 三 23:41]
+** DOING 2.Lisp Data Types
+   - State "DOING"      from "TODO"       [2018-09-27 四 00:10]
+*** Primitive types
+    Each object blongs to one and only one primitive type.
+    - integer
+    - float
+    - cons
+    - symbol
+    - string
+    - vector
+    - hash-table
+    - subr
+    - byte-code function
+    - record
+    - buffer
+    
+    Such type declarations do not exist in Emacs Lisp.
+    
+** TODO 3.Numbers
+** TODO 4.Strings and Characters
+** TODO 5.List
+** TODO 6.Sequences, Arrays, and Vectors
+** TODO 7.Records
+** TODO 8.Hash Tables
+** TODO 9.Symbols
+** TODO 10.Evaluation
+** TODO 11.Control Structure
+** TODO 12.Variables
+** TODO 13.Functions
+** TODO 14.Macros
+** TODO 15.Customization Settings
+** TODO 16.Loading
+** TODO 17.Byte Compilation
+** TODO 18.Debugging Lisp Programs
+** TODO 19.Reading and Printing List Objects
+** TODO 20.Minibuffers
+** TODO 21.Command Loop
+** TODO 22.Keymaps
+** TODO 23.Major and Minor Modes
+** TODO 24.Documentation
+** TODO 25.Files
+** TODO 26.Backups and Auto-Saving
+** TODO 27.Buffers
+** TODO 28.Windows
+** TODO 29.Frames
+** TODO 30.Positions
+** TODO 31.Markers
+** TODO 32.Text
+** TODO 33.Non-ASCII Characters
+** TODO 34.Searching and Matching
+** TODO 35.Syntax Tables
+** TODO 36.Abbrevs and Abbrev Expansion
+** TODO 37.Threads
+** TODO 38.Processes
+** TODO 39.Emacs Display
+** TODO 40.Operating System Interface
+** TODO 41.Preparing Lisp code for distribution
