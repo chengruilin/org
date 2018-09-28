@@ -1,13 +1,14 @@
 #+TITLE: Info Document Elisp
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
 
-* DOING Emacs Lisp Document [1/41]
+* DOING Emacs Lisp Document [2/41]
   - State "DOING"      from "TODO"       [2018-09-27 四 12:17]
 
 ** DONE [[elisp:(info-other-window%20"(elisp)Introduction")][1.Introduction]]
    CLOSED: [2018-09-27 四 00:10]
    - State "DOING"      from "TODO"       [2018-09-26 三 23:41]
-** DOING [[elisp:(info-other-window "(elisp)Lisp Data Types")][2.Lisp Data Types]
+** DONE [[elisp:(info-other-window "(elisp)Lisp Data Types")][2.Lisp Data Types]]
+   CLOSED: [2018-09-27 四 23:59]
    - State "DOING"      from "TODO"       [2018-09-27 四 00:10]
 *** Primitive types
     Each object blongs to one and only one primitive type.
@@ -24,8 +25,130 @@
     - buffer
 
     Such type declarations do not exist in Emacs Lisp.
+    A Lisp variables can have any type of value, and it remembers whatever value you store in it, type and all.
+    
+    Variables with Restricted Values:a small number of Emacs Lisp variables can only take on values of a certain type.
 
-** TODO [[elisp:(info-other-window "(elisp)Numbers")][3.Numbers]]
+*** Printed Representation 
+*** Comments
+    #+BEGIN_SRC elisp
+    ;; This is a commnet.
+    '(this is the code)
+    #+END_SRC
+*** Programming Type
+    | type                     | example                                  | description                                                                     |
+    |--------------------------+------------------------------------------+---------------------------------------------------------------------------------|
+    | Integer Type             | '-1','1','+1','1.'                       | The range depends on the machine.                                               |
+    | Floating-Point Type      | '1500.0','+15e2','15.0e+2','+1500000e-3' | Uses the C data type 'double' to store the value                                |
+    | Chatacter Type           | 'A','?B','?\n'                           |                                                                                 |
+    | Symbol Type              | 'foo','FOO'                              | A "symbol" in GNU Emacs List is an object with a name                           |
+    | Sequence Type            |                                          | "lists" and "arrays"                                                            |
+    | Cons Cell Type           |                                          | "CAR" & "CDR", A Lisp list thus works as a "linked list" built up of cons cells |
+    | Array Type               |                                          | one-dimensional, number of slots for holding/ referring Lisp objects            |
+    | String Type              |                                          | an array of characters                                                          |
+    | Vector Type              | [1 "two" (three)]                        | one-dimensional array of elements of any type                                   |
+    | Chat-Table Type          |                                          | one-dimensional array of elements of any type, indexed by character codes.      |
+    | Bool-Vector Type         |                                          | one-dimensional array elements must be 't' or 'nil'                             |
+    | Hash Table Type          |                                          | a very fast kind of lookup table                                                |
+    | Function Type            |                                          | In Lisp, functions are also Lisp objects.                                       |
+    | Marco Type               |                                          | an object much like a function. CDR is a Lisp function object, include 'lambda' |
+    | Primitive Funcetion Type |                                          | function callable from Lisp written in C language                               |
+    | Byte-Code Type           |                                          | byte-compiling Lisp code                                                        |
+    | Record Type              |                                          | much like a vector. create objects with new types not build into Emacs          |
+    | Type Descriptors         |                                          | is a 'record' holds infomateion about a type                                    |
+    | Autoload Type            |                                          | a list whose first element is the symbol 'autoload'                             |
+    | Finalizer Type           |                                          | helps clean up after objects that are no longer needed                          |
+
+*** Editing Types
+    | Type                      | description                                                                            |
+    |---------------------------+----------------------------------------------------------------------------------------|
+    | Buffer Type               | hold text that can be edited                                                           |
+    | Marker Type               | denotes a position in a specific buffer                                                |
+    | Window Type               | describes the portion of the terminal screen that Emacs uses to display a buffer       |
+    | Frame Type                | a screen area that contains one or more Emacs windows                                  |
+    | Terminal Type             | a device capable of displaying one or more Emacs frames                                |
+    | Window Configuration Type | stores information about the positions, sizes, and content of the window in a frame    |
+    | Frame Configuration Type  | stores information about the positions, sizes, and content of the window in all frames |
+    | Process Type              | usually means a running program                                                        |
+    | Thread Type               | a separate thread of Emacs Lisp execution                                              |
+    | Mutex Type                | an exclusive lock that threads can own and disown, for synchronize                     |
+    | Condition Variable Type   | a device for a more complex thread synchronization than the one supported by a mutex   |
+    | Stream Type               | an object can be used as a source or sink for characters                               |
+    | Keymap Type               | maps keys typed by the user to commands                                                |
+    | Overlay Type              | specifies properties that apply to a part of a buffer                                  |
+    | Font Type                 | specifies how to diaplay text on a graphical terminal                                  |
+
+*** Circular Objects
+    To represent shared or circular structures within a complex Lisp objects;
+    You can use the reader constructs '#N=' and '#N#'
+    #+BEGIN_SRC elisp
+    '(#1=(a) b #1#)
+    equals
+    ((a) b (a))
+    #+END_SRC
+
+*** Type Predicates
+    Check the types of any arguments
+    #+BEGIN_SRC elisp
+    ;; error -> Wrong type argument: number-or-mark-p, a 
+    (+ 2 'a)
+    #+END_SRC
+
+*** Equality Predicates
+    Here we describe functions that test for equality between two objects.
+    #+BEGIN_SRC elisp
+    ;; result is 't'
+    (eq 'foo 'foo)
+
+    ;; result is nil
+    (eq "asdf" "asdf")
+    #+END_SRC
+
+** DOING [[elisp:(info-other-window "(elisp)Numbers")][3.Numbers]]
+   - State "DOING"      from "TODO"       [2018-09-28 五 00:15]
+
+*** Integer Basics
+    The minimum range is −536,870,912 to 536,870,911 (30 bits; i.e., −2**29 to 2**29 −1).
+    Many machines provide a wider range.
+
+    '#' followed by a letter specifies the radix:
+    #+BEGIN_SRC elisp
+      '(#b101100) ;; b for binary
+      '(#o54)     ;; o for octal
+      '(#x2c)     ;; x for hex
+      '(#24r1k)   ;; #RADIXrINTEGER
+
+      (+ most-positive-fixnum 0) ;; largest integer
+      (+ most-negative-fixnum 0) ;; smallest integer
+    #+END_SRC
+
+*** Floating-Point Basics
+    #+BEGIN_SRC elisp
+      (/ 0.0 0.0)         ;; = 0.0e+NaN
+      (isnan (/ 0.0 0.0)) ;; = t
+      (frexp 10.0)        ;; = (0.625 . 4)
+      (ldexp 1.5 2)       ;; = 6.0
+      (copysign 2.3 -1.3) ;; = -2.3
+      (logb 2.2)          ;; = 1
+    #+END_SRC
+    
+*** Predicates on Numbers
+    #+BEGIN_SRC elisp
+      (floatp 1.2)     ;; = t
+      (integerp 2)     ;; = t
+      (numberp "aaa")  ;; = nil
+      (natnump 11.2)   ;; = nil
+      (zerop 0)        ;; = t
+      (= 2 0)          ;; = nil
+    #+END_SRC
+
+*** Comparison of Numbers
+    #+BEGIN_SRC elisp
+      (= 1 2)         ;; = nil
+      (eql 3.20 3.2)  ;; = t
+      (/= 3 7)        ;; = t
+      (/= 3 3)        ;; = nil
+    #+END_SRC
 ** TODO [[elisp:(info-other-window "(elisp)Strings and Characters")][4.Strings and Characters]]
 ** TODO [[elisp:(info-other-window "(elisp)List")][5.List]]
 ** TODO [[elisp:(info-other-window "(elisp)Sequences Arrays Vectors")][6.Sequences, Arrays, and Vectors]]
