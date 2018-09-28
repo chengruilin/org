@@ -1,7 +1,7 @@
 #+TITLE: My GTDs
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e@)
 #+STARTUP: overview
-#+TAGS: @work(w) @read(r) @code(c) @emacs(e) @key_map(k) @develop(d)
+#+TAGS: @work(w) @read(r) @code(c) @emacs(e) @develop(d)
 
 * Work
 
@@ -10,7 +10,6 @@
 * Emacs
 
 ** Problem                                                          :@emacs:
-
 *** sogou input method not work
     update emacs.desktop "Exec=env LC_CTYPE=zh_CN.UTF-8 emacs25 %F"
 
@@ -23,14 +22,14 @@
 ** DOING [[file:books/being_friends_with_time.org][把时间当作朋友]]                                              :@read:
    - State "DOING"      from "TODO"       [2018-09-21 五 11:54]
 
-** DONE [[file:doc/doc_info_org_mode.org][Org Mode Document]]                                             :@read:
+** DONE [[file:doc/doc_info_org_mode.org][Org Mode Document]]                                     :@read:@emacs:
    CLOSED: [2018-09-25 二 21:54]
    - State "DONE"       from "DOING"      [2018-09-25 二 21:54] \\
      Finish reading org-mode ducoment. Some chapter read when use.
    - State "DOING"      from "TODO"       [2018-09-21 五 11:54]
 
-** TODO [[file:doc/doc_info_elisp.org][Elisp Document]]                                               :@read:
-
+** DOING [[file:doc/doc_info_elisp.org][Elisp Document]]                                       :@read:@emacs:
+   - State "DOING"      from "TODO"       [2018-09-27 四 12:04]
 * Source Code
 ** TODO [[file:code/read_weex_source_code.org][Weex]]                                                         :@code:
    DEADLINE: <2018-11-09 五>
@@ -38,6 +37,7 @@
 ** TODO [[file:code/read_flutter_source_code.org][Flutter]]                                                      :@code:
    DEADLINE: <2018-11-23 五>
 
+** TODO [[file:code/read_java_source_code.org][Java]]                                                         :@code:
 * Develop
 ** TODO Ebiz Core Android Studio Plugin                           :@develop:
    DEADLINE: <2018-12-07 五>
