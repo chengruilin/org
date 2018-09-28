@@ -112,6 +112,29 @@
 ;; lognot function -> return bitwise complement of its argument
 (lognot 5)        ;= -6 0000...000101 -> 1111...111010 (30 bits total)
 
+;; Math Functions
+;; Argument为弧度，角度 != 弧度
+;; 弧度 = (PI * 角度) / 180.0
+(/ (* float-pi 90) 180)   ;= 1.572693
+(sin 1.572963)            ;= 0.99999 近似于 sin90度 = 1
+(cos 1.572963)            ;= 0.002   近似与 cos90度 = 0
+(/ (* float-pi 45) 180)   ;= 0.7864815
+(tan 0.7864815)           ;= 1.002 近似于 tan45度 = 1
+;;asin function -> X > -PI/2 && X < PI/2 && sinX=Y -> (asin Y) = X (Y超过[-1,1]返回NaN)
+(asin 1)                  ;= 1.57
+;;acos function -> X > 0 && X < PI && cosX=Y -> (acos Y) = X (Y超过[-1,1]返回NaN)
+(acos 0)                  ;= 1.57
+;;atan function -> X > -PI/2 && X < PI/2 && atanX=Y -> (atan Y) = X
+(atan 1)                  ;= 0.78
+(atan 1 2)                ;= 0.46 is the angle in radians between the vector [1, 2] and the 'X' axis
+;; exp function
+(exp 1)                   ;= 2.718 return
+;; log function
+(log 4)
+;; expt function -> return X reised to power Y
+(expt 3 2)
+;; sqat
+(sqrt -10)
 
 ;;-------------------- Numbers --------------------
 ;;-------------------- Numbers --------------------

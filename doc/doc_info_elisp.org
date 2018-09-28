@@ -1,4 +1,4 @@
-#+TITLE: Info Document Elisp
+#+TITLE: Info Document of Elisp
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
 
 * DOING Emacs Lisp Document [2/41]
@@ -249,6 +249,30 @@
     #+END_SRC
 
 *** Math Functions
+    #+BEGIN_SRC elisp
+      ;; Argument 为弧度，角度 != 弧度
+      ;; 弧度 = (PI * 角度) / 180.0
+      (/ (* float-pi 90) 180)   ;= 1.572693
+      (sin 1.572963)            ;= 0.99999 近似于 sin90 度 = 1
+      (cos 1.572963)            ;= 0.002   近似与 cos90 度 = 0
+      (/ (* float-pi 45) 180)   ;= 0.7864815
+      (tan 0.7864815)           ;= 1.002 近似于 tan45 度 = 1
+      ;;asin function -> X > -PI/2 && X < PI/2 && sinX=Y -> (asin Y) = X (Y 超过[-1,1]返回 NaN)
+      (asin 1)                  ;= 1.57
+      ;;acos function -> X > 0 && X < PI && cosX=Y -> (acos Y) = X (Y 超过[-1,1]返回 NaN)
+      (acos 0)                  ;= 1.57
+      ;;atan function -> X > -PI/2 && X < PI/2 && atanX=Y -> (atan Y) = X
+      (atan 1)                  ;= 0.78
+      (atan 1 2)                ;= 0.46 is the angle in radians between the vector [1, 2] and the 'X' axis
+      ;; exp function
+      (exp 1)                   ;= 2.718 return
+      ;; log function
+      (log 4)
+      ;; expt function -> return X reised to power Y
+      (expt 3 2)
+      ;; sqat
+      (sqrt -10)
+    #+END_SRC
 ** TODO [[elisp:(info-other-window "(elisp)Strings and Characters")][4.Strings and Characters]]
 ** TODO [[elisp:(info-other-window "(elisp)List")][5.List]]
 ** TODO [[elisp:(info-other-window "(elisp)Sequences Arrays Vectors")][6.Sequences, Arrays, and Vectors]]
@@ -286,4 +310,4 @@
 ** TODO [[elisp:(info-other-window "(elisp)Processes")][38.Processes]]
 ** TODO [[elisp:(info-other-window "(elisp)Display")][39.Emacs Display]]
 ** TODO [[elisp:(info-other-window "(elisp)Operating Interface")][40.Operating System Interface]]
-** TODO [[elisp:(info-other-window "(elisp)Packaging")][41.Preparing Lisp code for distribution]]
+** TODO [[elisp:(info-other-window "(elisp)Packaging")][41.Preparing Lisp code for distribut
