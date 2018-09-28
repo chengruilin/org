@@ -144,10 +144,37 @@
 
 *** Comparison of Numbers
     #+BEGIN_SRC elisp
-      (= 1 2)         ;; = nil
-      (eql 3.20 3.2)  ;; = t
-      (/= 3 7)        ;; = t
-      (/= 3 3)        ;; = nil
+      ;; Comparison of Numbers
+      (= 2 2)         ;= t
+      (eql 2 3)       ;= nil
+      (/= 2 3)        ;= t
+      (/= 2 2)        ;= nil
+      (< 3 4)         ;= t
+      (<= 3 4)        ;= t
+      (> 4 5)         ;= nil
+      (>= 3 5)        ;= nil
+      (max 2 4 10 9)  ;= 10
+      (min 2 4 10 9)  ;= 2
+      (abs -9)        ;= 9
+    #+END_SRC
+
+*** Numeric Conversions
+    #+BEGIN_SRC elisp
+      ;; Numeric Conversions
+      (float 2)       ;= 2.0
+      (truncate 2.23) ;= 2
+      (floor 3.65)    ;= 3
+      (floor -1.7)    ;= -2
+      (ceiling 1.2)   ;= 2
+      (ceiling -2.9)  ;= -2
+      (round 1.2)     ;= 1
+      (round -1.2)    ;= -1
+      (round -1.7)    ;= -2
+    #+END_SRC
+    
+*** Arithmetic Operations
+    #+BEGIN_SRC elisp
+    
     #+END_SRC
 ** TODO [[elisp:(info-other-window "(elisp)Strings and Characters")][4.Strings and Characters]]
 ** TODO [[elisp:(info-other-window "(elisp)List")][5.List]]
