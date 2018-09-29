@@ -324,10 +324,11 @@
 ;; capitalize function -> capitalize the word of strings
 (capitalize "the cat in the hat")           ;= "The Cat In The Hat"
 (capitalize ?x)                             ;= 88
-;; 
+;; capitalize-initials function
 (upcase-initials "The CAT in the hAt")      ;= "The CAT In The HAt"
 
-
+;; Case Table
+(case-table-p "key")                        ;= nil
 
 ;;-------------------- Numbers --------------------
 ;;-------------------- Numbers --------------------

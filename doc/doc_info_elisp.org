@@ -1,7 +1,7 @@
 #+TITLE: Info Document of Elisp
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
 
-* DOING Emacs Lisp Document [3/41]
+* DOING Emacs Lisp Document [4/41]
   - State "DOING"      from "TODO"       [2018-09-27 四 12:17]
 
 ** DONE [[elisp:(info-other-window%20"(elisp)Introduction")][1.Introduction]]
@@ -281,7 +281,8 @@
       (random)            ; = X X >=0 && X < 100
       (random 100)        ; = X X > most-negative-fixnum && X < most-positive-fixnum
     #+END_SRC
-** DOING [[elisp:(info-other-window "(elisp)Strings and Characters")][4.Strings and Characters]]
+** DONE [[elisp:(info-other-window "(elisp)Strings and Characters")][4.Strings and Characters]]
+   CLOSED: [2018-09-29 Sat 18:08]
    - State "DOING"      from "TODO"       [2018-09-29 六 10:13]
 *** String Basics
     A character is a Lisp object which represents a single character of text.
@@ -468,8 +469,39 @@
     #+END_SRC
 *** Case Conversion
     #+BEGIN_SRC elisp
-    
+      ;; downcase function -> convert string or char to lower case
+      (downcase "AAAbbbCCC")                      ;= "aaabbbccc"
+      (print ?X)                                  ;= 88
+      (downcase ?X)                               ;=120
+      ;; upcase function -> convert string or char to upper case
+      (upcase "aaaBBBccc")                        ;="AAABBBCCC"
+      (print ?X)                                  ;= 88
+      (upcase ?x)                                 ;= 88
+      ;; capitalize function -> capitalize the word of strings
+      (capitalize "the cat in the hat")           ;= "The Cat In The Hat"
+      (capitalize ?x)                             ;= 88
+      ;; capitalize-initials function
+      (upcase-initials "The CAT in the hAt")      ;= "The CAT In The HAt"
     #+END_SRC
+*** Case Table
+    You can customize case conversion by installing a special 'case table'.
+    #+NAME: Case Table functions
+    | function                | description                                                        | example                                |
+    |-------------------------+--------------------------------------------------------------------+----------------------------------------|
+    | case-table-p            | 'nil' if OBJECT is valid case table                                | case-table-p object                    |
+    | set-standard-case-table | make TABLE the standard case table                                 | set-standard-case-table table          |
+    | standard-case-table     | Return the standard case table                                     |                                        |
+    | current-case-table      | Return the current buffer's case table                             |                                        |
+    | set-case-table          | Set the current buffer's case table                                | set-case-table table                   |
+    | set-case-synctax-pair   | Specifies a pair of corresponding letters                          | set-case-synctax-pair uc lc case-table |
+    | set-case-syntax-delims  | Make characters L and R matching pair of case-invariant delimiters | set-case-synctax-delims l r case-table |
+    | set-case-syntax         | Make CHAR case-invariant, with synctax SYNTAX                      | set-case-syntax char syntax case-table |
+
+    #+NAME: Case Table Macro
+    | macro           | description                                            | example                    |
+    |-----------------+--------------------------------------------------------+----------------------------|
+    | with-case-table | save the current case table, make TABLE the case table | with-case-table table body |
+
 ** TODO [[elisp:(info-other-window "(elisp)List")][5.List]]
 ** TODO [[elisp:(info-other-window "(elisp)Sequences Arrays Vectors")][6.Sequences, Arrays, and Vectors]]
 ** TODO [[elisp:(info-other-window "(elisp)Records")][7.Records]]
