@@ -24,6 +24,7 @@
 
 ;; Comparison of Numbers
 (= 2 2)         ;= t
+(eq "2" "2")    ;= nil
 (eql 2 3)       ;= nil
 (/= 2 3)        ;= t
 (/= 2 2)        ;= nil
@@ -270,6 +271,61 @@
 (append "cba" (list "a" "b"))        ;= (99 98 97 "a" "b")
 ;; byte-to-string function -> convert a byte to unibyte string
 (byte-to-string 98)                  ;= "b"
+
+;; Formatting Strings
+;; format function -> return a string equal to STRING
+(progn
+  (setq x "foo")
+  (eq x (format "%s" x)))                               ;= t object x and (format "%s" x) is the same object
+;; %s -> Replace, Without quoting
+(format "%s is his name." "Tom")                        ;= "Tom is his name"
+;; %S -> Replace, With quoting
+(format "%S is his name." "Tom")                        ;= "\"Tom\" is his name"
+;; %o -> Replace, with base-eight representation of a unsigned integer
+(format "The value is %o." 10)                         ;= "The value is 12."
+;; %d -> Replace, with base-ten representation of a signed integer
+(format "The value is %d." 10)                         ;= "The value is 10."
+;; %x -> Replace, with base-sixteen representation of an unsigned integer, lower case
+(format "The value is %x." 12)                         ;= "The value is c."
+;; %X -> Replace, with base-sixteen representation of an unsigned integer, upper case
+(format "The value is %X." 90)                         ;= "The value is 5A."
+;; %c -> Replace, with character
+(format "The value is %c." 65)                         ;= "The value is A."
+;; %e -> Replace, with exponential notation for a floating-point number
+(format "The value is %e." 65000000)                   ;= "The value is 6.500000e+07"
+;; %f -> Replace, with decimal-point notation for a floating-point number
+(format "The value is %f." 65.23)                      ;= "The value is 65.230000."
+;; %% -> Replace, with a single '%'
+(format "The value is %%%d." 65)                       ;= "The value is %65."
+
+(format "%2$s, %3$s, %%, %1$s" "x" "y" "z")            ;= "y, z, %, x"
+(format "%06d is padded on the left with zeros" 123)   ;= "000123 is padded on the left with zeros"
+(format "'%-6d' is padded on the right" 123)           ;= "'123   ' is padded on the right"
+(format "The word '%-7s' actually has %d letters in it."
+        "foo" (length "foo"))                          ;= "The word 'foo    ' actually has 3 letters in it."
+(format "%5d is padded on the left with spaces" 123)   ;= "  123 is padded on the left with spaces"
+(format "The word '%7s' has %d letters in it."
+        "foo" (length "foo"))                          ;= "The word '    foo' has 3 letters in it."
+(format "The word '%7s' has %d letters in it."
+        "specification" (length "specification"))      ;= "The word 'specification' has 13 letters in it."
+;; format-message function -> like 'format'
+(format-message
+ "The name of this buffer is ‘%s’." (buffer-name))   ;= "The name of this buffer is ‘c2_lisp_bdata_type.el’."
+
+;; Case Conversion
+;; downcase function -> convert string or char to lower case
+(downcase "AAAbbbCCC")                      ;= "aaabbbccc"
+(print ?X)                                  ;= 88
+(downcase ?X)                               ;=120
+;; upcase function -> convert string or char to upper case
+(upcase "aaaBBBccc")                        ;="AAABBBCCC"
+(print ?X)                                  ;= 88
+(upcase ?x)                                 ;= 88
+;; capitalize function -> capitalize the word of strings
+(capitalize "the cat in the hat")           ;= "The Cat In The Hat"
+(capitalize ?x)                             ;= 88
+;; 
+(upcase-initials "The CAT in the hAt")      ;= "The CAT In The HAt"
 
 
 
