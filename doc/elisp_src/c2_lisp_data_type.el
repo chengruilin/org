@@ -435,8 +435,23 @@
 (number-sequence 5 8 -1)       ;= nil
 (number-sequence 1.5 6 2)      ;= (1.5 3.5 5.5)
 
-
-
+;; Modifying List Variables
+;; push macro -> create a new list whose CAR is ELEMENT and whose CDR is the list
+(setq l '(a b))                ;= (a b)
+(push 'c l)                    ;= (c a b)
+(pop l)                        ;= c
+;; add-to-list function -> set the variable SYMBOL by consing ELEMENT onto the old value(if ElEMENT is not already a member of that value)
+(setq foo '(a b))              ;= (a b)
+(add-to-list 'foo 'c)          ;= (c a b)
+(add-to-list 'foo 'b)          ;= (c a b)
+;; add-to-ordered-listp function -> set the variable SYMBOL
+(setq foo '())                 ;= nil
+(add-to-ordered-list 'foo 'a 1);= (a)
+(add-to-ordered-list 'foo 'c 3);= (a c)
+(add-to-ordered-list 'foo 'b 2);= (a b c)
+(add-to-ordered-list 'foo 'b 4);= (a c b)
+(add-to-ordered-list 'foo 'd)  ;= (a c b d)
+(add-to-ordered-list 'foo 'e)  ;= (a c b e d)
 
 ;;-------------------- Numbers --------------------
 ;;-------------------- Numbers --------------------
