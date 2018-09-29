@@ -502,7 +502,7 @@
     |-----------------+--------------------------------------------------------+----------------------------|
     | with-case-table | save the current case table, make TABLE the case table | with-case-table table body |
 
-** DOING [[elisp:(info-other-window "(elisp)List")][5.List]]
+** DOING [[elisp:(info-other-window%20"(elisp)Lists")][5.List]]
    - State "DOING"      from "TODO"       [2018-09-29 Sat 18:09]
 *** Cons Cells
     - Lists in Lisp are not a primitive data type; they are built up from 'cons cells'.
@@ -641,6 +641,86 @@
       (add-to-ordered-list 'foo 'e)  ;= (a c b e d)
     #+END_SRC
 *** Modifying Lists
+**** Setcar
+     Replacing an element in a list.
+     #+BEGIN_SRC elisp
+
+       ;; setcar function -> sotre OBEJCT as the new CAR of CONS replacing its previous CAR
+       (setq x '(1 2))                ;= (1 2)
+       (setcar x 4)                   ;= 4
+       x                              ;= (4 2)
+       ;; when a cons cell is part of the shared structure of serveral lists.
+       ;; storing a new CAR into the cons changes one element of each of these lists:
+       (setq x1 '(a b c))             ;= (a b c)
+       (setq x2 (cons 'z (cdr x1)))   ;= (z b c)
+       (setcar (cdr x1) 'foo)
+       x1                             ;= (a foo c)
+       x2                             ;= (z foo c)
+       ;; Replace the CAR of a link that is not shared
+       (setcar x1 'baz)         ;= baz
+       x1                       ;= (baz foo c)
+       x2                       ;= (z foo c)
+     #+END_SRC
+     
+     Here is the graphical show the changes:
+     #+BEGIN_EXAMPLE
+              --- ---        --- ---      --- ---
+     x1---> |   |   |----> |   |   |--> |   |   |--> nil
+             --- ---        --- ---      --- ---
+              |        -->   |            |
+              |       |      |            |
+               --> a  |       --> b        --> c
+                      |
+            --- ---   |
+     x2--> |   |   |--
+            --- ---
+             |
+             |
+              --> z
+
+     #+END_EXAMPLE
+**** Setcdr
+     Replacing part of the list backbone.
+     This can be used to remove or add elements.
+     #+BEGIN_SRC elisp
+       ;; setcdr function -> stores OBJECT as the new CDR of CONS, replacing its previous CDR.
+       (setq x '(1 2 3))              ;= (1 2 3)
+       (setcdr x '(4))                ;= (4)
+       x                              ;= (1 4)
+       ;; You can delete elemnts froom the middle of a list by altering the CDRs of the cons cells in the list.
+       (setq x1 '(a b c))             ;= (a b c)
+       (setcdr x1 (cdr (cdr x1)))     ;= (c)
+       x1                             ;= (a c)
+       ;; It is equally easy to inert a new elment by changing CDRs
+       (setq x1 '(a b c))             ;= (a b c)
+       (setcdr x1 (cons 'd (cdr x1))) ;=(d b c)
+       x1                             ;=(a d b c)
+     #+END_SRC
+
+     Here is this result in box notation:
+     #+BEGIN_EXAMPLE
+                        --------------------
+                       |                    |
+      --------------   |   --------------   |    --------------
+     | car   | cdr  |  |  | car   | cdr  |   -->| car   | cdr  |
+     |   a   |   o-----   |   b   |   o-------->|   c   |  nil |
+     |       |      |     |       |      |      |       |      |
+      --------------       --------------        --------------
+
+     #+END_EXAMPLE
+**** Rearrangement
+     Recording the elements in a list;combining lists. 
+     #+BEGIN_SRC elisp
+       ;; nconc function -> return a list containing all the elements of LISTS
+       (setq x '(1 2 3))              ;= (1 2 3)
+       (nconc x '(4 5))               ;= (1 2 3 4 5)
+       x                              ;= (1 2 3 4 5)
+       ;; The last argument of 'nconc' is not itself modified:
+       (setq x1 '(1 2 3))             ;= (1 2 3)
+       (nconc x1 'z)                  ;= (1 2 3 . z)
+       x1                             ;= (1 2 3 . z)
+     #+END_SRC
+*** Sets And Lists
 ** TODO [[elisp:(info-other-window "(elisp)Sequences Arrays Vectors")][6.Sequences, Arrays, and Vectors]]
 ** TODO [[elisp:(info-other-window "(elisp)Records")][7.Records]]
 ** TODO [[elisp:(info-other-window "(elisp)Hash Tables")][8.Hash Tables]]
