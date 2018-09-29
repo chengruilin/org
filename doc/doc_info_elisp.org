@@ -398,8 +398,32 @@
       (assoc-string "key" (list "keys" "aaa" "KEY") t)              ;= "key"
     #+END_SRC
 *** String Conversion
+    Describs functions for converting between characters, strings, and integers.
     #+BEGIN_SRC elisp
-    
+      ;; number-to-string function -> convert a NUMBER to string
+      (number-to-string 222)               ;= "222"
+      (number-to-string 0222)              ;= "222"
+      (number-to-string -22)               ;= "-22"
+      (int-to-string 22)                   ;= "22" a semi-obsolete alias for this function
+      ;; string-to-number function -> return the numeric value of the characters in STRING
+      (string-to-number "256")             ;= 256
+      (string-to-number "256 is a number") ;= 256
+      (string-to-number "Number 22")       ;= 0
+      (string-to-number "-4.5")            ;= -4.5
+      ;; char-to-string function
+      (char-to-string ?x)                  ;= "x"
+      ;; string-to-char function -> return the first character in STRING (a integer value)
+      (string-to-char "")                  ;= 0
+      (string-to-char "a")                 ;= 97
+      ;; concat function -> vonverts a vector or a list into a string
+      (concat "aaa" "bbb" "ccc")           ;= "aaabbbccc"
+      (concat "list-" (list 97 98 99 100)) ;= "list-abcd"
+      ;; vconcat function -> vonvert a string into a vector
+      (vconcat "abc")                      ;= [97 98 99]
+      ;; append function -> convert a string into a list
+      (append "cba" (list "a" "b"))        ;= (99 98 97 "a" "b")
+      ;; byte-to-string function -> convert a byte to unibyte string
+      (byte-to-string 98)                  ;= "b"
     #+END_SRC
 ** TODO [[elisp:(info-other-window "(elisp)List")][5.List]]
 ** TODO [[elisp:(info-other-window "(elisp)Sequences Arrays Vectors")][6.Sequences, Arrays, and Vectors]]
