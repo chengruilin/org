@@ -1,7 +1,7 @@
 #+TITLE: Info Document of Elisp
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
 
-* DOING Emacs Lisp Document [2/41]
+* DOING Emacs Lisp Document [3/41]
   - State "DOING"      from "TODO"       [2018-09-27 四 12:17]
 
 ** DONE [[elisp:(info-other-window%20"(elisp)Introduction")][1.Introduction]]
@@ -104,7 +104,8 @@
     (eq "asdf" "asdf")
     #+END_SRC
 
-** DOING [[elisp:(info-other-window "(elisp)Numbers")][3.Numbers]]
+** DONE [[elisp:(info-other-window "(elisp)Numbers")][3.Numbers]]
+   CLOSED: [2018-09-29 六 10:12]
    - State "DOING"      from "TODO"       [2018-09-28 五 00:15]
 
 *** Integer Basics
@@ -273,7 +274,133 @@
       ;; sqat
       (sqrt -10)
     #+END_SRC
-** TODO [[elisp:(info-other-window "(elisp)Strings and Characters")][4.Strings and Characters]]
+
+*** Random Numbers
+    #+BEGIN_SRC elisp
+      ;; random function -> return random number in interval [0,LIMIT]
+      (random)            ; = X X >=0 && X < 100
+      (random 100)        ; = X X > most-negative-fixnum && X < most-positive-fixnum
+    #+END_SRC
+** DOING [[elisp:(info-other-window "(elisp)Strings and Characters")][4.Strings and Characters]]
+   - State "DOING"      from "TODO"       [2018-09-29 六 10:13]
+*** String Basics
+    A character is a Lisp object which represents a single character of text.
+    A string is a fixed sequence of characters.
+    Since strings are arrays, you can operate on them with general array and sequence functions.
+*** Predicates for Strings
+    #+BEGIN_SRC elisp
+      ;; Predicates for Strings
+      ;; stringp function -> check argument is a string nor not
+      (stringp "asd")    ;= t
+      (stringp 1)        ;= nil
+      (stringp nil)      ;= nil
+      (stringp 'a')      ; error!
+      ;; string-or-null-p function -> check argument is a string or 'nil'
+      (string-or-null-p nil)    ;= t
+      (string-or-null-p "aab")  ;= t
+      (string-or-null-p 12)     ;= nil
+      ;; char-or-string-p function -> check argument is a string or a character(i.e., an integer)
+      (char-or-string-p "asd")  ;= t
+      (char-or-string-p 12)     ;= t
+      (char-or-string-p ?a)     ;= t
+      (char-or-string-p nil)    ;= nil
+    #+END_SRC
+*** Creating Strings
+    #+BEGIN_SRC elisp
+      ;; make-string function -> made up of COUNT repetition of CHARACTER. COUNT must >= 0
+      (make-string 4 ?x)                          ;= "xxxx"
+      (make-string 0 ?x)                          ;= ""
+      (make-string -1 ?)                          ; error!
+      ;; string function -> contain the characters
+      (string ?a ?b ?c)                           ;= "abc"
+      ;; substring function -> return a new string consists of those characters[START, END]
+      (substring "abcdefg" 0 3)                   ;= "abc"
+      (substring "abcdefg")                       ;= "abcdefg" just copy the string
+      (substring "abcdefg" -3 -1)                 ;= "ef" A negative number counts from the end of the string
+      (substring "abcdefg" -3 nil)                ;= "efg" 'nil' used for END, it stands for the length for the string.
+      (substring "abcdefg" 0)                     ;= "abcdefg" retun a copy of string
+      (substring [a b (c)] 1 3)                   ;= [b (c)] also accepts a vector for the first argument
+      ;; substring-no-properties function -> works like substring, but discards all text properties
+      (substring-no-properties "abcdefg" 0 3)     ;= "abc"
+      ;; concat function -> return a new string consisting of the characters in the arguments passed to it
+      (concat "abc" "-def")                       ;= "abc-def"
+      (concat "abc" (list 120 121) [122])         ;= "abcxyz"
+      (concat "abc" nil "-def")                   ;= "abc-def" 'nil' is an empty sequence
+      (concat)                                    ;= ""
+      ;; splite-string function -> splits STRING into substrings
+      (split-string "  tow words ")               ;= ("two" "words")
+      (split-string "  tow words " split-string-default-separators) ;=("" "two" "words" "")
+      (split-string "Soup is good food" "o")      ;= ("S" "up is g" "" "d f" "" "d")
+      (split-string "Soup is good food" "o" t)    ;= ("S" "up is g" "d f" "d")
+      (split-string "Soup is good food" "o+")     ;= ("S" "up is g" "d f" "d")
+      (split-string "aooob" "o*")                 ;= ("" "a" "" "b" "")
+      (split-string "ooaboo" "o*")                ;= ("" "" "a" "b" "")
+      (split-string "" "")                        ;= ("")
+      (split-string "Soup is good food" "o*" t)   ;= ("S" "u" "p" " " "i" "s" " " "g" "d" " " "f" "d")
+      (split-string "Nice doggy!" "" t)           ;= ("N" "i" "c" "e" " " "d" "o" "g" "g" "y" "!")
+      (split-string "ooo" "o*" t)                 ;= nil
+      (split-string "ooo" "\\|o+" t)              ;= ("o", "o", "o")
+    #+END_SRC
+    | variable                        | default value   | description                                        |
+    |---------------------------------+-----------------+----------------------------------------------------|
+    | split-string-defualt-separators | "[ \f\t\n\r\v]" | The default value of SEPARATORS for ~split-string~ |
+*** Modifying Strings
+    #+BEGIN_SRC elisp
+      ;; store-substring function -> alters part of string by index and replace string
+      (store-substring "asdoasdfoa" 0 "insert")   ;= "insertdfoa"
+      ;; clear-string function -> make string a unibyte string and clear its contents to zeros. length change.
+      (clear-string "aaa")                        ;= nil
+      (length (clear-string "abcdefg"))           ;= 0
+    #+END_SRC
+*** Text Comparison
+    #+BEGIN_SRC elisp
+      ;; char-equal function -> check arguments represent the sam character
+      (char-equal ?x ?a)                   ;= nil
+      (char-equal ?x ?x)                   ;= t
+      (let ((case-fold-search nil))
+        (char-equal ?x ?X))                ;= nil ignore differences in case if 'case-fold-search' is non- 'nil'
+      ;; string= function -> check if the two strings match exactly
+      (string= "asdf" "asdf")              ;= t
+      (string= "asdf" "asd")               ;= nil
+      (string= "asdf" "ASDF")              ;= nil
+      ;; string-equal -> another name for 'string='
+      (string-equal "aaa" "aaa")           ;= t
+      (string-collate-equalp "a" "a")      ;= t
+      (string-collate-equalp (string ?\uFF40) (string ?\u1FEF)) ;= t characters with different coding points but the same mean might be considered as equal. Do not use this function compare file names.
+      ;; string< function -> compare two strings a character at a time
+      (string< "aa" "aa")                  ;= nil
+      (string< "aa" "ac")                  ;= t
+      (string< "" "abc")                   ;= t
+      ;; string-lessp function -> another name for 'string<'
+      (string-lessp "aaa" "bbb")           ;= t
+      (string-greaterp "cc" "aa")          ;= t compare in the opposite order, equivalent to (string-lessp "aa" "cc")
+      ;; string-collate-lessp function -> compare two strings in collation order
+      (sort '("11" "12" "1 1" "1 2" "1.1" "1.2") 'string-collate-lessp) ;= ("11" "1 1" "1.1" "12" "1 2" "1.2")
+      ;; string-version-lessp function -> compare numbers in two strings
+      (string-version-lessp "foo2.png" "foo12.png") ;= t
+      ;; string-prefix-p function -> check if string1 is a prefix of string2
+      (string-prefix-p "A" "Abc")          ;= t
+      (string-prefix-p "a" "Abc")          ;= nil
+      (string-prefix-p "a" "Abc" t)        ;= t you can add 'ignore-case' argument
+      ;; string-suffix-p function -> check if string1 is a suffix of string2
+      (string-suffix-p "C" "abC")          ;= t
+      (string-suffix-p "c" "abC")          ;= nil
+      (string-suffix-p "c" "abC" t)        ;= t you can add 'ignore-case' argument
+      ;; compare-strings function -> strings are compared by the numberic values of their characters
+      (compare-strings "abcdefg" 1 3 "bbbbabc" 5 7)                 ;= t "bc" compare with "bc"
+      (compare-strings "abcdefg" 1 3 "bbbbabc" 1 3)                 ;= 2 "bc" compare with "bb"
+      (compare-strings "abcc" 1 3 "bcbc" 1 3)                       ;= -1 "bc" compare with "cb"
+      (compare-strings "abcccccc" 1 5 "ZZZZZZZ" 2 4)                ;= 1
+      (compare-strings "abcccccc" 1 5 "zzzzzzz" 2 4 t)              ;= -1
+      ;; assoc-string function -> like function 'assoc'
+      (assoc-string "key" (list "keys" "aaa" "key"))                ;= "key"
+      (assoc-string "key" (list "keys" "aaa" "KEY"))                ;= nil
+      (assoc-string "key" (list "keys" "aaa" "KEY") t)              ;= "key"
+    #+END_SRC
+*** String Conversion
+    #+BEGIN_SRC elisp
+    
+    #+END_SRC
 ** TODO [[elisp:(info-other-window "(elisp)List")][5.List]]
 ** TODO [[elisp:(info-other-window "(elisp)Sequences Arrays Vectors")][6.Sequences, Arrays, and Vectors]]
 ** TODO [[elisp:(info-other-window "(elisp)Records")][7.Records]]
