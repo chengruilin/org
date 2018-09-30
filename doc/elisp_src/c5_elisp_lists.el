@@ -241,5 +241,21 @@ alist                                ;= ((foo 1) (bar 2) (lose 4))
 trees                                ;= ((pine . cones) (maple . seeds))
 
 ;; Property Lists
-;;
+;; plist-get function -> return the value of the PROPERTY property stored in the property list PLIST
+(plist-get '(foo 4) 'foo)                       ;= 4
+;; plist-put function -> store VALUE as the value of the PROPERTY property in the property list PLIST
+(setq my-plist '(bar t foo 4))                  ;= (bar t foo 4)
+(setq my-plist (plist-put my-plist 'foo 69))    ;= (bar t foo 9)
+;; lax-plist-get function -> like 'plist-get', use 'equal' instead of 'eq'
+(lax-plist-get '("a" 4 "b" 5) "a")              ;= 4
+(plist-get '("a" 4 "b" 5) "a")                  ;= nil
+;; lax-plist-put function -> like 'plist-put', use 'equal' instead of 'eq'
+(setq my-plist '("a" 4 "b" 5))                  ;= ("a" 4 "b" 5)
+(setq my-plist (lax-plist-put my-plist "a" 11)) ;= ("a" 11 "b" 5)
+(setq my-plist (plist-put my-plist "a" 21))     ;= ("a" 11 "b" 5 "a" 21)
+;; plist-member function -> return 'nil' if PLIST not contains the given PROPERTY
+(setq my-plist '(bar t foo 4))
+(plist-member my-plist 'bar)                    ;= (bar t foo 4)
+
+
 
