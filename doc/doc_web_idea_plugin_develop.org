@@ -1,0 +1,10 @@
+#+TITLE: Idea Plugin Develop
+
+
+* Idea Plugin Develop
+
+** The Document links
+  [[http://www.jetbrains.org/intellij/sdk/docs/welcome.html][1.IntelliJ Platform SDK Doc]]
+  [[https://juejin.im/post/599f7f546fb9a0248c2de496][2.Android Studio 插件开发教程 - 简书]]
+  
+** TODO Read the Offical Guide

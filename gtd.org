@@ -30,6 +30,7 @@
 
 ** DOING [[file:doc/doc_info_elisp.org][Elisp Document]]                                       :@read:@emacs:
    - State "DOING"      from "TODO"       [2018-09-27 四 12:04]
+
 * Source Code
 ** TODO [[file:code/read_weex_source_code.org][Weex]]                                                         :@code:
    DEADLINE: <2018-11-09 五>
@@ -38,10 +39,10 @@
    DEADLINE: <2018-11-23 五>
 
 ** TODO [[file:code/read_java_source_code.org][Java]]                                                         :@code:
+
 * Develop
-** TODO Ebiz Core Android Studio Plugin                           :@develop:
-   DEADLINE: <2018-12-07 五>
-   
+** TODO [[file:doc/doc_web_idea_plugin_develop.org][Idea Plugin Develop]]                                       :@develop:
+
 * Workspace
 ** TODO Android 开发入门分享                                         :@work:
    DEADLINE: <2018-11-02 五>

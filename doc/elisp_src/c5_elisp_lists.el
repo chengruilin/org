@@ -137,9 +137,9 @@ x                              ;= (4 2)
 x1                             ;= (a foo c)
 x2                             ;= (z foo c)
 ;; Replace the CAR of a link that is not shared
-(setcar x1 'baz)         ;= baz
-x1                       ;= (baz foo c)
-x2                       ;= (z foo c)
+(setcar x1 'baz)               ;= baz
+x1                             ;= (baz foo c)
+x2                             ;= (z foo c)
 
 ;; setcdr function -> stores OBJECT as the new CDR of CONS, replacing its previous CDR.
 (setq x '(1 2 3))              ;= (1 2 3)
@@ -164,13 +164,25 @@ x                              ;= (1 2 3 4 5)
 (nconc x1 'z)                  ;= (1 2 3 . z)
 x1                             ;= (1 2 3 . z)
 
+;; Sets And Lists
+;; memq function -> test to see wether OBJECT is a member of LIST, return a list starting with the first occurrence of OBJECT.
+(memq 'b '(a b c b a))               ;= (b c b a)
+(memq '(2) '((1) (2)))               ;= nil '(2)' and '(2)' are not 'eq'
+;; delq function -> removes all elements 'eq' to OBJECT from list, and return resulting list.
+(delq 'a '(a b c))                   ;= (b c)
+(delq 'b '(a b c))                   ;= (a c)
+;; remq function -> return a copy of LIST, with all elements removed which are 'eq' to OBEJCT
+(setq sample-list '(a b c a b c))    ;= (a b c a b c)
+(remq 'a sample-list)                ;= (b c b c)
+sample-list                          ;= (a b c a b c)
+;; memql function -> compare members with OBEJCT use 'eql', and return a list starting with the first occurrence of OBJECT.
+(memql 1.2 '(1.1 1.2 1.3))           ;= (1.2 1.3)
+(memq 1.2 '(1.1 1.2 1.3))            ;= nil
+;; member function -> see weather OBJECT is a member of LIST(using 'equal')
+(member '(2) '((1) (2)))             ;= ((2))
+(memq '(2) '((1) (2)))               ;= nil
+(member "foo" '("foo" "bar"))        ;= ("foo" "bar")
+;;
+(setq l '((2) (1) (2)))              ;= ((2) (1) (2))
+(delete '(2) l)                      ;= (1)
 
-
-
-;;-------------------- Numbers --------------------
-;;-------------------- Numbers --------------------
-;;-------------------- Numbers --------------------
-;;-------------------- Numbers --------------------
-;;-------------------- Numbers --------------------
-;;-------------------- Numbers --------------------
-;;-------------------- Numbers --------------------
