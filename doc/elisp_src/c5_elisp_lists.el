@@ -182,7 +182,64 @@ sample-list                          ;= (a b c a b c)
 (member '(2) '((1) (2)))             ;= ((2))
 (memq '(2) '((1) (2)))               ;= nil
 (member "foo" '("foo" "bar"))        ;= ("foo" "bar")
-;;
+;; delete function -> uses 'equal' to compare elements with OBJECT, then cut the element as 'delq' would
 (setq l '((2) (1) (2)))              ;= ((2) (1) (2))
 (delete '(2) l)                      ;= (1)
+;; remove function -> non-desctructive counterpart of 'delete'
+(remove '(2) '((2) (1) (2)))         ;= ((1))
+(remove '(2) [(2) (1) (2)])          ;= [(1)]
+;; member-ignore-case function -> like 'member' but ignores letter-case
+(member-ignore-case "A" '("b" "a" "c")) ;= ("a" "c")
+;; delete-dups function -> Remove all 'equal' duplicates from LIST
+(setq l '((2) (1) (2) (2)))
+(delete-dups l)                      ;= ((2) (1) (2))
+l                                    ;= ((2) (1))
+
+;; Association Lists
+;; assoc function -> return the first association for KEY in ALIST
+(setq trees '((pine . cones) (oak . acorns) (maple . seeds)))
+(assoc 'oak trees)                   ;= (oak . acorns)
+(setq needles-per-cluster
+      '((2 "Austrian Pine" "Red Pine")
+        (3 "Pitch Pine")
+        (5 "White Pine")))
+(cdr (assoc 3 needles-per-cluster))  ;= ("Pitch Pine")
+(cdr (assoc 2 needles-per-cluster))  ;= ("Austrian Pine" "Red Pine")
+;; rassoc function -> return the first association with value in ALIST
+(setq trees '((pine . cones) (oak . acorns) (maple . seeds)))
+(rassoc 'cones trees)                ;= (pine . cones)
+;; assq function -> like 'assoc', but it makes the compare using 'eq'
+(setq trees '((pine . cones) (oak . acorns) (maple . seeds)))
+(assq 'pine trees)                   ;= (pine .cones)
+(setq leaves
+      '(("simple leaves" . oak)
+        ("compound leaves" . horsechestnut)))
+(assq "simple leaves" leaves)        ;= nil
+;; alist-get function -> similar to 'assq', compare KEY, retuen VALUE
+(setq trees '((pine . cones) (oak . acorns) (maple . seeds)))
+(alist-get 'pine trees)              ;= cones
+;; rassq function -> return first compare CDR 'eq' VALUE, return 'nil' if not found
+(setq trees '((pine . cones) (oak . acorns) (maple . seeds)))
+(rassq 'acorns trees)                ;= (oak . acorns)
+(rassq 'aa trees)                    ;= nil
+;; assoc-default function -> search ALIST for a match for KEY
+(assoc-default 'pina trees)          ;= nil
+(assoc-default 'pine trees)          ;= cones
+;; copy-list function -> create a new copy of each association
+(setq trees '((pine . cones) (oak . acorns) (maple . seeds)))
+(copy-list trees)                    ;= ((pine . cones) (oak . acorns) (maple . seeds))
+(setq copy (copy-list trees))
+(eq trees copy)                      ;= nil
+(equal trees copy)                   ;= t
+;; assq-delete-all function -> delete from ALIST all the elements whose CAR is 'eq' to KEY, return eht shortened alist
+(setq alist '((foo 1) (bar 2) (foo 3) (lose 4)))
+(assq-delete-all 'foo alist)         ;= ((bar 2) (lose 4))
+alist                                ;= ((foo 1) (bar 2) (lose 4))
+;; rassq-delete-all function -> delete from ALIST all the elements whose CDR is 'eq' to KEY, return eht shortened alist
+(setq trees '((pine . cones) (oak . acorns) (maple . seeds)))
+(rassq-delete-all 'acorns trees)     ;= ((pine . cones) (maple . seeds))
+trees                                ;= ((pine . cones) (maple . seeds))
+
+;; Property Lists
+;;
 
