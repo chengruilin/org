@@ -830,7 +830,42 @@
        (setq my-plist '(bar t foo 4))
        (plist-member my-plist 'bar)                    ;= (bar t foo 4)
      #+END_SRC
-** TODO [[elisp:(info-other-window "(elisp)Sequences Arrays Vectors")][6.Sequences, Arrays, and Vectors]]
+** DOING [[elisp:(info-other-window "(elisp)Sequences Arrays Vectors")][6.Sequences, Arrays, and Vectors]]
+   - State "DOING"      from "TODO"       [2018-09-30 日 17:59]
+
+*** Summary
+    The "sequence" type is the union of two other Lisp types: lists and arrays.
+    An "array" is a fixed-length object with a slot for each of its elements.
+    #+BEGIN_EXAMPLE
+               _____________________________________________
+              |                                             |
+              |          Sequence                           |
+              |  ______   ________________________________  |
+              | |      | |                                | |
+              | | List | |             Array              | |
+              | |      | |    ________       ________     | |
+              | |______| |   |        |     |        |    | |
+              |          |   | Vector |     | String |    | |
+              |          |   |________|     |________|    | |
+              |          |  ____________   _____________  | |
+              |          | |            | |             | | |
+              |          | | Char-table | | Bool-vector | | |
+              |          | |____________| |_____________| | |
+              |          |________________________________| |
+              |_____________________________________________|
+
+    #+END_EXAMPLE
+
+*** Sequence Functions
+    
+*** Arrays
+*** Array Functions
+*** Vectors
+*** Vector Functions
+*** Char-Tables
+*** Bool-Vectors
+*** Rings
+
 ** TODO [[elisp:(info-other-window "(elisp)Records")][7.Records]]
 ** TODO [[elisp:(info-other-window "(elisp)Hash Tables")][8.Hash Tables]]
 ** TODO [[elisp:(info-other-window "(elisp)Symbols")][9.Symbols]]
