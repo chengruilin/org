@@ -857,6 +857,9 @@
     #+END_EXAMPLE
 
 *** Sequence Functions
+    #+BEGIN_SRC elisp    
+
+    #+END_SRC
     
 *** Arrays
 *** Array Functions
