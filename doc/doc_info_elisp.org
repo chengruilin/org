@@ -994,10 +994,73 @@
     #+END_SRC
     
 *** Arrays
+    An "array" object has slots that hold a number of other Lisp objecs, called the elements of the array.
+    
+    Emacs define four types of array
+    1.strings
+    2.vectors
+    3.bool-vectors
+    4.char-tables
+
+    Array characteristics:
+    1.First element of an array has index zero.
+    2.The length of the array is fixed once you create it(can not change).
+    3.The array is a constant.It evaluates to itself.
+    4.Element may be referenced or changed with the functions 'aref' and 'aset'.
+
 *** Array Functions
+    #+BEGIN_SRC elisp
+      ;; arrayp function -> check whether the argument is an array
+      (arrayp [a])                      ;= t
+      (arrayp "abc")                    ;= t
+      ;;
+      (setq primes [2 3 5 7 11 13])     ;= [2 3 5 7 11 13]
+      (aref primes 4)                   ;= 11
+      (aref "abcdefg" 1)                ; 98  'b' is ASCII code 98
+      ;; aset function -> set the INDEXth element of ARRAY to be OBJECT
+      (setq w [foo bar baz])            ;= [foo bar baz]
+      (aset w 0 'fu)
+      w                                 ;= [fu bar baz]
+      ;; fillarray function -> fill the array with OBJECT
+      (setq a [a b c d e f g])          ;= [a b c d e f g]
+      (fillarray a 0)                   ;= [0 0 0 0 0 0 0]
+    #+END_SRC
+
 *** Vectors
+    A "vector" is a general-purpose array whose elements can be any Lisp objects.
+    
+    Used in Emacs:
+    1.As key sequences
+    2.As symbol-lookup tables
+    3.As part of the representation of a byte-compiled function
+
+    Vector example:
+    #+BEGIN_SRC elisp
+    [a b a]
+    #+END_SRC
+
 *** Vector Functions
+    #+BEGIN_SRC elisp
+      ;; vectorp function -> return 't' if OBJECT is a vector
+      (vectorp [a])                     ;= t
+      (vectorp "abc")                   ;= nil
+      ;; vector function -> create and return a vector
+      (vector 'foo 23 [bar baz] "rats") ;= [foo 23 [bar baz] "rats"
+      (vector)                          ;= []
+      ;; make-vector function -> return a new vector consisting of LENGTH elements
+      (setq sleepy (make-vector 9 'Z))  ;= [Z Z Z Z Z Z Z Z Z]
+      ;; vconcat function -> return a new containing all the elements of SEQUENCES
+      (setq a (vconcat '(A B C) '(D E F))) ;= [A B C D E F]
+      (eq a (vconcat a))                   ;= nil
+      (vconcat)                            ;= []
+    #+END_SRC
+
 *** Char-Tables
+    A char-table is much like a vector, except that it is indexed by character codes.
+ 
+    #+BEGIN_SRC elisp
+    
+    #+END_SRC
 *** Bool-Vectors
 *** Rings
 

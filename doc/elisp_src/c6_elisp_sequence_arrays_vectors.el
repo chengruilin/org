@@ -135,5 +135,58 @@ list                                                 ;= (1 2 2 1 3 3)
 ;; seq-let macro -> binds the variable defined in ARGUMENTS to the elements of SEQUENCE
 (seq-let [first second] [1 2 3 4] (list first second)) ;= (1 2)
 
+;; Array Functions
+;; arrayp function -> check whether the argument is an array
+(arrayp [a])                      ;= t
+(arrayp "abc")                    ;= t
+;;
+(setq primes [2 3 5 7 11 13])     ;= [2 3 5 7 11 13]
+(aref primes 4)                   ;= 11
+(aref "abcdefg" 1)                ; 98  'b' is ASCII code 98
+;; aset function -> set the INDEXth element of ARRAY to be OBJECT
+(setq w [foo bar baz])            ;= [foo bar baz]
+(aset w 0 'fu)
+w                                 ;= [fu bar baz]
+;; fillarray function -> fill the array with OBJECT
+(setq a [a b c d e f g])          ;= [a b c d e f g]
+(fillarray a 0)                   ;= [0 0 0 0 0 0 0]
+
+;; Vector Functions
+;; vectorp function -> return 't' if OBJECT is a vector
+(vectorp [a])                     ;= t
+(vectorp "abc")                   ;= nil
+;; vector function -> create and return a vector
+(vector 'foo 23 [bar baz] "rats") ;= [foo 23 [bar baz] "rats"
+(vector)                          ;= []
+;; make-vector function -> return a new vector consisting of LENGTH elements
+(setq sleepy (make-vector 9 'Z))  ;= [Z Z Z Z Z Z Z Z Z]
+;; vconcat function -> return a new containing all the elements of SEQUENCES
+(setq a (vconcat '(A B C) '(D E F))) ;= [A B C D E F]
+(eq a (vconcat a))                   ;= nil
+(vconcat)                            ;= []
+
+;; Char-Tables
+;; make-char-table function -> retuan a newly-created char-table, with subtype(a symbol)
+;; no argument to specify the length of the char-table, all char-table have room for any valid character code as index.
+(setq a-char-table (make-char-table  'my-test-subtype 100))
+;; char-table-p function -> return 't' if OBJECT is a char-table
+(char-table-p a-char-table)                     ;= t
+;; char-table-subtype function -> return sybtype symbol of CHAR-TABLE
+(char-table-subtype a-char-table)               ;= my-test-subtype
+;; set-char-table-parent function -> set the parent of CHAR-TABLE to NEW-PARENT
+(setq another-char-table (make-char-table 'my-test-subtype))
+(set-char-table-parent another-char-table a-char-table)
+(aref a-char-table ?A)
+;; char-table-parent function -> return the parent of CHAR-TABLE
+(char-table-parent another-char-table)
+;; char-table-extra-slot function -> return contents of extra slot
+(char-table-extra-slot a-char-table 0)
+;; set-char-table-extra-slot function -> store VALUE in extra slot N of CHAR-TABLE
+(set-char-table-extra-slot a-char-table 0 '(haha Hello World))
+;; char-table-range function -> return the value specified in CHAR-TABLE for a range of characters RANGE
+
+
+
+
 
 
