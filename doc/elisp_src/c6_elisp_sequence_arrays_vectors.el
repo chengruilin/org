@@ -88,10 +88,52 @@ vec                                ;= [1 2 5 4]
 ;; seq-empty-p function -> return non- 'nil' if SEQUENCE is empty
 (seq-empty-p "not-empty")               ;= nil
 (seq-empty-p "")                        ;= t
-
-
-
-
+;; seq-count function -> return the number of SEQUENCE for which PREDICATE
+(seq-count (lambda (elt) (> elt 0)) [-1 2 0 3 -2])   ;= 2
+;; seq-sort function -> return a copy of SEQUENCE that is sorted according to FUNCTION
+(seq-sort #'> [1 3 4 2])                ;= [4 3 2 1]
+;; seq-sort-by function -> similar to 'seq-sort', but the element of SEQUENCE are transformed by applying FUNCTION on them before being sorted
+(seq-sort-by #'seq-length #'> ["a" "ab" "abc"])      ;= ["abc" "ab" "a"]
+;; seq-contains function -> return first element in SEQUENCE that is equal to ELT
+(seq-contains '(symbol1 symbol2) 'symbol1)           ;= symbol1
+;; seq-set-equal-p function -> check whether SEQUENCE1 and SEQUENCE2 contain the same elements, regardless of the order.
+(seq-set-equal-p '(a b c) '(c b a))                  ;= t
+(seq-set-equal-p '(a b c) '(c b))                    ;= nil
+;; seq-position function -> get the index of first element in SEQUENCE
+(seq-position '(a b c) 'b)                           ;= 1
+(seq-position '(a b c) 'd)                           ;= nil
+;; seq-uniq function -> get a list of the elements of SEQUENCE with duplicates removed
+(setq list '(1 2 2 1 3 3))
+(seq-uniq list)                                      ;= (1 2 3)
+list                                                 ;= (1 2 2 1 3 3)
+;; seq-subseq function -> get a subset of SEQUENCE from START to END
+(seq-subseq '(1 2 3 4 5) 1)                          ;= (2 3 4 5)
+(seq-subseq '[1 2 3 4 5] 1 3)                        ;= [2 3]
+;; seq-concatenate function -> get a sequence made of the concatenation of SEQUENCES
+(seq-concatenate 'list '(1 2) '(3 4) [5 6])          ;= (1 2 3 4 5 6)
+(seq-concatenate 'string "Hello" " " "World")        ;= "Hello World"
+;; seq-mapcat function -> return the result of applying 'seq-concatenate' to the result of applying FUNCTION to each element of SEQUENCE
+(seq-mapcat #'seq-reverse '((3 2 1) (6 5 4)))        ;= (1 2 3 4 5 6)
+;; seq-partition function -> return a list of the element of SEQUENCE groupd into sub-sequence of length N
+(seq-partition '(0 1 2 3 4 5 6 7) 3)                 ;= ((0 1 2) (3 4 5) (6 7))
+;; seq-intersection function -> return a list of the elements that appear both SEQUENCES
+(seq-intersection [2 3 4 5] [1 3 5 6 7])             ;= (3 5)
+;; seq-difference function -> return a list of the elements appear in SEQUENCE1 but not in SEQUENCE2
+(seq-difference '(2 3 4 5) [1 3 5 6 7])              ;= (2 4)
+;; seq-group-by function -> separate the elements of SEQUENCE into an alist whose keys are the result of applying FUNCTION to each element of SEQUENCE.
+(seq-group-by #'integerp '(1 2.1 3 2 3.2))           ;= ((t 1 3 2) (nil 2.1 3.2))
+;; seq-into function -> convert the sequence into a sequence of type in ('vector', 'string', 'list')
+(seq-into [1 2 3] 'list)                             ;= (1 2 3)
+;; seq-min function -> return the smallest element of SEQUENCE
+(seq-min [3 1 2])                                    ;= 1
+;; seq-max function -> return the largest element of SEQUENCE
+(seq-max [1 3 2])                                    ;= 3
+;; seq-random-elt function -> return an element of SEQUENCE taken a random
+(seq-random-elt [1 2 3 4])                           ;= 3
+;; seq-doseq macro -> like 'dolist', except that SEQUENCE can be a lit, vector or string.
+(seq-doseq (var list) '(1 2 3))                        ;= (1 2 2 1 3 3)
+;; seq-let macro -> binds the variable defined in ARGUMENTS to the elements of SEQUENCE
+(seq-let [first second] [1 2 3 4] (list first second)) ;= (1 2)
 
 
 
