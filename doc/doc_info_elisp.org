@@ -1059,7 +1059,40 @@
     A char-table is much like a vector, except that it is indexed by character codes.
  
     #+BEGIN_SRC elisp
-    
+      ;; make-char-table function -> retuan a newly-created char-table, with subtype(a symbol)
+      ;; no argument to specify the length of the char-table, all char-table have room for any valid character code as index.
+      (setq a-char-table (make-char-table  'my-test-subtype 100))
+      ;; char-table-p function -> return 't' if OBJECT is a char-table
+      (char-table-p a-char-table)                     ;= t
+      ;; char-table-subtype function -> return sybtype symbol of CHAR-TABLE
+      (char-table-subtype a-char-table)               ;= my-test-subtype
+      ;; set-char-table-parent function -> set the parent of CHAR-TABLE to NEW-PARENT
+      (setq another-char-table (make-char-table 'my-test-subtype))
+      (set-char-table-parent another-char-table a-char-table)
+      (aref a-char-table ?A)
+      ;; char-table-parent function -> return the parent of CHAR-TABLE
+      (char-table-parent another-char-table)
+      ;; char-table-extra-slot function -> return contents of extra slot
+      (char-table-extra-slot a-char-table 0)
+      ;; set-char-table-extra-slot function -> store VALUE in extra slot N of CHAR-TABLE
+      (set-char-table-extra-slot a-char-table 0 '(haha Hello World))
+      ;; char-table-range function -> return the value specified in CHAR-TABLE for a range of characters RANGE
+      (char-table-range char-table range)
+      ;; set-char-table-range function -> set the value in CHAR-TABLE for a range of characters RANGE
+      (set-char-table-range char-table range)
+      ;; map-char-table function -> call its argument FUNCTION for each element of CHAR-TABLE that has a non- 'nil' value
+      (let (accumulator)
+        (map-char-table
+         #'(lambda (key value)
+             (setq accumulator
+                   (cons (list
+                          (if (consp key)
+                              (list (car key) (cdr key))
+                            key)
+                          value)
+                         accumulator)))
+         (syntax-table))
+        accumulator)
     #+END_SRC
 *** Bool-Vectors
 *** Rings

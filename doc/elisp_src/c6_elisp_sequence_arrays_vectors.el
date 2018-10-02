@@ -184,6 +184,22 @@ w                                 ;= [fu bar baz]
 ;; set-char-table-extra-slot function -> store VALUE in extra slot N of CHAR-TABLE
 (set-char-table-extra-slot a-char-table 0 '(haha Hello World))
 ;; char-table-range function -> return the value specified in CHAR-TABLE for a range of characters RANGE
+(char-table-range char-table range)
+;; set-char-table-range function -> set the value in CHAR-TABLE for a range of characters RANGE
+(set-char-table-range char-table range)
+;; map-char-table function -> call its argument FUNCTION for each element of CHAR-TABLE that has a non- 'nil' value
+(let (accumulator)
+  (map-char-table
+   #'(lambda (key value)
+       (setq accumulator
+             (cons (list
+                    (if (consp key)
+                        (list (car key) (cdr key))
+                      key)
+                    value)
+                   accumulator)))
+   (syntax-table))
+  accumulator)
 
 
 
