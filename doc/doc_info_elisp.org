@@ -1,7 +1,7 @@
 #+TITLE: Info Document of Elisp
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
 
-* DOING Emacs Lisp Document [5/41]
+* DOING Emacs Lisp Document [6/41]
   - State "DOING"      from "TODO"       [2018-09-27 四 12:17]
 
 ** DONE [[elisp:(info-other-window%20"(elisp)Introduction")][1.Introduction]]
@@ -830,7 +830,8 @@
        (setq my-plist '(bar t foo 4))
        (plist-member my-plist 'bar)                    ;= (bar t foo 4)
      #+END_SRC
-** DOING [[elisp:(info-other-window "(elisp)Sequences Arrays Vectors")][6.Sequences, Arrays, and Vectors]]
+** DONE [[elisp:(info-other-window "(elisp)Sequences Arrays Vectors")][6.Sequences, Arrays, and Vectors]]
+   CLOSED: [2018-10-02 二 15:56]
    - State "DOING"      from "TODO"       [2018-09-30 日 17:59]
 
 *** Summary
@@ -1165,7 +1166,33 @@
               (ring-remove fifo)))                   ;= (0 t one t "two")
     #+END_SRC
 
-** TODO [[elisp:(info-other-window "(elisp)Records")][7.Records]]
+** DOING [[elisp:(info-other-window "(elisp)Records")][7.Records]]
+   - State "DOING"      from "TODO"       [2018-10-02 二 15:56]
+*** Sumary
+    - The purpose of records is to allow programmers to create objects with new types that are not build into Emacs.
+    - They are used as the underlying representation of 'cl-defstruct' and 'defclass' instance.
+    - A record object is much like a vector
+    - In the current implementation records can have at most 4096 slots, whereas vectors can be much larger.
+    - The slot has index 0.
+    - The printed representation of records is '#s' followed by a list specifying the contents.
+
+*** Record Functions
+    #+BEGIN_SRC elisp
+      ;; recordp function -> return 't' if OBJECT is a record
+      (recordp "a")                          ;= nil
+      (recordp #s(a))                        ;= t
+      ;; record function -> create and return a record whose type is TYPE and remaining slots are the rest of the arguments, OBJECTS
+      (record 'foo 23 [bar baz] "rats")      ;= #s(foo 23 [bar baz] "rats")
+      ;; make-record function -> return a new record with type TYPE and LENGTH moew slots, each initialized to OBJECT
+      (setq sleepy (make-record 'foo 9 'Z))  ;= #s(foo Z Z Z Z Z Z Z Z Z)
+    #+END_SRC
+
+*** Backward Compatibility
+    
+    #+BEGIN_SRC elisp
+    ;; if ARG is positive, enable backward compatibility with old-style structs
+    (cl-old-struct-compat-mode arg)
+    #+END_SRC
 ** TODO [[elisp:(info-other-window "(elisp)Hash Tables")][8.Hash Tables]]
 ** TODO [[elisp:(info-other-window "(elisp)Symbols")][9.Symbols]]
 ** TODO [[elisp:(info-other-window "(elisp)Evaluation")][10.Evaluation]]
