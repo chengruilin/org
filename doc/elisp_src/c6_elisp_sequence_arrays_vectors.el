@@ -201,8 +201,70 @@ w                                 ;= [fu bar baz]
    (syntax-table))
   accumulator)
 
+;; Bool-vectors
+;; make-bool-vector function -> return a new bool-vector of LENGTH elements, with initialized value
+(setq my-bool-v (make-bool-vector 10 nil))
+;; bool-vector function -> create and return a bool-vector
+(bool-vector t nil t nil)                  ;;= #&4"^E"
+;; bool-vector-p function -> return 't' if OBJECT is a bool-vector
+(bool-vector-p my-bool-v)
+;; bool-vector-exclusive-or function -> return "bitwise exclusive or" of bool vectors A and B
+(bool-vector-exclusive-or a b &optional c)
+;; bool-vector-union function -> return "bitwise or" of bool vectors A and B
+(bool-vector-union a b &optional c)
+;; bool-vector-intersection function -> return "bitwise and" of bool vectors A and B
+(bool-vector-intersection a b &optional c)
+;; bool-vector-set-difference function -> return "set difference" of bool vectors A and B
+(bool-vector-set-difference a b &optional c)
+;; bool-vector-not function -> return "set complement" of bool vector A
+(bool-vector-not a &optional b)
+;; bool-vector-subsetp function -> return 't' if every 't' value in A is also 't' in B
+(bool-vector-subsetp a b)
+;; bool-vector-count-consecutive function -> return the number of consecutive elements in A equal B starting at I
+(bool-vector-count-consecutive a b i)
+;; bool-vector-count-population function -> return the number of elements that are 't' in bool vector A
+(bool-vector-count-population a)
+;; use 'vconcat' to print a bool-vector
+(vconcat (bool-vector t nil t nil))          ;= [t nil t nil]
+;; example
+(setq bv (make-bool-vector 5 t))             ;=#&5"^_"
+(aref bv 1)                                  ;t
+(aset bv 3 nil)                              ;nil
+bv                                           ;#&5"^W"
 
-
+;; Rings
+;; make-ring function -> return a new ring capable of holding SIZE objects
+(make-ring 3)                          ;= (0 0 . [nil nil nil])
+(make-ring 0)                          ;= (0 0 . [])
+;; ring-p function -> return 't' if OBJECT is a ring
+(ring-p "a")                           ;= nil
+(setq a-ring (make-ring 3))            ;= (0 0 . [nil nil nil])
+(ring-p a-ring)                        ;= t
+;; ring-size function -> return the maximum capable of the RING
+(ring-size a-ring)                     ;= 3
+;; ring-length function -> return the number of objects that RING currently contains
+(ring-length a-ring)                   ;= 0
+;; ring-elements function -> return a list of the objects in RING, in order, newest first
+(ring-elements a-ring)                 ;= nil
+;; ring-copy function -> return a new ring which is a copy of RING.
+(ring-copy a-ring)                     ;= (0 0 . [nil nil nil])
+;; ring-empty-p function -> return 't' if RING is empty
+(ring-empty-p a-ring)                  ;= t
+;; ring-ref function -> return the object in RING found at index
+(ring-ref ring index)
+;; ring-insert function -> insert OBJECT into RING, make it the newest element, and return OBJECT
+(ring-insert a-ring "a")
+;; ring-remove function -> remove an object from RING, and return that object.
+(ring-remove a-ring 1)
+;; ring-insert-at-beginning function -> insert OBJECT into RING, treating it as the oldest element
+(ring-insert-at-beginning a-ring "b")
+;;  If you are careful not to exceed the ring size, you can use the ring as a first-in-first-out queue.  For example:
+(let ((fifo (make-ring 5)))
+  (mapc (lambda (obj) (ring-insert fifo obj))
+        '(0 one "two"))
+  (list (ring-remove fifo) t
+        (ring-remove fifo) t
+        (ring-remove fifo)))                   ;= (0 t one t "two")
 
 
 
