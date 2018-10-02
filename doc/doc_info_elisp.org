@@ -1,7 +1,7 @@
 #+TITLE: Info Document of Elisp
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
 
-* DOING Emacs Lisp Document [6/41]
+* DOING Emacs Lisp Document [7/41]
   - State "DOING"      from "TODO"       [2018-09-27 四 12:17]
 
 ** DONE [[elisp:(info-other-window%20"(elisp)Introduction")][1.Introduction]]
@@ -1166,7 +1166,8 @@
               (ring-remove fifo)))                   ;= (0 t one t "two")
     #+END_SRC
 
-** DOING [[elisp:(info-other-window "(elisp)Records")][7.Records]]
+** DONE [[elisp:(info-other-window "(elisp)Records")][7.Records]]
+   CLOSED: [2018-10-02 二 16:25]
    - State "DOING"      from "TODO"       [2018-10-02 二 15:56]
 *** Sumary
     - The purpose of records is to allow programmers to create objects with new types that are not build into Emacs.
@@ -1193,7 +1194,57 @@
     ;; if ARG is positive, enable backward compatibility with old-style structs
     (cl-old-struct-compat-mode arg)
     #+END_SRC
-** TODO [[elisp:(info-other-window "(elisp)Hash Tables")][8.Hash Tables]]
+** DOING [[elisp:(info-other-window "(elisp)Hash Tables")][8.Hash Tables]]
+   - State "DOING"      from "TODO"       [2018-10-02 二 16:25]
+*** Summary
+    A hash table is a very fast kind of lookup table, somewhat like an alist in that it maps keys to corresponding values.
+    It differs from an alist in thest ways:
+    - Lookup in a hash table is extremely fast for large tables, the time required is essentially independent of how many elements are stored in the table
+    - The corresponding in a hash table are in no particular order
+    - There is no way to share structure between two hash tables, the way two alists can share a common tail
+      
+    Hash tables have a special printed representation, which consists of '#s' followed by a list specifying the hash table properties and contents.
+
+*** Creating Hash
+    #+BEGIN_SRC elisp
+      ;; make-hash-table function -> create a new hash table according to the specified arguments
+      (setq myHash (make-hash-table
+                    :test 'equal
+                    :weakness 'key-and-value))
+    #+END_SRC
+**** :test TEST
+     This specifies the method of key lookup for this hash table.
+    #+NAME: Hash table ':test'
+    | value | description                                                                    |
+    |-------+--------------------------------------------------------------------------------|
+    | eql   | Eaquel in value and either both are integers or both are floating point        |
+    | eq    | Any two discinct Lisp objects are different as keys                            |
+    | equal | Two Lisp objects are the same, as keys, if they are equal according to 'equal' |
+
+**** :weakness WEAK
+     The weakness of a hash table specifies whether the presence of a key or value in the hash table preserves it from garbage collection.
+
+     #+NAME: Hash table ':weakness'
+     | value         | description                  |
+     |---------------+------------------------------|
+     | nil           |                              |
+     | key           |                              |
+     | value         |                              |
+     | key-or-value  |                              |
+     | key-and-value |                              |
+     | t             | An alias for 'key-and-value' |
+
+**** :size SIZE
+
+**** :rehash-size REHASH-SIZE
+
+**** :rehash-threshold THRESHOLD
+
+*** Hash Access
+
+*** Defining Hash
+
+*** Other Hash
 ** TODO [[elisp:(info-other-window "(elisp)Symbols")][9.Symbols]]
 ** TODO [[elisp:(info-other-window "(elisp)Evaluation")][10.Evaluation]]
 ** TODO [[elisp:(info-other-window "(elisp)Structure")][11.Control Structure]]
