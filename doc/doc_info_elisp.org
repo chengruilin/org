@@ -1,7 +1,7 @@
 #+TITLE: Info Document of Elisp
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
 
-* DOING Emacs Lisp Document [7/41]
+* DOING Emacs Lisp Document [8/41]
   - State "DOING"      from "TODO"       [2018-09-27 四 12:17]
 
 ** DONE [[elisp:(info-other-window%20"(elisp)Introduction")][1.Introduction]]
@@ -1194,7 +1194,8 @@
     ;; if ARG is positive, enable backward compatibility with old-style structs
     (cl-old-struct-compat-mode arg)
     #+END_SRC
-** DOING [[elisp:(info-other-window "(elisp)Hash Tables")][8.Hash Tables]]
+** DONE [[elisp:(info-other-window "(elisp)Hash Tables")][8.Hash Tables]]
+   CLOSED: [2018-10-04 四 21:19]
    - State "DOING"      from "TODO"       [2018-10-02 二 16:25]
 *** Summary
     A hash table is a very fast kind of lookup table, somewhat like an alist in that it maps keys to corresponding values.
@@ -1310,7 +1311,103 @@
       (hash-table-rehash-threshold myHash)   ;= 0.8125
       (hash-table-size myHash)               ;= 65
     #+END_SRC
-** TODO [[elisp:(info-other-window "(elisp)Symbols")][9.Symbols]]
+** DOING [[elisp:(info-other-window "(elisp)Symbols")][9.Symbols]]
+   - State "DOING"      from "TODO"       [2018-10-04 四 21:19]
+*** Summary
+    A "symbol" is an object with a unique name.
+    Test whether an arbitrary Lisp object is a symbol with 'symbolp':
+    #+BEGIN_SRC elisp
+    (symbolp "a")         ;= nil
+    (symbolp 'abc)        ;= t
+    #+END_SRC
+*** Symbol Components
+    Each symbol has 4 components:
+    #+NAME: Symbol Components
+    | Component     | Description                                                        |
+    |---------------+--------------------------------------------------------------------|
+    | Print name    | Symbol's name                                                      |
+    | Value         | Symbol's current value as variable                                 |
+    | Function      | Symbol's function definition(a symbol, a keymap, a keyboard macro) |
+    | Property list | Symbol's property list                                             |
+
+*** Definitions
+    A "definition" is a special kind of Lisp expression that announces your intention to use a symbol in a particular way.
+    
+    - 'defvar' and 'defconst' special forms that define a symbol as a 'global variable'.
+    - 'defcustom' macro define a customizable variable, which also calls defvar as a subroutine.
+    - 'setq' assign a variable value to any symbol
+    - 'defun' define a symbol as a function
+    - 'defsubst' and 'defalias' are two other ways defining a function
+    - 'defmacro' defines a symbol as a macro
+     
+    As previously noted, Emacs Lisp allows the same symbol to be defined both as a variable and as a function or macro.
+
+*** Creating Symbols
+    How Lisp read symbols:
+    1) Read all the characters of symbol
+    2) Hashes those characters to find an index in a table called an "obarray".
+       Each element of the obarray is ab "bucket", which holds all the symbols with a given hash code.
+    3) If a symbol with the desired name is found, the reader uses that symbol.
+    4) If obarray does not contain a symbol with that name, the reader makes a new symbol and add it to the obarray.
+
+    #+BEGIN_SRC elisp
+      ;; return the string that is SYMBOL's name.
+      (symbol-name 'foo)                 ;= "foo"
+      ;; return a newly-allocated, uninterned symbol whose name is NAME.
+      (setq sym (make-symbol "foo"))     ;= foo
+      (eq sym 'foo)                      ;= nil
+      ;; return a symbol using 'make-symbol', whose name is make by appending 'gsnsym-couter' to PREFIX
+      (gensym 'foo)                      ;= foo23
+      (gensym 'foo)                      ;= foo24
+      ;; return the interned symbol by name.If no such symbol, 'intern' create a new one, add it to the obarray, and return it.
+      (setq sym (intern "foo"))          ;= foo
+      (eq sym 'foo)                      ;= t
+      ;; return the symbol in OBARRAY by name, or 'nil' if OBARRAY has no symbol with that name
+      (intern-soft "frazzle")            ;= nil
+      (make-symbol "frazzle")            ;= frazzle
+      (intern-soft "frazzle")            ;= nil
+      (setq sym (intern "frazzle"))      ;= frazzle
+      (intern-soft "frazzle")            ;= frazzle
+      (eq sym 'frazzle)                  ;= t
+      ;; mapatioms function -> call function once with each symbol in the obarray.
+      (setq count 0)
+      (defun count-syms (s)
+        (setq count (1+ count)))         ;= count-syms
+      (mapatoms 'count-syms)             ;= nil
+      count                              ;= 69948
+      ;; delete SYMBOL from the obarray
+      (unintern "foo")                   ;= t
+      (unintern "foo")                   ;= nil
+    #+END_SRC
+
+    Variable: obarray
+    The variable is the standard obarray for use by 'intern' and 'read'
+
+*** Symbol Properties
+    A symbol may possess any number of "symbol properties", which can be used to record miscellaneous information about the symbol.
+    Each symbol's properties and property values are stored in the symbol's property list cell, in the form of a property list.
+**** Symbol Plists
+     #+BEGIN_SRC elisp
+       ;; get value of the property
+       (get 'foo 'prop1)                  ;= nil
+       ;; put value of the property
+       (put 'foo 'prop1 'value1)          ;= value1
+       (get 'foo 'prop1)                  ;= value1
+       ;; return the property list
+       (symbol-plist 'foo)                ;= (prop1 value1)
+       ;; sets SYMBOL's property list to PLIST
+       (setplist 'foo '(a 1 b (2 3) c nil))  ;= (a 1 b (2 3) c nil)
+       (symbol-plist 'foo)                   ;= (a 1 b (2 3) c nil)
+       ;; identical to 'get'
+       (function-get 'foo 'prop1)         ;= nil
+       ;; identical to 'put'
+       (function-put 'foo 'prop2 'value2) ;= value2
+     #+END_SRC
+
+**** Standard Properties
+     [[info:elisp#Standard%20Properties][Link for standard properties]]
+
+
 ** TODO [[elisp:(info-other-window "(elisp)Evaluation")][10.Evaluation]]
 ** TODO [[elisp:(info-other-window "(elisp)Structure")][11.Control Structure]]
 ** TODO [[elisp:(info-other-window "(elisp)Variables")][12.Variables]]
