@@ -26,3 +26,4 @@ a                      ;= 123
 (fset 'erste 'first)          ;= car
 (erste '(1 2 3))              ;= 1
 
+;; 
