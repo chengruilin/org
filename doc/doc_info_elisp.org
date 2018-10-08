@@ -1,7 +1,7 @@
 #+TITLE: Info Document of Elisp
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
 
-* DOING Emacs Lisp Document [8/41]
+* DOING Emacs Lisp Document [9/41]
   - State "DOING"      from "TODO"       [2018-09-27 四 12:17]
 
 ** DONE [[elisp:(info-other-window%20"(elisp)Introduction")][1.Introduction]]
@@ -1311,7 +1311,8 @@
       (hash-table-rehash-threshold myHash)   ;= 0.8125
       (hash-table-size myHash)               ;= 65
     #+END_SRC
-** DOING [[elisp:(info-other-window "(elisp)Symbols")][9.Symbols]]
+** DONE [[elisp:(info-other-window "(elisp)Symbols")][9.Symbols]]
+   CLOSED: [2018-10-05 五 00:45]
    - State "DOING"      from "TODO"       [2018-10-04 四 21:19]
 *** Summary
     A "symbol" is an object with a unique name.
@@ -1407,8 +1408,18 @@
 **** Standard Properties
      [[info:elisp#Standard%20Properties][Link for standard properties]]
 
-
-** TODO [[elisp:(info-other-window "(elisp)Evaluation")][10.Evaluation]]
+** DOING [[elisp:(info-other-window "(elisp)Evaluation")][10.Evaluation]]
+   - State "DOING"      from "TODO"       [2018-10-05 五 00:46]
+*** Summary
+    The "evaluation" of expressions in Emacs Lisp is performed by the "Lisp interpreter"
+    a program that receives a Lisp object as input and computes its "value as an expression".
+*** Intro Eval
+    The Lisp interpreter, or evaluator, is the part of Emacs that computes the value of an expression that is given to it.
+    
+*** Forms
+*** Quoting
+*** Backquote
+*** Eval
 ** TODO [[elisp:(info-other-window "(elisp)Structure")][11.Control Structure]]
 ** TODO [[elisp:(info-other-window "(elisp)Variables")][12.Variables]]
 ** TODO [[elisp:(info-other-window "(elisp)Functions")][13.Functions]]
