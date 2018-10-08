@@ -1464,13 +1464,42 @@
      #+END_SRC
 
 **** Function Forms
+     If the first element of a list being evaluated is a Lisp function object, byte-code object
+     or primitive function object, then that list is a "function call".
+     #+BEGIN_SRC elisp
+     (+ 1 x)
+     #+END_SRC
+
 **** Macro Forms
+     If the first element of a list being evaluated is a macro object, then the list is a "macro call".
+     #+BEGIN_SRC elisp
+       (defmacro cadr (x)
+         (list 'car (list 'cdr x)))
+     #+END_SRC
 
 **** Special Forms
+     A "special form" is a primitive function specially marked so that its arguments are not all evaluated.
+     #+BEGIN_SRC elisp
+       ;; test whether its argument is a special form
+       (special-form-p 'car)           ;= nil
+       (special-form-p 'and)           ;= t
+     #+END_SRC
 
 **** Autoloading
+     The "autoload" feature allows you to call a function or macro whose function definition has not yet been loaded into Emacs.
+
 *** Quoting
+    The special form "quote" returns its single argument, as written, without evaluating it.
+    #+BEGIN_SRC elisp
+      (quote (+ 1 2))                 ;= (+ 1 2)
+      (quote foo)                     ;= foo
+      'foo                            ;= foo
+      '(+ 1 2)                        ;= (+ 1 2)
+    #+END_SRC
+
 *** Backquote
+    "Backquote constructs" allow you to quote a list, but selectively evaluate elements of that list.
+
 *** Eval
 ** TODO [[elisp:(info-other-window "(elisp)Structure")][11.Control Structure]]
 ** TODO [[elisp:(info-other-window "(elisp)Variables")][12.Variables]]

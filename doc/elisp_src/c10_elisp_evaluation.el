@@ -26,4 +26,22 @@ a                      ;= 123
 (fset 'erste 'first)          ;= car
 (erste '(1 2 3))              ;= 1
 
-;; 
+;; Lisp Macro Evaluation
+(defmacro cadr (x)
+  (list 'car (list 'cdr x)))
+
+;; Special Forms
+;; test whether its argument is a special form
+(special-form-p 'car)           ;= nil
+(special-form-p 'and)           ;= t
+
+;; Quoting
+(quote (+ 1 2))                 ;= (+ 1 2)
+(quote foo)                     ;= foo
+'foo                            ;= foo
+'(+ 1 2)                        ;= (+ 1 2)
+
+;; Backquote
+'(a list of (+ 2 3) elements)   ;= (a list of (+ 2 3) elements) use quote
+`(a list of ,(+ 2 3) elements)   ;= (a list of 5 elements) use backquote
+`(1 2 (3 ,(+ 4 5)))              ;= (1 2 (3 9))
