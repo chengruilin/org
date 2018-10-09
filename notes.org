@@ -1,9 +1,9 @@
 #+TITLE: My Notes
-#+TAG: develop(d) idea(i)
+#+TAGS: @develop(d) @note(n)
 
 * Quick notes
 
-** Android 模块化分模块打包数据共享机制
+** Android 模块化分模块打包数据共享机制                              :@note:
   [2018-09-29 六 10:58]
   通过壳 App 和 Module App 校验签名,共享 accessToken 和账户以及店铺信息
    #+BEGIN_SRC java
@@ -146,3 +146,43 @@
      }
    #+END_SRC
 
+** grep 查找文件内容                                                 :@note:
+  [2018-10-09 二 15:14]
+  
+*** 基础用法
+
+    简单用法(查找 fruitlist.txt 中的 apple 字符串):
+    #+BEGIN_SRC shell
+      grep apple fruitlist.txt
+    #+END_SRC
+
+    忽略大小写(-i):
+    #+BEGIN_SRC shell
+      grep -i apple fruitlist.txt
+    #+END_SRC
+
+    搜索目录里的所有文件(包括子目录):
+    #+BEGIN_SRC shell
+      grep -nr apple *
+    #+END_SRC
+
+*** 高级用法
+    
+    #+NAME: grep 相关参数
+    | argument | description                                            | example                 |
+    |----------+--------------------------------------------------------+-------------------------|
+    | -A       | --after-context=num:在结果中同时输出匹配之后的 num 行  | grep -A 100 apple a.txt |
+    | -B       | --before-context=num:在结果中同时输出匹配之前的 num 行 | grep -B 100 apple a.txt |
+    | -i       | --ignore-case:忽略大小写                               | grep -i apple a.txt     |
+    | -R, -r   | --recursive:递归搜索子目录                             | grep -r apple /src      |
+    | -n       | --line-number:显示行号                                 | grep -n apple a.txt     |
+    | -v       | --invert-match:输出没有匹配的行                        |                         |
+
+    使用管道:
+    #+BEGIN_SRC sh
+      ## 想查找包含 apple 的行,又想过滤掉 pineapple
+      grep apple fruitlist.txt | grep -v pineapple
+
+      ## 保存搜索结果
+      grep apple fruitlist.txt | grep -v pineapple > apples.txt
+    #+END_SRC
