@@ -45,3 +45,14 @@ a                      ;= 123
 '(a list of (+ 2 3) elements)   ;= (a list of (+ 2 3) elements) use quote
 `(a list of ,(+ 2 3) elements)   ;= (a list of 5 elements) use backquote
 `(1 2 (3 ,(+ 4 5)))              ;= (1 2 (3 9))
+;; ,@
+(setq some-list '(2 3))                    ;= (2 3)
+(cons 1 (append some-list '(4) some-list)) ;= (1 2 3 4 2 3)
+`(1 ,@some-list 4 ,@some-list)             ;= (1 2 3 4 2 3)
+
+;; Eval
+(setq foo 'bar)                 ;= bar
+(setq bar 'baz)                 ;= baz
+(eval 'foo)                     ;= bar
+(eval foo)                      ;= baz
+(nth 0 values)

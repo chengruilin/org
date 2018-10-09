@@ -1,7 +1,7 @@
 #+TITLE: Info Document of Elisp
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e) LATER(l)
 
-* DOING Emacs Lisp Document [9/41]
+* DOING Emacs Lisp Document [10/41]
   - State "DOING"      from "TODO"       [2018-09-27 四 12:17]
 
 ** DONE [[elisp:(info-other-window%20"(elisp)Introduction")][1.Introduction]]
@@ -1408,7 +1408,8 @@
 **** Standard Properties
      [[info:elisp#Standard%20Properties][Link for standard properties]]
 
-** DOING [[elisp:(info-other-window "(elisp)Evaluation")][10.Evaluation]]
+** DONE [[elisp:(info-other-window "(elisp)Evaluation")][10.Evaluation]]
+   CLOSED: [2018-10-09 二 23:38]
    - State "DOING"      from "TODO"       [2018-10-05 五 00:46]
 
 *** Summary
@@ -1499,9 +1500,30 @@
 
 *** Backquote
     "Backquote constructs" allow you to quote a list, but selectively evaluate elements of that list.
+    #+BEGIN_SRC elisp
+      '(a list of (+ 2 3) elements)   ;= (a list of (+ 2 3) elements) use quote
+      `(a list of ,(+ 2 3) elements)   ;= (a list of 5 elements) use backquote
+      `(1 2 (3 ,(+ 4 5)))              ;= (1 2 (3 9))
+    #+END_SRC
+    
+    You can also "splice" an evaluated value into the resulting list, using the special marker ',@'
+    #+BEGIN_SRC elisp
+      (setq some-list '(2 3))                    ;= (2 3)
+      (cons 1 (append some-list '(4) some-list)) ;= (1 2 3 4 2 3)
+      `(1 ,@some-list 4 ,@some-list)             ;= (1 2 3 4 2 3)
+    #+END_SRC
 
 *** Eval
-** TODO [[elisp:(info-other-window "(elisp)Structure")][11.Control Structure]]
+    Most often, forms are evaluated automatically, by virtue of their occurrence in a program being run.
+
+    Function: eval form &optional lexical
+    Command:  eval-region start end &optional stream read-function
+    Command:  eval-buffer &optional buffer-or-name stream filename unibyte print
+    User Options: max-lisp-eval-depth
+    Variable: values
+
+** DOING [[elisp:(info-other-window "(elisp)Structure")][11.Control Structure]]
+   - State "DOING"      from "TODO"       [2018-10-09 二 23:38]
 ** TODO [[elisp:(info-other-window "(elisp)Variables")][12.Variables]]
 ** TODO [[elisp:(info-other-window "(elisp)Functions")][13.Functions]]
 ** TODO [[elisp:(info-other-window "(elisp)Macros")][14.Macros]]
