@@ -153,12 +153,93 @@
        }
      #+END_SRC
      
-*** TODO Lifecycle
-**** Workflow [fn:1]
+*** DOING Lifecycle
+    - State "DOING"      from "TODO"       [2018-10-10 三 18:12]
+**** Workflow
+     此处图片出处: [[https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG][WeexLiftcycle 的讨论]]
      Create Instance:
      [[./weex/imgs/img_weex_lifecycle_create_instance.jpeg]]
+     
+     Refresh Instance:
+     [[./weex/imgs/img_weex_lifecycle_refresh_instance.jpeg]]
+
+     Fire Event/Callback:
+     [[./weex/imgs/img_weex_lifecycle_fire_event.jpeg]]
+
+     Destroy Instance:
+     [[./weex/imgs/img_weex_lifecycle_destroy_instance.jpeg]]
+
+     Navigate:
+     [[./weex/imgs/img_weex_lifecycle_navigate.jpeg]]
+
+**** 组件生命周期解析
+
+     生命周期图解:
+     #+BEGIN_EXAMPLE
+      ------      --------      -------             -----------
+     | init | -> | create | -> | ready |           | destroyed |
+      ------      --------      -------             -----------
+     #+END_EXAMPLE
+     
+     生命周期用法:
+     #+BEGIN_SRC javascript
+       <script>
+         module.exports = {
+           data: {},
+           methods: {},
+
+           init: function () {
+             console.log('在初始化内部变量，并且添加了事件功能后被触发');
+           },
+           created: function () {
+             console.log('完成数据绑定之后，模板编译之前被触发');
+           },
+           ready: function () {
+             console.log('模板已经编译并且生成了 Virtual DOM 之后被触发');
+           },
+           destroyed: function () {
+             console.log('在页面被销毁时调用');
+           }
+         }
+       </script>
+     #+END_SRC
+
+***** init:
+     - 初始化内部变量,添加事件功能
+     - 没有执行数据绑定,没有创建 Virtual-DOM,所以不能通过 this 获取到 data 中的数据,不能调用到 methods 中定义的方法,也不能获取到 Virtual-DOM 的节点
+     - 可以在方法内初始化一些内部变量,绑定一些自定义事件
+
+     created:
+     - 刚完成数据绑定,还没开始编译模板
+     - 可以通过 this 操作 data 中的数据,可以调用 methods 中的方法,但是不能获取到 Virtual-DOM 的节点
+     - 可以在方法中修改 data 中数据,不会触发额外的渲染
+
+***** ready:
+     - 表示组件已经渲染完成
+     - 首先执行子组件的 ready 方法
+     - 可以获得 Virtual-DOM 的节点,也可以获取子组件的 Virtual-DOM 实例
+     - 小心操作 data,避免频繁赋值
+     - 建议去除需要频繁改动的值,等操作执行结束之后再赋值
+
+     [[./weex/imgs/img_weex_lifecycle_parent_son.png]]
+
+     避免频繁赋值:
+     #+BEGIN_SRC javascript
+       // 在修改 this.count 前先获取它的值，在执行完操作后再赋值回去，如果在循环体中直接设置 this.count 的值，页面将触发 999 次局部刷新，很可能会导致页面卡顿
+       module.exports = {
+         data: {
+           count: 0
+         },
+         ready: function () {
+           var count = this.count;
+           for (var i = 0; i < 999; i++) {
+             count += Math.random();
+           }
+           this.count = count;
+         }
+       }
+     #+END_SRC
+
+***** destroyed
+
 ** TODO 源码分析
-
-* Footnotes
-
-[fn:1] 图片均来自:https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG
