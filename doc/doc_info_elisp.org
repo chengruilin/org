@@ -1524,6 +1524,69 @@
 
 ** DOING [[elisp:(info-other-window "(elisp)Structure")][11.Control Structure]]
    - State "DOING"      from "TODO"       [2018-10-09 二 23:38]
+*** Summary
+    A Lisp program consists of a set of "expressions", or "forms".
+    We control the order of execution of these forms by enclosing them in "control structures".
+
+    Simplest order of execution is sequential execution:
+    #+BEGIN_EXAMPLE
+    first form A -> form B -> and so on
+    #+END_EXAMPLE
+
+*** Sequencing
+    The simplest control construct of Lisp: 'progn'.
+    #+BEGIN_SRC elisp
+      ;; (progn A B B ...)  A -> B -> C -> ....
+      ;; Special Form: progn forms...
+      (progn (print "The first form")
+             (print "The second form")
+             (print "The third form"))
+      ;; "The first form"
+      ;; "The second form"
+      ;; "The third form"
+      ;; -> "The third form"
+      ;; Special Form: prog1 form1 forms...
+      (prog1 (print "The first form")
+        (print "The second form")
+        (print "The third form"))
+      ;; "The first form"
+      ;; "The second form"
+      ;; "The third form"
+      ;; -> "The first form"
+      ;; Special Form: prog2 form1 form2 forms...
+      (prog2 (print "The first form")
+          (print "The second form")
+        (print "The third form"))
+      ;; "The first form"
+      ;; "The second form"
+      ;; "The third form"
+      ;; -> "The second form"
+    #+END_SRC
+
+*** Conditionals
+    Emacs Lisp has four conditional forms: 'if', 'when', 'unless', 'cond'
+
+    Special Form: 'if'
+    #+BEGIN_SRC elisp
+      (if nil
+          (print 'true)
+        'very-false)
+      ;; => very-false
+    #+END_SRC
+
+    Macro: 'when'
+    #+BEGIN_SRC elisp
+    
+    #+END_SRC
+
+*** Combining Conditions
+
+*** Iteration
+
+*** Generators
+
+*** Nonlocal Exits
+
 ** TODO [[elisp:(info-other-window "(elisp)Variables")][12.Variables]]
 ** TODO [[elisp:(info-other-window "(elisp)Functions")][13.Functions]]
 ** TODO [[elisp:(info-other-window "(elisp)Macros")][14.Macros]]
