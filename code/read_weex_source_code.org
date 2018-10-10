@@ -154,7 +154,11 @@
      #+END_SRC
      
 *** TODO Lifecycle
-**** Workflow
+**** Workflow [fn:1]
      Create Instance:
      [[./weex/imgs/img_weex_lifecycle_create_instance.jpeg]]
 ** TODO 源码分析
+
+* Footnotes
+
+[fn:1] 图片均来自:https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG
