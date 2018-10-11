@@ -1,14 +1,15 @@
 #+TITLE: Weex 源码分析
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e)
 
-* TODO Weex Source Code [3/6]
+* TODO Weex Source Code [5/7]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
 
 ** DOING Weex 使用相关
    - State "DOING"      from "TODO"       [2018-10-10 三 17:56]
-*** Weex 扩展
+*** DONE Weex 扩展(Android)
+    CLOSED: [2018-10-11 四 11:11]
 
 **** DONE Module
      CLOSED: [2018-10-10 三 17:56]
@@ -115,51 +116,76 @@
 **** DONE Adapter
      CLOSED: [2018-10-10 三 17:56]
      - State "DOING"      from "DOING"      [2018-10-10 三 17:55]
-     扩展图片加载:
-     #+BEGIN_SRC java
-       public class ImageAdapter implements IWXImgLoaderAdapter {
+***** IWXImgLoaderAdapter
+      图片加载适配器,使用方法:
+      #+BEGIN_SRC java
+        public class ImageAdapter implements IWXImgLoaderAdapter {
 
-           public ImageAdapter() {
-           }
+            public ImageAdapter() {
+            }
 
-           @Override
-           public void setImage(final String url, final ImageView view,
-                                WXImageQuality quality, WXImageStrategy strategy) {
+            @Override
+            public void setImage(final String url, final ImageView view,
+                                 WXImageQuality quality, WXImageStrategy strategy) {
 
-               WXSDKManager.getInstance().postOnUiThread(new Runnable() {
+                WXSDKManager.getInstance().postOnUiThread(new Runnable() {
 
-                       @Override
-                       public void run() {
-                           if(view==null||view.getLayoutParams()==null){
-                               return;
-                           }
-                           if (TextUtils.isEmpty(url)) {
-                               view.setImageBitmap(null);
-                               return;
-                           }
-                           String temp = url;
-                           if (url.startsWith("//")) {
-                               temp = "http:" + url;
-                           }
-                           if (view.getLayoutParams().width <= 0 || view.getLayoutParams().height <= 0) {
-                               return;
-                           }
-                           Picasso.with(WXEnvironment.getApplication())
-                               .load(temp)
-                               .into(view);
-                       }
-                   },0);
-           }
-       }
-     #+END_SRC
-     
-*** DOING Lifecycle
+                        @Override
+                        public void run() {
+                            if(view==null||view.getLayoutParams()==null){
+                                return;
+                            }
+                            if (TextUtils.isEmpty(url)) {
+                                view.setImageBitmap(null);
+                                return;
+                            }
+                            String temp = url;
+                            if (url.startsWith("//")) {
+                                temp = "http:" + url;
+                            }
+                            if (view.getLayoutParams().width <= 0 || view.getLayoutParams().height <= 0) {
+                                return;
+                            }
+                            Picasso.with(WXEnvironment.getApplication())
+                                .load(temp)
+                                .into(view);
+                        }
+                    },0);
+            }
+        }
+      #+END_SRC
+***** IWXHttpAdapter
+      网络请求适配器,接口定义:
+      #+BEGIN_SRC java
+        public interface IWXHttpAdapter {
+            void sendRequest(WXRequest request, OnHttpListener listener);
+        }
+      #+END_SRC
+***** IWXUserTrackAdapter
+      埋点适配器,接口定义:
+      #+BEGIN_SRC java
+        public interface IWXUserTrackAdapter {
+            void commit(Context context, String eventId, String type, WXPerformance perf, Map<String, Serializable> params);
+        }
+      #+END_SRC
+***** IActivityNavBarSetter
+      Weex 导航适配器,使用方法:
+      #+BEGIN_SRC java
+      WXSDKEngine.setActivityNavBarSetter(new IActivityNavBarSetter(){});
+      #+END_SRC
+***** IWXStorageAdapter
+      本地存储适配器,默认 DefaultWXStorage
+***** IWXJSExceptionAdapter
+      处理 JS 异常,默认忽略
+      
+*** DONE Lifecycle
+    CLOSED: [2018-10-11 四 10:31]
     - State "DOING"      from "TODO"       [2018-10-10 三 18:12]
 **** Workflow
      此处图片出处: [[https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG][WeexLiftcycle 的讨论]]
      Create Instance:
      [[./weex/imgs/img_weex_lifecycle_create_instance.jpeg]]
-     
+
      Refresh Instance:
      [[./weex/imgs/img_weex_lifecycle_refresh_instance.jpeg]]
 
@@ -180,7 +206,7 @@
      | init | -> | create | -> | ready |           | destroyed |
       ------      --------      -------             -----------
      #+END_EXAMPLE
-     
+
      生命周期用法:
      #+BEGIN_SRC javascript
        <script>
@@ -205,26 +231,26 @@
      #+END_SRC
 
 ***** init:
-     - 初始化内部变量,添加事件功能
-     - 没有执行数据绑定,没有创建 Virtual-DOM,所以不能通过 this 获取到 data 中的数据,不能调用到 methods 中定义的方法,也不能获取到 Virtual-DOM 的节点
-     - 可以在方法内初始化一些内部变量,绑定一些自定义事件
+      - 初始化内部变量,添加事件功能
+      - 没有执行数据绑定,没有创建 Virtual-DOM,所以不能通过 this 获取到 data 中的数据,不能调用到 methods 中定义的方法,也不能获取到 Virtual-DOM 的节点
+      - 可以在方法内初始化一些内部变量,绑定一些自定义事件
 
-     created:
-     - 刚完成数据绑定,还没开始编译模板
-     - 可以通过 this 操作 data 中的数据,可以调用 methods 中的方法,但是不能获取到 Virtual-DOM 的节点
-     - 可以在方法中修改 data 中数据,不会触发额外的渲染
+      created:
+      - 刚完成数据绑定,还没开始编译模板
+      - 可以通过 this 操作 data 中的数据,可以调用 methods 中的方法,但是不能获取到 Virtual-DOM 的节点
+      - 可以在方法中修改 data 中数据,不会触发额外的渲染
 
 ***** ready:
-     - 表示组件已经渲染完成
-     - 首先执行子组件的 ready 方法
-     - 可以获得 Virtual-DOM 的节点,也可以获取子组件的 Virtual-DOM 实例
-     - 小心操作 data,避免频繁赋值
-     - 建议去除需要频繁改动的值,等操作执行结束之后再赋值
+      - 表示组件已经渲染完成
+      - 首先执行子组件的 ready 方法
+      - 可以获得 Virtual-DOM 的节点,也可以获取子组件的 Virtual-DOM 实例
+      - 小心操作 data,避免频繁赋值
+      - 建议去除需要频繁改动的值,等操作执行结束之后再赋值
 
-     [[./weex/imgs/img_weex_lifecycle_parent_son.png]]
+      [[./weex/imgs/img_weex_lifecycle_parent_son.png]]
 
-     避免频繁赋值:
-     #+BEGIN_SRC javascript
+      避免频繁赋值:
+      #+BEGIN_SRC javascript
        // 在修改 this.count 前先获取它的值，在执行完操作后再赋值回去，如果在循环体中直接设置 this.count 的值，页面将触发 999 次局部刷新，很可能会导致页面卡顿
        module.exports = {
          data: {
@@ -238,8 +264,12 @@
            this.count = count;
          }
        }
-     #+END_SRC
+      #+END_SRC
 
 ***** destroyed
+      - 组件销毁时被调用
+      - 自底向上执行(先触发子组件的 destroyed 方法,再触发自身的)
+      - 先执行开发者定义的 destroyed 方法,再清除内部属性
+      - 添加的全局或者 this 的属性,建议在 destroyed 方法中手动清除,避免内存泄露
 
 ** TODO 源码分析
