@@ -272,4 +272,17 @@
       - 先执行开发者定义的 destroyed 方法,再清除内部属性
       - 添加的全局或者 this 的属性,建议在 destroyed 方法中手动清除,避免内存泄露
 
-** TODO 源码分析
+** DOING 源码分析
+   - State "DOING"      from "TODO"       [2018-10-16 二 15:23]
+     
+*** 整体架构
+    结构图:
+    [[./weex/imgs/img_weex_arch_flow.png]]
+
+*** Android Render Engine
+    
+    
+
+*** iOS Render Engine
+
+*** H5 Render Engine
