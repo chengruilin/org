@@ -32,16 +32,18 @@
    - State "DOING"      from "TODO"       [2018-09-27 四 12:04]
 
 * Source Code
-** TODO [[file:code/read_weex_source_code.org][Weex]]                                                         :@code:
+** DOING [[file:code/read_weex_source_code.org][Weex]]                                                        :@code:
    DEADLINE: <2018-11-09 五>
 
+   - State "DOING"      from "TODO"       [2018-10-22 一 10:56]
 ** TODO [[file:code/read_flutter_source_code.org][Flutter]]                                                      :@code:
    DEADLINE: <2018-11-23 五>
 
 ** TODO [[file:code/read_java_source_code.org][Java]]                                                         :@code:
 
 * Develop
-** TODO [[file:doc/doc_web_idea_plugin_develop.org][Idea Plugin Develop]]                                       :@develop:
+** DOING [[file:doc/doc_web_idea_plugin_develop.org][Idea Plugin Develop]]                                      :@develop:
+   - State "DOING"      from "TODO"       [2018-10-22 一 14:58]
 ** TODO [[file:doc/doc_android_app_bundle.org][Android App Bundle]]                                        :@develop:
 * Workspace
 ** TODO Android 开发入门分享                                         :@work:

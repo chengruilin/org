@@ -1,5 +1,5 @@
 #+TITLE: Idea Plugin Develop
-
+#+TODO: TODO(t) DOING PAUSE(p!) RESUME(r!) | DONE(e)
 
 * Idea Plugin Develop
 
@@ -7,4 +7,133 @@
   [[http://www.jetbrains.org/intellij/sdk/docs/welcome.html][1.IntelliJ Platform SDK Doc]]
   [[https://juejin.im/post/599f7f546fb9a0248c2de496][2.Android Studio 插件开发教程 - 简书]]
   
-** TODO Read the Offical Guide
+** DOING Read the Offical Guide [2/3]
+   - State "DOING"      from "TODO"       [2018-10-22 一 14:50]
+
+*** DONE Create a Idea Plugin
+    CLOSED: [2018-10-22 一 15:04]
+
+    - MainMenu -> File | New | Project.
+       [[./idea_plugin/imgs/idea_plugin_new_project_wizard.png]]
+    - Set *IntelliJ Platform Plugin* project type
+    - Click *Next*
+    - Set desired project name
+    - Click *Finish* to generate project structure files
+    - Go to *File | Project* Structure to customize project settings if required
+
+*** DONE Create An Action
+    CLOSED: [2018-10-22 一 15:30]
+
+**** Defining actions
+     An action is a class derived from the ~AnAction~ class.
+     #+BEGIN_SRC java
+       import com.intellij.openapi.actionSystem.AnAction;
+       import com.intellij.openapi.actionSystem.AnActionEvent;
+       import com.intellij.openapi.actionSystem.PlatformDataKeys;
+       import com.intellij.openapi.project.Project;
+       import com.intellij.openapi.ui.Messages;
+
+
+       public class TextBoxes extends AnAction {
+           // If you register the action from Java code, this constructor is used to set the menu item name
+           // (optionally, you can specify the menu description and an icon to display next to the menu item).
+           // You can omit this constructor when registering the action in the plugin.xml file.
+           public TextBoxes() {
+               // Set the menu item name.
+               super("Text _Boxes");
+               // Set the menu item name, description and icon.
+               // super("Text _Boxes","Item description",IconLoader.getIcon("/Mypackage/icon.png"));
+           }
+
+           public void actionPerformed(AnActionEvent event) {
+               Project project = event.getData(PlatformDataKeys.PROJECT);
+               String txt= Messages.showInputDialog(project, "What is your name?", "Input your name", Messages.getQuestionIcon());
+               Messages.showMessageDialog(project, "Hello, " + txt + "!\n I am glad to see you.", "Information", Messages.getInformationIcon());
+           }
+       }
+     #+END_SRC
+
+**** Register actions
+     Once you have defined an action or a system of actions, you must regiser them to specify the menu items for toolbar buttons associated with actions.
+     You can register actions in one of following ways:
+
+     1. Register action in the ~<action>~ section of the ~plugin.xml~ file.
+     2. Register actions from Java code.
+
+**** Register actions in plugin.xml file
+     May you want create an action like this:
+     [[./idea_plugin/imgs/idea_plugin_sample_menu.jpg]]
+
+     You should register action in ~plugin.xml~ file:
+     #+BEGIN_SRC xml
+       <actions>
+         <group id="MyPlugin.SampleMenu" text="_Sample Menu" description="Sample menu">
+           <add-to-group group-id="MainMenu" anchor="last"  />
+           <action id="Myplugin.Textboxes" class="Mypackage.TextBoxes" text="Text _Boxes" description="A test menu item" />
+           <action id="Myplugin.Dialogs" class="Mypackage.MyShowDialog" text="Show _Dialog" description="A test menu item" />
+         </group>
+       </actions>
+     #+END_SRC
+
+**** Register actions from Java code
+     - Create a new class that implements the ~ApplicationComponent~ interface.
+     - In this class, override the ~getComponentName~, ~initComponent~, and ~disposeComponent~ methods.
+     - Register this class in the ~<application-components>~ section of the ~plugin.xml~ file.
+
+     Here is the Java sample:
+     #+BEGIN_SRC java
+       public class MyPluginRegistration implements ApplicationComponent {
+           // Returns the component name (any unique string value).
+           @NotNull public String getComponentName() {
+               return "MyPlugin";
+           }
+
+
+           // If you register the MyPluginRegistration class in the <application-components> section of
+           // the plugin.xml file, this method is called on IDEA start-up.
+           public void initComponent() {
+               ActionManager am = ActionManager.getInstance();
+               TextBoxes action = new TextBoxes();
+
+               // Passes an instance of your custom TextBoxes class to the registerAction method of the ActionManager class.
+               am.registerAction("MyPluginAction", action);
+
+               // Gets an instance of the WindowMenu action group.
+               DefaultActionGroup windowM = (DefaultActionGroup) am.getAction("WindowMenu");
+
+               // Adds a separator and a new menu command to the WindowMenu group on the main menu.
+               windowM.addSeparator();
+               windowM.add(action);
+           }
+
+           // Disposes system resources.
+           public void disposeComponent() {
+           }
+       }
+     #+END_SRC
+
+     Here is ~plugin.xml~ sample:
+     #+BEGIN_SRC xml
+       <application-components>
+         <!-- Add your application components here -->
+         <component>
+           <implementation-class>MypackageName.MyPluginRegistration</implementation-class>
+         </component>
+       </application-components>
+     #+END_SRC
+
+**** Quick creation of actions
+     On the *New* menu, click *Action*:
+     [[./idea_plugin/imgs/idea_plugin_new_action_template.png]]
+
+     On the *New Action* page that opens, fill in the following fields, then click *OK*
+     [[./idea_plugin/imgs/idea_plugin_new_action_page.png]]
+
+     - Action Id :: Action unique ID. Like: PluginName.ID
+     - Class Name :: Action class name
+     - Name :: Name of the menu item or tooltip for toolbar button associated with action
+     - Description :: Action description
+     - Groups :: specify the action group to which to add a newly created action
+     - Keyboard Shortcuts :: specify the first and second keystrokes of the action
+
+*** TODO Action system
