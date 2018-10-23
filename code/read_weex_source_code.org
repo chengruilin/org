@@ -178,7 +178,7 @@
       本地存储适配器,默认 DefaultWXStorage
 ***** IWXJSExceptionAdapter
       处理 JS 异常,默认忽略
-      
+
 *** DONE Lifecycle
     CLOSED: [2018-10-11 四 10:31]
     - State "DOING"      from "TODO"       [2018-10-10 三 18:12]
@@ -275,15 +275,148 @@
 
 ** DOING 源码分析
    - State "DOING"      from "TODO"       [2018-10-16 二 15:23]
-     
+
 *** 整体架构
-    结构图:
+
+    官方结构图:
     [[./weex/imgs/img_weex_arch_flow.png]]
 
-*** Android Render Engine
-    
-    
+    [[file:weex/imgs/img_weex_framework_classes.jpeg][依赖关系图（图片比较大，摘自知乎）]]
 
-*** iOS Render Engine
+*** 初始化流程分析
+**** 初始化方法
+     Weex 官方文档中的初始化方法：
+     #+BEGIN_SRC java
+       public class WXApplication extends Application {
+           @Override
+           public void onCreate() {
+               super.onCreate();
+               InitConfig config=new InitConfig.Builder().setImgAdapter(new ImageAdapter()).build();
+               WXSDKEngine.initialize(this,config);
+           }
+       }
+     #+END_SRC
+     此处调用了 WXSDKEngine 方法，那么这个方法里面做了什么事情呢，我们来看下：
+     #+BEGIN_SRC java
+       // com.taobao.weex.WXSDKEngine
+       public static void initialize(Application application,InitConfig config){
+           synchronized (mLock) {
+               if (mIsInit) {
+                   return;
+               }
+               // 此处省略，大概就是记录初始化耗时，设置日志级别什么的
+               doInitInternal(application,config);
+               registerApplicationOptions(application);
+               mIsInit = true;
+           }
+       }
+     #+END_SRC
+     这里需要重点关注的就是 doInitInternal 和 registerApplicationOptions 这两个方法。
+**** registerApplicationOptions 方法
+     可以认为是获取了 App 的一些环境配置
+     | key                  | value                                      |
+     |----------------------+--------------------------------------------|
+     | screen_width_pixels  | resources.getDisplayMetricx().widthPixels  |
+     | screen_height_pixels | resources.getDisplayMetricx().heightPixels |
+     | status_bar_height    | get status bar height                      |
 
-*** H5 Render Engine
+     获取 status_bar_height 的方式：
+     #+BEGIN_SRC java
+       int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+       if (resourceId > 0) {
+           int statusBarHeight = resources.getDimensionPixelSize(resourceId);
+           registerCoreEnv("status_bar_height", String.valueOf(statusBarHeight));
+       }
+     #+END_SRC
+**** doInitInternal 方法
+     其实主要初始化的工作都是由 doInitInternal 这个方法完成的，我们来看下它的代码：
+     #+BEGIN_SRC java
+       private static void doInitInternal(final Application application,final InitConfig config){
+           // 获取 Application 对象
+           WXEnvironment.sApplication = application;
+           // 如果 Application 对象为空，传递异常给到 JS
+           if(application == null){
+               WXLogUtils.e(TAG, " doInitInternal application is null");
+               WXExceptionUtils.commitCriticalExceptionRT(null,
+                                                          WXErrorCode.WX_KEY_EXCEPTION_SDK_INIT,
+                                                          "doInitInternal",
+                                                          WXErrorCode.WX_KEY_EXCEPTION_SDK_INIT.getErrorMsg() + "WXEnvironment sApplication is null",
+                                                          null);
+           }
+           WXEnvironment.JsFrameworkInit = false;
+
+           WXBridgeManager.getInstance().post(new Runnable() {
+                   @Override
+                   public void run() {
+                       // 又要统计初始化时间什么的，忽略
+                       WXSDKManager sm = WXSDKManager.getInstance();
+                       sm.onSDKEngineInitialize();
+
+                       if(config != null ) {
+                           sm.setInitConfig(config);
+                       }
+                       // 初始化 SoLoaderAdapter 默认直接调用 System.loadLibrary(so...)
+                       WXSoInstallMgrSdk.init(application,
+                                              sm.getIWXSoLoaderAdapter(),
+                                              sm.getWXStatisticsListener());
+                       // 加载 V8 so 库，一个叫 weexcore.so 的库
+                       mIsSoInit = WXSoInstallMgrSdk.initSo(V8_SO_NAME, 1, config!=null?config.getUtAdapter():null);
+                       if (!mIsSoInit) {
+                           WXExceptionUtils.commitCriticalExceptionRT(null,
+                                                                      WXErrorCode.WX_KEY_EXCEPTION_SDK_INIT,
+                                                                      "doInitInternal",
+                                                                      WXErrorCode.WX_KEY_EXCEPTION_SDK_INIT.getErrorMsg() + "isSoInit false",
+                                                                      null);
+                           return;
+                       }
+                       // 调用 WXBridgeManager 的 initScriptsFramework 方法，一系列调用最终调用到了 WXBridgeManager 的 initFramework 方法，我们后续再看
+                       sm.initScriptsFramework(config!=null?config.getFramework():null);
+                   }
+               });
+           // 注册了一堆默认的 Component
+           register();
+       }
+     #+END_SRC
+*** JS Bridge
+    主要用来和 JS Engine（V8）进行双向通信，运行在 JsBridge 进程中。
+
+**** 注册 Component
+
+     实际注册 Component 的方法： ~com.taobao.weex.ui.WXComponentRegistry~
+     #+BEGIN_SRC java
+       public static synchronized boolean registerComponent(final String type, final IFComponentHolder holder, final Map<String, Object> componentInfo) throws WXException {
+           if (holder == null || TextUtils.isEmpty(type)) {
+               return false;
+           }
+
+           //register component
+           AutoScanConfigRegister.preLoad(holder);
+
+           //execute task in js thread to make sure register order is same as the order invoke register method.
+           WXBridgeManager.getInstance()
+               .post(new Runnable() {
+                       @Override
+                       public void run() {
+                           try {
+                               Map<String, Object> registerInfo = componentInfo;
+                               if (registerInfo == null){
+                                   registerInfo = new HashMap<>();
+                               }
+
+                               registerInfo.put("type",type);
+                               registerInfo.put("methods",holder.getMethods());
+                               registerNativeComponent(type, holder);
+                               registerJSComponent(registerInfo);
+                               sComponentInfos.add(registerInfo);
+                           } catch (WXException e) {
+                               WXLogUtils.e("register component error:", e);
+                           }
+
+                       }
+       }
+     #+END_SRC
+*** Render
+**** Android Render Engine
+**** iOS Render Engine
+
+**** H5 Render Engine

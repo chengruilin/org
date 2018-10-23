@@ -1576,7 +1576,7 @@
 
     Macro: 'when'
     #+BEGIN_SRC elisp
-    
+
     #+END_SRC
 
 *** Combining Conditions
