@@ -277,11 +277,11 @@
    - State "DOING"      from "TODO"       [2018-10-16 二 15:23]
 
 *** 整体架构
+**** 调用流程图
+     [[./weex/imgs/img_weex_arch_flow.png]]
 
-    官方结构图:
-    [[./weex/imgs/img_weex_arch_flow.png]]
-
-    [[file:weex/imgs/img_weex_framework_classes.jpeg][依赖关系图（图片比较大，摘自知乎）]]
+**** 框架结构图
+     [[./weex/imgs/img_weex_framework_classes.jpeg]]
 
 *** 初始化流程分析
 **** 初始化方法
