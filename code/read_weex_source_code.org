@@ -1,14 +1,13 @@
 #+TITLE: Weex 源码分析
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e)
 
-* TODO Weex Source Code [6/7]
+* TODO Weex Source Code [7/8]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
 
 ** DONE Weex 使用相关
    CLOSED: [2018-10-22 一 10:57]
-   - State "DOING"      from "TODO"       [2018-10-10 三 17:56]
 *** DONE Weex 扩展(Android)
     CLOSED: [2018-10-11 四 11:11]
 
@@ -273,18 +272,24 @@
       - 先执行开发者定义的 destroyed 方法,再清除内部属性
       - 添加的全局或者 this 的属性,建议在 destroyed 方法中手动清除,避免内存泄露
 
-** DOING 源码分析
-   - State "DOING"      from "TODO"       [2018-10-16 二 15:23]
+** DONE 架构分析
+   CLOSED: [2018-10-24 三 16:33]
+*** 调用流程图
+    [[./weex/imgs/img_weex_arch_flow.png]]
 
-*** 整体架构
-**** 调用流程图
-     [[./weex/imgs/img_weex_arch_flow.png]]
+*** 框架结构图
+    图片出处: https://zhuanlan.zhihu.com/p/25326775
+    [[./weex/imgs/img_weex_framework_classes.jpeg]]
 
-**** 框架结构图
-     [[./weex/imgs/img_weex_framework_classes.jpeg]]
-
+*** 线程模型
+    <<weex_thread>>
+** DOING 源码分析-Android
 *** 初始化流程分析
-**** 初始化方法
+    整个初始化的流程,简单来说就是:
+    1. 
+    
+
+**** WXSDKEngine -> initialize
      Weex 官方文档中的初始化方法：
      #+BEGIN_SRC java
        public class WXApplication extends Application {
@@ -296,7 +301,9 @@
            }
        }
      #+END_SRC
+
      此处调用了 WXSDKEngine 方法，那么这个方法里面做了什么事情呢，我们来看下：
+     #+NAME: WXSDKEngine.java
      #+BEGIN_SRC java
        // com.taobao.weex.WXSDKEngine
        public static void initialize(Application application,InitConfig config){
@@ -312,24 +319,9 @@
        }
      #+END_SRC
      这里需要重点关注的就是 doInitInternal 和 registerApplicationOptions 这两个方法。
-**** registerApplicationOptions 方法
-     可以认为是获取了 App 的一些环境配置
-     | key                  | value                                      |
-     |----------------------+--------------------------------------------|
-     | screen_width_pixels  | resources.getDisplayMetricx().widthPixels  |
-     | screen_height_pixels | resources.getDisplayMetricx().heightPixels |
-     | status_bar_height    | get status bar height                      |
-
-     获取 status_bar_height 的方式：
-     #+BEGIN_SRC java
-       int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
-       if (resourceId > 0) {
-           int statusBarHeight = resources.getDimensionPixelSize(resourceId);
-           registerCoreEnv("status_bar_height", String.valueOf(statusBarHeight));
-       }
-     #+END_SRC
-**** doInitInternal 方法
+**** WXSDKEngine -> doInitInternal
      其实主要初始化的工作都是由 doInitInternal 这个方法完成的，我们来看下它的代码：
+     #+NAME: WXSDKEngine.java
      #+BEGIN_SRC java
        private static void doInitInternal(final Application application,final InitConfig config){
            // 获取 Application 对象
@@ -344,7 +336,7 @@
                                                           null);
            }
            WXEnvironment.JsFrameworkInit = false;
-
+           // 这里的操作在线程中完成
            WXBridgeManager.getInstance().post(new Runnable() {
                    @Override
                    public void run() {
@@ -352,6 +344,7 @@
                        WXSDKManager sm = WXSDKManager.getInstance();
                        sm.onSDKEngineInitialize();
 
+                       // 设置 Weex 初始化的 Congif 参数(可以为空)
                        if(config != null ) {
                            sm.setInitConfig(config);
                        }
@@ -377,10 +370,180 @@
            register();
        }
      #+END_SRC
+
+     可以看到其中几步重要的操作通过 ~WXBridgeManager.getInstance().post()~ 在线程中完成,详细的线程模型可以查 [[weex_thread]]:
+     #+NAME: WXSDKEngine.java
+     #+BEGIN_SRC java
+     WXBridgeManager.getInstance().post(new Runnable() {
+               @Override
+               public void run() {
+                   // do something
+               }
+           };
+     #+END_SRC
+     其中有两个重要的方法,继续往下追 ~initFramework~ 方法和 ~register~ 方法,分两小节来介绍.
+     
+***** WXBridgeManager -> initFramework
+      可能需要了解下这里的 framework 是什么概念, [[weex_jsframework][传送门]].
+
+      先来看下 InitConfig 的 framework 为空的情况(这个参数默认为空):
+      #+NAME: WXBridgeManager.java
+      #+BEGIN_SRC java
+        // InitConfig -> framework 默认为空
+        private void initFramework(String framework) {
+            // 首先检查 so 文件是否初始化成功
+            if (WXSDKEngine.isSoInitialized() && !isJSFrameworkInit()) {
+                if (TextUtils.isEmpty(framework)) {
+                    // isSandBoxContext 默认为 true
+                    if (!isSandBoxContext) {
+                        framework = WXFileUtils.loadAsset("main.js", WXEnvironment.getApplication());
+                    } else {
+                        // 默认加载 assets 目录下的 weex-main-jsfm.js 文件来启动 JSFramework
+                        framework = WXFileUtils.loadAsset("weex-main-jsfm.js", WXEnvironment.getApplication());
+                    }
+                }
+                if (TextUtils.isEmpty(framework)) {
+                    // 抛出异常到 JS 端显示
+                    return;
+                }
+                try {
+                    //监听 JSFramework 启动状态
+                    if (WXSDKManager.getInstance().getWXStatisticsListener() != null) {
+                        WXSDKManager.getInstance().getWXStatisticsListener().onJsFrameworkStart();
+                    }
+
+                    String crashFile = "";
+                    try {
+                        crashFile = WXEnvironment.getApplication().getApplicationContext().getCacheDir().getPath();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    boolean pieSupport = true;
+                    try {
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                            pieSupport = false;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    // extends initFramework
+                    // 调用 WXBridge -> initFramework -> nativeInitFramework -> weexcore.so 底层方法初始化 JSFramework
+                    if (mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport) == INIT_FRAMEWORK_OK) {
+                        // 打了一堆日志(渲染速度监控相关的)
+                        setJSFrameworkInit(true);
+
+                        //监听 JSFramework 准备状态
+                        if (WXSDKManager.getInstance().getWXStatisticsListener() != null) {
+                            WXSDKManager.getInstance().getWXStatisticsListener().onJsFrameworkReady();
+                        }
+                        // Module/Component/JSService 有注册失败的话,在这里可以完成重新注册
+                        execRegisterFailTask();
+                        // 注册 Dom Module
+                        registerDomModule();
+                    } else {
+                        //抛异常到 JS
+                    }
+                } catch (Throwable e) {
+                    //抛异常到 JS
+                }
+
+            }
+        }
+      #+END_SRC
+
+      有关 Module 注册: [[weex_register_module][传送门]]
+      有关 Component 注册: [[weex_register_module][传送门]]
+
+***** native -> initFramework
+      上一节中提到的 initFramework 代码 ~mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport)~ 实际调用的是 native 层的代码:
+      #+NAME: wx_bridge.cpp
+      #+BEGIN_SRC c
+        static jint InitFramework(JNIEnv* env, jobject object, jstring script, jobject params) {
+          WXBridge::Instance()->Reset(env, object);
+          // Init platform thread --- ScriptThread
+          WeexCoreManager::Instance()->InitScriptThread();
+          // Exception handler for so
+          SoUtils::RegisterExceptionHanler([](const char* status_code, const char* error_msg) {
+              WeexCoreManager::Instance()
+                ->getPlatformBridge()
+                ->platform_side()
+                ->ReportNativeInitStatus(status_code, error_msg);
+            });
+          // Init platform bridge
+          PlatformBridge* bridge = new AndroidBridgeInSimple;
+          WeexCoreManager::Instance()->set_platform_bridge(bridge);
+          // Init params
+          std::vector<INIT_FRAMEWORK_PARAMS*> params_vector = initFromParam(env, params, [](const char* status_code, const char* error_msg) {
+              WeexCoreManager::Instance()
+                ->getPlatformBridge()
+                ->platform_side()
+                ->ReportNativeInitStatus(status_code, error_msg);
+            });
+          // If parse init params error, return false
+          if (params_vector.empty()) return false;
+          // Set project mode
+          if (isSingleProcess()) {
+            WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_SO);
+          } else {
+            WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_PROCESS);
+          }
+          // Init script bridge
+          if (WeexCoreManager::Instance()->project_mode() ==
+              WeexCoreManager::ProjectMode::MULTI_PROCESS) {
+            WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
+          } else {
+            WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiSo);
+          }
+          // It means initialization failed when any bridge is not passable
+          if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
+              !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
+            return false;
+          }
+          // for environment
+          bridge->core_side()->SetPlatform(WXCoreEnvironment::getInstance()->platform());
+          bridge->core_side()->SetDeviceWidthAndHeight(WXCoreEnvironment::getInstance()->DeviceWidth(), WXCoreEnvironment::getInstance()->DeviceHeight());
+          auto options = WXCoreEnvironment::getInstance()->options();
+          auto it = options.begin();
+          for (; it != options.end(); it++) {
+            bridge->core_side()->AddOption(it->first, it->second);
+          }
+          // Set measure function
+          WeexCoreManager::Instance()->set_measure_function_adapter(new MeasureFunctionAdapterImplAndroid());
+          bridge->core_side()->SetMeasureFunctionAdapter();
+          ScopedJStringUTF8 c_script(env, script);
+          // Call InitFramework
+          auto result = bridge->core_side()->InitFramework(c_script.getChars(), params_vector);
+          freeParams(params_vector);
+          return result;
+        }
+      #+END_SRC
+***** WXSDKEngine -> regiser
+**** WXSDKEngine -> registerApplicationOptions
+     可以认为是获取了 App 的一些环境配置
+     | key                  | value                                      |
+     |----------------------+--------------------------------------------|
+     | screen_width_pixels  | resources.getDisplayMetricx().widthPixels  |
+     | screen_height_pixels | resources.getDisplayMetricx().heightPixels |
+     | status_bar_height    | get status bar height                      |
+
+     获取 status_bar_height 的方式：
+     #+NAME: WXSDKEngine.java
+     #+BEGIN_SRC java
+       // com.taobao.weex.WXSDKEngine
+       int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+       if (resourceId > 0) {
+           int statusBarHeight = resources.getDimensionPixelSize(resourceId);
+           registerCoreEnv("status_bar_height", String.valueOf(statusBarHeight));
+       }
+     #+END_SRC
+
 *** JS Bridge
     主要用来和 JS Engine（V8）进行双向通信，运行在 JsBridge 进程中。
 
 **** 注册 Component
+     <<weex_register_component>>
 
      实际注册 Component 的方法： ~com.taobao.weex.ui.WXComponentRegistry~
      #+BEGIN_SRC java
@@ -415,8 +578,27 @@
                        }
        }
      #+END_SRC
-*** Render
-**** Android Render Engine
-**** iOS Render Engine
 
-**** H5 Render Engine
+**** 注册 Module
+     <<weex_register_module>>
+
+*** Android Render Engine
+
+** 源码分析-iOS
+*** 初始化流程分析
+
+*** JS Bridge
+
+*** iOS Render Engine
+
+** 源码分析-JS
+*** JSFramework
+    <<weex_jsframework>>
+**** framework 是个啥?
+     Weex 通过调用 JS Framework 提供的接口来调用原生功能并且渲染真实 UI.代码层面其实就是 weex 提供的一个 js 库,用来完成 js 调用原生功能的一个组件.
+**** 配置 framework
+     在 weex 初始化时,通过设置 InitConfig 的 framework 参数,来配置 framework
+     #+NAME: InitConfig.java
+     #+BEGIN_SRC java
+     InitConfig config=new InitConfig.Builder().setFramework("your framework").build();
+     #+END_SRC
