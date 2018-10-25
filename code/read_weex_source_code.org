@@ -1155,29 +1155,138 @@
        WeexCoreManager::Instance()->getPlatformBridge()->core_side()->ExecJS(instance_id.getChars(), name_space.getChars(), function.getChars(), params);
      #+END_SRC
 
-     #+NAME: weex_core_manager.h
-     #+BEGIN_SRC c
-       class WeexCoreManager {
-         // 省略一些方法
-         inline void set_platform_bridge(PlatformBridge *bridge) {
-           platform_bridge_ = bridge;
-         }
+***** WeexCoreManager -> getPlatformBridge()
+      #+NAME: weex_core_manager.h
+      #+BEGIN_SRC c
+        class WeexCoreManager {
+          // 省略一些方法
+          inline void set_platform_bridge(PlatformBridge *bridge) {
+            platform_bridge_ = bridge;
+          }
 
-         inline PlatformBridge *getPlatformBridge() { return platform_bridge_; }
-         // 省略一些方法
-        private:
-         PlatformBridge *platform_bridge_;
-         // 省略一些属性
-       }
-     #+END_SRC
+          inline PlatformBridge *getPlatformBridge() { return platform_bridge_; }
+          // 省略一些方法
+         private:
+          PlatformBridge *platform_bridge_;
+          // 省略一些属性
+        }
+      #+END_SRC
 
-***** PlatformBridge
-      1.ScriptBridgeInMultiSo
-      2.ScriptBridgeInMultiProcess
+      Android 中，InitFramework 方法中会调用 set_platform_bridge 方法：
+      #+NAME: wx_bridge.cpp
+      #+BEGIN_SRC c++
+        static jint InitFramework(JNIEnv* env, jobject object, jstring script,
+                                  jobject params) {
+          // other code...
+          // Init platform bridge
+          PlatformBridge* bridge = new AndroidBridgeInSimple;
+          WeexCoreManager::Instance()->set_platform_bridge(bridge);
+          // other code...
+        }
+      #+END_SRC
 
-***** CodeSide
-      1.CodeSideInMultiProcess
-      2.CodeSideInMultiSo
+***** -> core_side()
+      来看下 AndroidBridgeInSimple 的实现：
+      #+NAME: android_bridge.cpp
+      #+BEGIN_SRC c++
+        // AndroidBridgeInSimple 继承自 PlatformBridge
+        AndroidBridgeInSimple::AndroidBridgeInSimple() {
+          // 调用了 PlatformBridge -> set_core_side(CoreSide* core_side) 方法
+          set_core_side(new CoreSideInPlatform);
+          // 调用了 PlatformBridge -> set_platform_side(PlatformSide* platform_side) 方法
+          set_platform_side(new AndroidSide);
+        }
+      #+END_SRC
 
+***** -> ExecJS()
+      CoreSideInPlatform 的 ExecJS 方法:
+      #+NAME: core_side_in_platform.cpp
+      #+BEGIN_SRC c++
+        int CoreSideInPlatform::ExecJS(const char *instanceId, const char *nameSpace,
+                                       const char *func,
+                                       std::vector<VALUE_WITH_TYPE *> &params) {
+          return WeexCoreManager::Instance()->script_bridge()->script_side()->ExecJS(instanceId, nameSpace, func, params);
+        }
+      #+END_SRC
+
+***** WeexCoreManager -> script_bridge()
+      
+      WeexCoreManager 中，通过两个方法来操作 ~script_bridge_~ :
+      #+NAME: weex_core_manager.h
+      #+BEGIN_SRC c
+        inline ScriptBridge *script_bridge() { return script_bridge_; }
+
+        inline void set_script_bridge(ScriptBridge *script_bridge) {
+          script_bridge_ = script_bridge;
+        }
+      #+END_SRC
+
+      Android 环境中，在 InitFramework 方法中进行设置：
+      #+NAME: wx_bridge.cpp
+      #+BEGIN_SRC c++
+        static jint InitFramework(JNIEnv* env, jobject object, jstring script,
+                                  jobject params) {
+          // Init params
+          // initFromParam 关系到后面的 isSingleProcess()
+          std::vector<INIT_FRAMEWORK_PARAMS*> params_vector =
+            initFromParam(env, params, [](const char* status_code, const char* error_msg) {
+                                         WeexCoreManager::Instance()
+                                           ->getPlatformBridge()
+                                           ->platform_side()
+                                           ->ReportNativeInitStatus(status_code, error_msg);
+                                       });
+          // Set project mode
+          if (isSingleProcess()) {
+            WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_SO);
+          } else {
+            WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_PROCESS);
+          }
+          // Init script bridge
+          if (WeexCoreManager::Instance()->project_mode() == WeexCoreManager::ProjectMode::MULTI_PROCESS) {
+            WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
+          } else {
+            WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiSo);
+          }
+        }
+      #+END_SRC
+      
+      ~isSingleProcess()~ 的值：
+      #+NAME:params_utils.cpp
+      #+BEGIN_SRC c++
+        bool g_is_single_process = false;
+        bool isSingleProcess() { return g_is_single_process; }
+
+        std::vector<INIT_FRAMEWORK_PARAMS*> initFromParam(JNIEnv* env,
+                                                          jobject params,
+                                                          const std::function<void(const char*, const char*)>&ReportNativeInitStatus) {
+          // other code...
+
+          jmethodID m_use_single_process = env->GetMethodID(c_params, "getUseSingleProcess", "()Ljava/lang/String;");
+          if (m_use_single_process == nullptr) {
+            LOGE("getUseSingleProcess method is missing");
+          } else {
+            jobject j_use_single_process =
+              env->CallObjectMethod(params, m_use_single_process);
+            const char* use_single_process =
+              env->GetStringUTFChars((jstring)(j_use_single_process), nullptr);
+            LOGE("g_use_single_process is %s ", use_single_process);
+            if (use_single_process == nullptr) {
+              g_is_single_process = false;
+            } else {
+              g_is_single_process = strstr(use_single_process, "true") != nullptr;
+              env->DeleteLocalRef(j_use_single_process);
+            }
+          }
+
+          // other code...
+        }
+      #+END_SRC
+      这里的 ~g_is_single_process~ 是通过调用 JNI 接口 ~WXParams -> getUseSingleProcess()~ 的返回值来进行配置的
+
+      #+NAME: WXBridgeManager -> setUseSingleProcess()
+      #+BEGIN_SRC java
+      WXBridgeManager.getInstance().setUseSingleProcess(false); // ture or false
+      #+END_SRC
+      
 *** Native 渲染 Weex Js
     <<weex_core_render>>
