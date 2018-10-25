@@ -293,22 +293,22 @@
     #+NAME: Weex 目录结构(选择性列了一些比较重要的目录)
     #+BEGIN_EXAMPLE
     ./incubator-weex                        # 根目录 
-    ---------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------
         - android/                          # Android SDK 相关目录
             - commons/                      # 
             - playground/                   # Android 模板工程
             - sdk/                          # Android Weex SDK
-    ---------------------------------------------------------------------------------        
+    -----------------------------------------------------------------------------------------
         - ios/                              # iOS SDK 相关
             - playground/                   # iOS 模板工程
             - sdk/                          # iOS Weex SDK
-    ---------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------
         - packages/                         # 打包好的 JSFramework 库
             - weex-js-framework/            # 
             - weex-js-runtime/              # 
             - weex-legacy-framework/        # 
             - weex-vanilla-framework/       # 
-    ---------------------------------------------------------------------------------        
+    -----------------------------------------------------------------------------------------
         - runtime/                          # JSFramework 源码目录 
             - api/                          # 
             - bridge/                       # 
@@ -317,10 +317,10 @@
             - services/                     # 
             - shared/                       # 
             - vdom/                         # 
-    ---------------------------------------------------------------------------------            
+    -----------------------------------------------------------------------------------------    
         - script/                           # 一些脚本文件
-    ---------------------------------------------------------------------------------
-        - weex_core/Source                  # Weex 底层支持代码
+    -----------------------------------------------------------------------------------------
+        - weex_core/Source                  # Weex 底层支持代码(打包成 weexcore.so,SDK 引入)
             - IPC/                          # [Android] IPC 通信层
             - android/                      # [Android] JNI 层
             - base/                         # 
@@ -854,7 +854,8 @@
            }
        }
      #+END_SRC
-     这里最终处理完交给 WXBridge 来调用 execJS -> nativeExecJS
+     这里最终处理完交给 WXBridge 来调用 execJS -> nativeExecJS: [[weex_core_render][传送门]]
+     
 *** JS Bridge
     来看下 Android 的 SDK 中用来和 JS Engine（V8）进行双向通信的代码,主要的类有 WXBridgeManager.java 和 WXBridge.java.
     与 native 的 JS 方法的调用都运行在 JsBridge 线程中。
@@ -925,6 +926,7 @@
      WXBridgeManager -> invokeRegisterComponents
      #+NAME: WXBridgeManager.java
      #+BEGIN_SRC java
+
        private void invokeRegisterComponents(List<Map<String, Object>> components, List<Map<String, Object>> failReceiver) {
            if (components == failReceiver) {
                throw new RuntimeException("Fail receiver should not use source.");
@@ -951,7 +953,9 @@
            // 省略异常日志输出
        }
      #+END_SRC
-     
+
+     Native 注册 Component: [[weex_core_register_component][传送门]]
+
 **** 注册 Module
      <<weex_register_module>>
 
@@ -1057,6 +1061,8 @@
            //忽略错误信息打印
        }
      #+END_SRC
+     
+      Native 注册 Component: [[weex_core_register_module][传送门]]
 
 *** Android Render Engine
 ** TODO 源码分析-iOS
@@ -1078,3 +1084,9 @@
      InitConfig config=new InitConfig.Builder().setFramework("your framework").build();
      #+END_SRC
 ** TODO Weex Core 代码分析
+*** Native 注册 Module
+    <<weex_core_register_module>>
+*** Native 注册 Component
+    <<weex_core_register_component>>
+*** Native 渲染 Weex Js
+    <<weex_core_render>>
