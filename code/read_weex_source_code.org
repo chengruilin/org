@@ -13,7 +13,7 @@
 
 **** DONE Module
      CLOSED: [2018-10-10 三 17:56]
-     
+
      实现源码分析:[[weex_register_module][传送门]]
 
      Module 扩展非 UI 功能
@@ -285,17 +285,17 @@
 
 *** 线程模型
     <<weex_thread>>
-    
+
 **** Weex 线程间交互关系图
      [[./weex/imgs/img_weex_threads.jpg]]
 *** 项目目录结构
-    
+
     #+NAME: Weex 目录结构(选择性列了一些比较重要的目录)
     #+BEGIN_EXAMPLE
-    ./incubator-weex                        # 根目录 
+    ./incubator-weex                        # 根目录
     -----------------------------------------------------------------------------------------
         - android/                          # Android SDK 相关目录
-            - commons/                      # 
+            - commons/                      #
             - playground/                   # Android 模板工程
             - sdk/                          # Android Weex SDK
     -----------------------------------------------------------------------------------------
@@ -304,33 +304,33 @@
             - sdk/                          # iOS Weex SDK
     -----------------------------------------------------------------------------------------
         - packages/                         # 打包好的 JSFramework 库
-            - weex-js-framework/            # 
-            - weex-js-runtime/              # 
-            - weex-legacy-framework/        # 
-            - weex-vanilla-framework/       # 
+            - weex-js-framework/            #
+            - weex-js-runtime/              #
+            - weex-legacy-framework/        #
+            - weex-vanilla-framework/       #
     -----------------------------------------------------------------------------------------
-        - runtime/                          # JSFramework 源码目录 
-            - api/                          # 
-            - bridge/                       # 
-            - entries/                      # 
-            - frameworks/                   # 
-            - services/                     # 
-            - shared/                       # 
-            - vdom/                         # 
-    -----------------------------------------------------------------------------------------    
+        - runtime/                          # JSFramework 源码目录
+            - api/                          #
+            - bridge/                       #
+            - entries/                      #
+            - frameworks/                   #
+            - services/                     #
+            - shared/                       #
+            - vdom/                         #
+    -----------------------------------------------------------------------------------------
         - script/                           # 一些脚本文件
     -----------------------------------------------------------------------------------------
         - weex_core/Source                  # Weex 底层支持代码(打包成 weexcore.so,SDK 引入)
             - IPC/                          # [Android] IPC 通信层
             - android/                      # [Android] JNI 层
-            - base/                         # 
-            - core/                         # 
-            - include/                      # 
-            - third_party/                  # 
+            - base/                         #
+            - core/                         #
+            - include/                      #
+            - third_party/                  #
             - wson/                         # wson 支持
             - CMakeLists.txt                # CMake 打包脚本
     #+END_EXAMPLE
-    
+
 ** DOING 源码分析-Android
 *** 初始化流程分析
     整个初始化的流程,简单来说就是:
@@ -855,7 +855,7 @@
        }
      #+END_SRC
      这里最终处理完交给 WXBridge 来调用 execJS -> nativeExecJS: [[weex_core_render][传送门]]
-     
+
 *** JS Bridge
     来看下 Android 的 SDK 中用来和 JS Engine（V8）进行双向通信的代码,主要的类有 WXBridgeManager.java 和 WXBridge.java.
     与 native 的 JS 方法的调用都运行在 JsBridge 线程中。
@@ -885,7 +885,7 @@
            return WXComponentRegistry.registerComponent(type,new SimpleComponentHolder(clazz), componentInfo);
        }
      #+END_SRC
-     
+
      WXComponentRegistry -> registerComponent
      #+NAME: WXComponentRegistry.java
      #+BEGIN_SRC java
@@ -922,7 +922,7 @@
                        }
        }
      #+END_SRC
-     
+
      WXBridgeManager -> invokeRegisterComponents
      #+NAME: WXBridgeManager.java
      #+BEGIN_SRC java
@@ -963,7 +963,7 @@
      #+BEGIN_SRC java
      WXSDKEngine.registerModule("MyModule", MyModule.class);
      #+END_SRC
-     
+
      WXSDKEngine -> registerModule
      #+NAME: WXSDKEngine.java
      #+BEGIN_SRC java
@@ -984,7 +984,7 @@
            return WXModuleManager.registerModule(moduleName, factory,global);
        }
      #+END_SRC
-     
+
      WXModuleManager -> regiserModule
      #+NAME: WXModuleManager.java
      #+BEGIN_SRC java
@@ -1061,8 +1061,8 @@
            //忽略错误信息打印
        }
      #+END_SRC
-     
-      Native 注册 Component: [[weex_core_register_module][传送门]]
+
+     Native 注册 Component: [[weex_core_register_module][传送门]]
 
 *** Android Render Engine
 ** TODO 源码分析-iOS
@@ -1088,5 +1088,96 @@
     <<weex_core_register_module>>
 *** Native 注册 Component
     <<weex_core_register_component>>
+**** Android JNI 接口的实现
+     WXBridge 中对 execJS 方法的 JNI 接口定义:
+     #+NAME: WXBridge.java
+     #+BEGIN_SRC java
+       private native int nativeExecJS(String instanceId, String name, String function, WXJSObject[] args);
+     #+END_SRC
+
+     execJS 对应的 JNI 方法声明:
+     #+NAME: WXBridge_jni.h
+     #+BEGIN_SRC c
+       // RegisterNatives.
+       static const JNINativeMethod kMethodsWXBridge[] =
+         {
+          // 省略其他 Native 方法声明
+          { "nativeExecJS",
+            "("
+            "Ljava/lang/String;"
+            "Ljava/lang/String;"
+            "Ljava/lang/String;"
+            "[Lcom/taobao/weex/bridge/WXJSObject;"
+            ")"
+            "I", reinterpret_cast<void*>(ExecJS)
+          }
+          // 省略其他 Native 方法声明
+         }
+     #+END_SRC
+
+     #+NAME: wx_bridge.cpp
+     #+BEGIN_SRC c++
+       #include "android/jniprebuild/jniheader/WXBridge_jni.h"
+       /**
+        ,* Called to execute JavaScript such as . createInstance(),destroyInstance ext.
+        ,*
+        ,*/
+       static jint ExecJS(JNIEnv* env, jobject jthis, jstring jinstanceid,
+                          jstring jnamespace, jstring jfunction, jobjectArray jargs) {
+         //省略参数检查什么的
+         std::vector<VALUE_WITH_TYPE*> params;
+
+         for (int i = 0; i < length; i++) {
+           VALUE_WITH_TYPE* param = nullptr;
+
+           param = WeexCore::getValueWithTypePtr();
+           auto jni_object = base::android::ScopedLocalJavaRef<jobject>(
+                                                                        env, env->GetObjectArrayElement(jargs, i));
+           auto wx_js_object =
+             std::unique_ptr<WXJSObject>(new WXJSObject(env, jni_object.Get()));
+           addParamsFromJArgs(params, param, env, wx_js_object);
+         }
+         // 实际就是调了这一坨代码去调用 JSFramework 中的方法
+         auto result =
+             WeexCoreManager::Instance()->getPlatformBridge()->core_side()->ExecJS(
+                                                                                 instance_id.getChars(), name_space.getChars(), function.getChars(),
+                                                                                 params);
+         freeParams(params);
+         return result;
+       }
+     #+END_SRC
+
+**** Android JNI 层调用 V8 Engine 的流程
+
+     先来看下这一长串的调用,这步调用完成了调用 V8 Engine 提供的 API, 调用到了 JSFramework 的方法:
+     #+NAME: wx_bridge.cpp
+     #+BEGIN_SRC c++
+       WeexCoreManager::Instance()->getPlatformBridge()->core_side()->ExecJS(instance_id.getChars(), name_space.getChars(), function.getChars(), params);
+     #+END_SRC
+
+     #+NAME: weex_core_manager.h
+     #+BEGIN_SRC c
+       class WeexCoreManager {
+         // 省略一些方法
+         inline void set_platform_bridge(PlatformBridge *bridge) {
+           platform_bridge_ = bridge;
+         }
+
+         inline PlatformBridge *getPlatformBridge() { return platform_bridge_; }
+         // 省略一些方法
+        private:
+         PlatformBridge *platform_bridge_;
+         // 省略一些属性
+       }
+     #+END_SRC
+
+***** PlatformBridge
+      1.ScriptBridgeInMultiSo
+      2.ScriptBridgeInMultiProcess
+
+***** CodeSide
+      1.CodeSideInMultiProcess
+      2.CodeSideInMultiSo
+
 *** Native 渲染 Weex Js
     <<weex_core_render>>
