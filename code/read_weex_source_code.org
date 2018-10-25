@@ -13,7 +13,8 @@
 
 **** DONE Module
      CLOSED: [2018-10-10 三 17:56]
-     - State "DOING"      from "TODO"       [2018-10-10 三 17:42]
+     
+     实现源码分析:[[weex_register_module][传送门]]
 
      Module 扩展非 UI 功能
      1. extends WXModule
@@ -67,7 +68,8 @@
 
 **** DONE Component
      CLOSED: [2018-10-10 三 17:56]
-     - State "DOING"      from "TODO"       [2018-10-10 三 17:42]
+
+     实现源码分析:[[weex_register_component][传送门]]
 
      Component 扩展实现 Native 控件
      1. extends WXComponent
@@ -599,7 +601,7 @@
            registerCoreEnv("status_bar_height", String.valueOf(statusBarHeight));
        }
      #+END_SRC
-*** 加载流程分析
+*** Weex 页面渲染流程分析
     #+NAME: Weex 加载页面的调用
     #+BEGIN_SRC java
       public class MainActivity extends AppCompatActivity implements IWXRenderListener {
@@ -627,195 +629,221 @@
           /* other methods */
       }
     #+END_SRC
-**** WXSDKInstance -> render
-***** WXSDKInstance -> renderInternal
-      redner 方法内部调用了内部的 renderInternal 方法来进行 Weex 页面的渲染，来看下代码：
-      #+NAME: WXSDKInstance.class
-      #+BEGIN_SRC java
-       /**
-        ,* Render template asynchronously
-        ,*
-        ,* @param pageName, used for performance log.
-        ,* @param template bundle js
-        ,* @param options  os   iphone/android/ipad
-        ,*                 weexversion    Weex version(like 1.0.0)
-        ,*                 appversion     App version(like 1.0.0)
-        ,*                 devid        Device id(like Aqh9z8dRJNBhmS9drLG5BKCmXhecHUXIZoXOctKwFebH)
-        ,*                 sysversion    Device system version(like 5.4.4、7.0.4, should be used with os)
-        ,*                 sysmodel     Device model(like iOS:"MGA82J/A", android:"MI NOTE LTE")
-        ,*                 Time    UNIX timestamp, UTC+08:00
-        ,*                 TTID(Optional)
-        ,*                 MarkertId
-        ,*                 Appname(Optional)  tm,tb,qa
-        ,*                 Bundleurl(Optional)  template url
-        ,* @param jsonInitData Initial data for rendering
-        ,* @param flag     RenderStrategy {@link WXRenderStrategy}
-        ,*/
-       private void renderInternal(String pageName,
-                                   String template,
-                                   Map<String, Object> options,
-                                   String jsonInitData,
-                                   WXRenderStrategy flag){
-           // 此处省略各种参数检查
-           // 此处省略数据埋点
+    来分析下 WXSDKInstance -> render() 方法的内部实现, 除了参数检查之外,它其实调用的是内部的 rednerInternal 方法.
 
-           // 检查 RenderContainer 是否为空，为空的话创建一个
-           ensureRenderArchor();
+**** WXSDKInstance -> renderInternal
+     redner 方法内部调用了内部的 renderInternal 方法来进行 Weex 页面的渲染，来看下代码：
+     #+NAME: WXSDKInstance.class
+     #+BEGIN_SRC java
+      /**
+       ,* Render template asynchronously
+       ,*
+       ,* @param pageName, used for performance log.
+       ,* @param template bundle js
+       ,* @param options  os   iphone/android/ipad
+       ,*                 weexversion    Weex version(like 1.0.0)
+       ,*                 appversion     App version(like 1.0.0)
+       ,*                 devid        Device id(like Aqh9z8dRJNBhmS9drLG5BKCmXhecHUXIZoXOctKwFebH)
+       ,*                 sysversion    Device system version(like 5.4.4、7.0.4, should be used with os)
+       ,*                 sysmodel     Device model(like iOS:"MGA82J/A", android:"MI NOTE LTE")
+       ,*                 Time    UNIX timestamp, UTC+08:00
+       ,*                 TTID(Optional)
+       ,*                 MarkertId
+       ,*                 Appname(Optional)  tm,tb,qa
+       ,*                 Bundleurl(Optional)  template url
+       ,* @param jsonInitData Initial data for rendering
+       ,* @param flag     RenderStrategy {@link WXRenderStrategy}
+       ,*/
+      private void renderInternal(String pageName,
+                                  String template,
+                                  Map<String, Object> options,
+                                  String jsonInitData,
+                                  WXRenderStrategy flag){
+          // 此处省略各种参数检查
+          // 此处省略数据埋点
 
-           Map<String, Object> renderOptions = options;
-           if (renderOptions == null) {
-               renderOptions = new HashMap<>();
-           }
-           if (WXEnvironment.sDynamicMode && !TextUtils.isEmpty(WXEnvironment.sDynamicUrl) && renderOptions.get("dynamicMode") == null) {
-               renderOptions.put("dynamicMode", "true");
-               // 根据 URL 渲染，最终还是调用到 renderInternal 方法，最终还是会调用 WXSDKManager -> createInstance 方法
-               renderByUrl(pageName, WXEnvironment.sDynamicUrl, renderOptions, jsonInitData, flag);
+          // 检查 RenderContainer 是否为空，为空的话创建一个
+          ensureRenderArchor();
+
+          Map<String, Object> renderOptions = options;
+          if (renderOptions == null) {
+              renderOptions = new HashMap<>();
+          }
+          if (WXEnvironment.sDynamicMode && !TextUtils.isEmpty(WXEnvironment.sDynamicUrl) && renderOptions.get("dynamicMode") == null) {
+              renderOptions.put("dynamicMode", "true");
+              // 根据 URL 渲染，最终还是调用到 renderInternal 方法，最终还是会调用 WXSDKManager -> createInstance 方法
+              renderByUrl(pageName, WXEnvironment.sDynamicUrl, renderOptions, jsonInitData, flag);
+              return;
+          }
+          WXSDKManager.getInstance().setCrashInfo(WXEnvironment.WEEX_CURRENT_KEY,pageName);
+          // 渲染页面，会调用 WXBridgeManager -> createInstance 方法
+          WXSDKManager.getInstance().createInstance(this, template, renderOptions, jsonInitData);
+          mRendered = true;
+      }
+     #+END_SRC
+**** WXBridgeManager -> createInstance
+     render 方法调用最终会调用到这个方法中
+     #+NAME: WXBridgeManager.java
+     #+BEGIN_SRC java
+       public void createInstance(final String instanceId, final String template,
+                                  final Map<String, Object> options, final String data) {
+           final WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(instanceId);
+           // 此处省略  WXSDKInstance 为空检查
+
+           if (!isJSFrameworkInit() && reInitCount == 1 && !WXEnvironment.sDebugServerConnectable) {
+               //  错误日志
+               post(new Runnable() {
+                       @Override
+                       public void run() {
+                           // 再次初始化 JSFramework 环境
+                           initFramework("");
+                       }
+                   }, instanceId);
                return;
            }
-           WXSDKManager.getInstance().setCrashInfo(WXEnvironment.WEEX_CURRENT_KEY,pageName);
-           // 渲染页面，会调用 WXBridgeManager -> createInstance 方法
-           WXSDKManager.getInstance().createInstance(this, template, renderOptions, jsonInitData);
-           mRendered = true;
+
+           WXModuleManager.createDomModule(instance);
+           post(new Runnable() {
+                   @Override
+                   public void run() {
+                       // 省略一堆性能日志代码
+                       invokeCreateInstance(instance, template, options, data);
+                   }
+               }, instanceId);
        }
-      #+END_SRC
-***** WXBridgeManager -> createInstance
-      render 方法调用最终会调用到这个方法中
-      #+NAME: WXBridgeManager.java
-      #+BEGIN_SRC java
-        public void createInstance(final String instanceId, final String template,
-                                   final Map<String, Object> options, final String data) {
-            final WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(instanceId);
-            // 此处省略  WXSDKInstance 为空检查
+     #+END_SRC
 
-            if (!isJSFrameworkInit() && reInitCount == 1 && !WXEnvironment.sDebugServerConnectable) {
-                //  错误日志
-                post(new Runnable() {
-                        @Override
-                        public void run() {
-                            // 再次初始化 JSFramework 环境
-                            initFramework("");
-                        }
-                    }, instanceId);
-                return;
-            }
+     来看下 createInstance 方法最后调用到的 invokeCreateInstance 方法
+     #+NAME: WXBridgeManager.java
+     #+BEGIN_SRC java
+       private void invokeCreateInstance(@NonNull WXSDKInstance instance, String template,
+                                         Map<String, Object> options, String data) {
+           // add for sandbox, will delete on sandbox ok
+           initFramework("");
 
-            WXModuleManager.createDomModule(instance);
-            post(new Runnable() {
-                    @Override
-                    public void run() {
-                        // 省略一堆性能日志代码
-                        invokeCreateInstance(instance, template, options, data);
-                    }
-                }, instanceId);
-        }
-      #+END_SRC
+           if (mMock) {
+               mock(instance.getInstanceId());
+           } else {
 
-      来看下 createInstance 方法最后调用到的 invokeCreateInstance 方法
-      #+NAME: WXBridgeManager.java
-      #+BEGIN_SRC java
-        private void invokeCreateInstance(@NonNull WXSDKInstance instance, String template,
-                                          Map<String, Object> options, String data) {
-            // add for sandbox, will delete on sandbox ok
-            initFramework("");
+               //省略 JSFramework 环境检查
 
-            if (mMock) {
-                mock(instance.getInstanceId());
-            } else {
+               WXModuleManager.registerWhenCreateInstance();
+               try {
+                   BundType type = BundType.Others;
+                   try {
+                       type = getBundleType(instance.getBundleUrl(), template);
+                   } catch (Throwable e) {
+                   }
 
-                //省略 JSFramework 环境检查
+                   try {
+                       if (options == null) {
+                           options = new HashMap<>();
+                       }
+                       // on file there is { "framework": "Vue" } or others
+                       if (options.get(BUNDLE_TYPE) == null) {
+                           // may vue or Rax
+                           if (type == BundType.Vue) {
+                               options.put(BUNDLE_TYPE, "Vue");
+                           } else if (type == BundType.Rax) {
+                               options.put(BUNDLE_TYPE, "Rax");
+                           } else {
+                               options.put(BUNDLE_TYPE, "Others");
+                           }
+                           instance.getApmForInstance().addProperty(WXInstanceApm.KEY_PAGE_PROPERTIES_BUNDLE_TYPE, options.get(BUNDLE_TYPE));
+                       }
+                       if (options.get("env") == null) {
+                           options.put("env", mInitParams.toMap());
+                       }
+                   } catch (Throwable e) {
+                       e.printStackTrace();
+                   }
+                   instance.bundleType = type;
 
-                WXModuleManager.registerWhenCreateInstance();
-                try {
-                    BundType type = BundType.Others;
-                    try {
-                        type = getBundleType(instance.getBundleUrl(), template);
-                    } catch (Throwable e) {
-                    }
+                   // 省略日志什么的
 
-                    try {
-                        if (options == null) {
-                            options = new HashMap<>();
-                        }
-                        // on file there is { "framework": "Vue" } or others
-                        if (options.get(BUNDLE_TYPE) == null) {
-                            // may vue or Rax
-                            if (type == BundType.Vue) {
-                                options.put(BUNDLE_TYPE, "Vue");
-                            } else if (type == BundType.Rax) {
-                                options.put(BUNDLE_TYPE, "Rax");
-                            } else {
-                                options.put(BUNDLE_TYPE, "Others");
-                            }
-                            instance.getApmForInstance().addProperty(WXInstanceApm.KEY_PAGE_PROPERTIES_BUNDLE_TYPE, options.get(BUNDLE_TYPE));
-                        }
-                        if (options.get("env") == null) {
-                            options.put("env", mInitParams.toMap());
-                        }
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
-                    instance.bundleType = type;
+                   WXJSObject instanceIdObj = new WXJSObject(WXJSObject.String, instance.getInstanceId());
+                   WXJSObject instanceObj = new WXJSObject(WXJSObject.String, template);
+                   WXJSObject optionsObj = new WXJSObject(WXJSObject.JSON,
+                                                          options == null ? "{}"
+                                                          : WXJsonUtils.fromObjectToJSONString(options));
+                   optionsObj = optionObjConvert(isSandBoxContext, type, optionsObj);
+                   WXJSObject dataObj = new WXJSObject(WXJSObject.JSON,
+                                                       data == null ? "{}" : data);
 
-                    // 省略日志什么的
+                   WXJSObject apiObj;
+                   if (type == BundType.Rax) {
+                       if (mRaxApi == null) {
+                           mRaxApi =  WXFileUtils.loadAsset("weex-rax-api.js", WXEnvironment.getApplication());
+                       }
+                       apiObj = new WXJSObject(WXJSObject.String,
+                                               mRaxApi);
+                   } else {
+                       apiObj = new WXJSObject(WXJSObject.String,
+                                               "");
+                   }
 
-                    WXJSObject instanceIdObj = new WXJSObject(WXJSObject.String, instance.getInstanceId());
-                    WXJSObject instanceObj = new WXJSObject(WXJSObject.String, template);
-                    WXJSObject optionsObj = new WXJSObject(WXJSObject.JSON,
-                                                           options == null ? "{}"
-                                                           : WXJsonUtils.fromObjectToJSONString(options));
-                    optionsObj = optionObjConvert(isSandBoxContext, type, optionsObj);
-                    WXJSObject dataObj = new WXJSObject(WXJSObject.JSON,
-                                                        data == null ? "{}" : data);
+                   // When render strategy is data_render, put it into options. Others keep null.
+                   WXJSObject renderStrategy = null;
+                   if (instance.getRenderStrategy() == WXRenderStrategy.DATA_RENDER) {
+                       renderStrategy = new WXJSObject(WXJSObject.String, WXRenderStrategy.DATA_RENDER.getFlag());
+                   }
 
-                    WXJSObject apiObj;
-                    if (type == BundType.Rax) {
-                        if (mRaxApi == null) {
-                            mRaxApi =  WXFileUtils.loadAsset("weex-rax-api.js", WXEnvironment.getApplication());
-                        }
-                        apiObj = new WXJSObject(WXJSObject.String,
-                                                mRaxApi);
-                    } else {
-                        apiObj = new WXJSObject(WXJSObject.String,
-                                                "");
-                    }
+                   WXJSObject[] args = {instanceIdObj, instanceObj, optionsObj,
+                                        dataObj, apiObj, renderStrategy};
+                   instance.setTemplate(template);
+                   instance.getApmForInstance().onStage(WXInstanceApm.KEY_PAGE_STAGES_LOAD_BUNDLE_END);
 
-                    // When render strategy is data_render, put it into options. Others keep null.
-                    WXJSObject renderStrategy = null;
-                    if (instance.getRenderStrategy() == WXRenderStrategy.DATA_RENDER) {
-                        renderStrategy = new WXJSObject(WXJSObject.String, WXRenderStrategy.DATA_RENDER.getFlag());
-                    }
-
-                    WXJSObject[] args = {instanceIdObj, instanceObj, optionsObj,
-                                         dataObj, apiObj, renderStrategy};
-                    instance.setTemplate(template);
-                    instance.getApmForInstance().onStage(WXInstanceApm.KEY_PAGE_STAGES_LOAD_BUNDLE_END);
-
-                    if (!isSandBoxContext) {
-                        invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
-                        return;
-                    }
-                    if (type == BundType.Vue || type == BundType.Rax
-                        || instance.getRenderStrategy() == WXRenderStrategy.DATA_RENDER) {
-                        invokeCreateInstanceContext(instance.getInstanceId(), null, "createInstanceContext", args, false);
-                        return;
-                    } else {
-                    invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
-                        return;
-                    }
-                } catch (Throwable e) {
-                    // 处理异常
-                }
-            }
-        }
-      #+END_SRC
-      这里最终处理完交给 WXBridge 来调用 execJS -> nativeExecJS
+                   if (!isSandBoxContext) {
+                       invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
+                       return;
+                   }
+                   if (type == BundType.Vue || type == BundType.Rax
+                       || instance.getRenderStrategy() == WXRenderStrategy.DATA_RENDER) {
+                       invokeCreateInstanceContext(instance.getInstanceId(), null, "createInstanceContext", args, false);
+                       return;
+                   } else {
+                   invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
+                       return;
+                   }
+               } catch (Throwable e) {
+                   // 处理异常
+               }
+           }
+       }
+     #+END_SRC
+     这里最终处理完交给 WXBridge 来调用 execJS -> nativeExecJS
 *** JS Bridge
-    主要用来和 JS Engine（V8）进行双向通信，运行在 JsBridge 进程中。
+    来看下 Android 的 SDK 中用来和 JS Engine（V8）进行双向通信的代码,主要的类有 WXBridgeManager.java 和 WXBridge.java.
+    与 native 的 JS 方法的调用都运行在 JsBridge 线程中。
+**** WXBridgeManager.java
+     负责通过 WXBridge.java 提供的一系列 native 接口,来完成 Java 环境和 JS 之间的交互.
 
+**** WXBridge.java
+     封装了一层 Java 层和 JNI 层关于 JS 调用的接口,内部实现了一堆 native 调用方法.
 **** 注册 Component
      <<weex_register_component>>
 
-     实际注册 Component 的方法： ~com.taobao.weex.ui.WXComponentRegistry~
+     再来看下如何手动注册一个 Component 组件:
+     #+NAME: WXSDKEngine.java
+     #+BEGIN_SRC java
+       // 调用 SDK 提供的 API 注册一个 Component 实现
+       WXSDKEngine.registerComponent("richText", RichText.class);
+
+       // 实际调用的注册方法
+       public static boolean registerComponent(Map<String, Object> componentInfo, Class<? extends WXComponent> clazz) throws WXException {
+           if(componentInfo == null){
+               return false;
+           }
+           String type = (String)componentInfo.get("type");
+           if(TextUtils.isEmpty(type)){
+               return false;
+           }
+           return WXComponentRegistry.registerComponent(type,new SimpleComponentHolder(clazz), componentInfo);
+       }
+     #+END_SRC
+     
+     WXComponentRegistry -> registerComponent
+     #+NAME: WXComponentRegistry.java
      #+BEGIN_SRC java
        public static synchronized boolean registerComponent(final String type, final IFComponentHolder holder, final Map<String, Object> componentInfo) throws WXException {
            if (holder == null || TextUtils.isEmpty(type)) {
@@ -838,7 +866,9 @@
 
                                registerInfo.put("type",type);
                                registerInfo.put("methods",holder.getMethods());
+                               // 注册 Component 到本地的一个静态变量 ConcurrentHashMap -> sTypeComponentMap 中
                                registerNativeComponent(type, holder);
+                               // 调用 WXBridgeManager -> invokeRegisterComponents 方法
                                registerJSComponent(registerInfo);
                                sComponentInfos.add(registerInfo);
                            } catch (WXException e) {
@@ -848,9 +878,142 @@
                        }
        }
      #+END_SRC
-
+     
+     WXBridgeManager -> invokeRegisterComponents
+     #+NAME: WXBridgeManager.java
+     #+BEGIN_SRC java
+       private void invokeRegisterComponents(List<Map<String, Object>> components, List<Map<String, Object>> failReceiver) {
+           if (components == failReceiver) {
+               throw new RuntimeException("Fail receiver should not use source.");
+           }
+           if (!isJSFrameworkInit()) {
+               // JSFramework 还没初始化成功,丢到 failReceiver 列表中,等 JSFramework 初始化成功之后重新注册
+               for (Map<String, Object> comp : components) {
+                   failReceiver.add(comp);
+               }
+               return;
+           }
+           if (components == null) {
+               return;
+           }
+           WXJSObject[] args = {WXWsonJSONSwitch.toWsonOrJsonWXJSObject(components)};
+           try {
+               // 调用 WXBridge.java 提供的 JNI 方法,注册到 JS 环境中
+               if(0 == mWXBridge.execJS("", null, METHOD_REGISTER_COMPONENTS, args)) {
+                   errorMsg = "execJS error";
+               }
+           } catch (Throwable e) {
+               // 省略异常日志输出
+           }
+           // 省略异常日志输出
+       }
+     #+END_SRC
+     
 **** 注册 Module
      <<weex_register_module>>
+
+     来看下 Android 应用中注册 Module 的方式:
+     #+BEGIN_SRC java
+     WXSDKEngine.registerModule("MyModule", MyModule.class);
+     #+END_SRC
+     
+     WXSDKEngine -> registerModule
+     #+NAME: WXSDKEngine.java
+     #+BEGIN_SRC java
+       /**
+        ,* Register module. This is a wrapper method for
+        ,* {@link #registerModule(String, Class, boolean)}. The module register here only need to
+        ,* be singleton in {@link WXSDKInstance} level.
+        ,* @param moduleName  module name
+        ,* @param moduleClass module to be registered.
+        ,* @return true for registration success, false for otherwise.
+        ,* {@link WXModuleManager#registerModule(String, ModuleFactory, boolean)}
+        ,*/
+       public static <T extends WXModule> boolean registerModule(String moduleName, Class<T> moduleClass,boolean global) throws WXException {
+           return moduleClass != null && registerModule(moduleName, new TypeModuleFactory<>(moduleClass), global);
+       }
+
+       public static <T extends WXModule> boolean registerModule(String moduleName, ModuleFactory factory, boolean global) throws WXException {
+           return WXModuleManager.registerModule(moduleName, factory,global);
+       }
+     #+END_SRC
+     
+     WXModuleManager -> regiserModule
+     #+NAME: WXModuleManager.java
+     #+BEGIN_SRC java
+       public static boolean registerModule(final String moduleName, final ModuleFactory factory, final boolean global) throws WXException {
+           // 省略一系列的参数检查
+
+           //execute task in js thread to make sure register order is same as the order invoke register method.
+           WXBridgeManager.getInstance()
+               .post(new Runnable() {
+                       @Override
+                       public void run() {
+                           try {
+                               // 将注册的 Module 相关参数放到一个静态的 volatile ConcurrentHashMap 中
+                               registerNativeModule(moduleName, factory);
+                           } catch (WXException e) {
+                           }
+                           // 省略 global Module map
+
+                           // 调用 WXSDKManager 的 registerJSModules 方法
+                           registerJSModule(moduleName, factory);
+                       }
+                   });
+           return true;
+       }
+
+       static boolean registerJSModule(String moduleName, ModuleFactory factory) {
+           Map<String, Object> modules = new HashMap<>();
+           modules.put(moduleName, factory.getMethods());
+           // WXSDKManager 中调用了 WXBridgeManager -> registerModules 方法
+           WXSDKManager.getInstance().registerModules(modules);
+           return true;
+       }
+     #+END_SRC
+
+     WXBridgeManager -> registerModules
+     #+NAME: WXBridgeManager.java
+     #+BEGIN_SRC java
+       public void registerModules(final Map<String, Object> modules) {
+           if (modules != null && modules.size() != 0) {
+               // 确保是在 JSThread 中完成注册
+               if (isJSThread()) {
+                   invokeRegisterModules(modules, mRegisterModuleFailList);
+               } else {
+                   post(new Runnable() {
+                           @Override
+                           public void run() {
+                               invokeRegisterModules(modules, mRegisterModuleFailList);
+                           }
+                       }, null);
+               }
+           }
+       }
+     #+END_SRC
+
+     WXBridgeManager -> invokeRegisterModules
+     #+NAME: WXBridgeManager.java
+     #+BEGIN_SRC java
+       private void invokeRegisterModules(Map<String, Object> modules, List<Map<String, Object>> failReceiver) {
+           if (modules == null || !isJSFrameworkInit()) {
+               // JSFramework 没有初始化的情况下放到 failReceiver 列表中,下次 initFramework 的时候再次注册
+               failReceiver.add(modules);
+               return;
+           }
+
+           WXJSObject[] args = {WXWsonJSONSwitch.toWsonOrJsonWXJSObject(modules)};
+           try {
+               // 通过 WXBridge.java 的 JNI 方法调用,完成 Module 注册到 JS 环境中
+               if(0 == mWXBridge.execJS("", null, METHOD_REGISTER_MODULES, args)) {
+                   errorMsg = "execJS error";
+               }
+               // 注册成功之后调用 WXModuleManager.resetModuleState(module, true); 方法更新 module 状态
+           } catch (Throwable e) {
+           }
+           //忽略错误信息打印
+       }
+     #+END_SRC
 
 *** Android Render Engine
 ** TODO 源码分析-iOS
