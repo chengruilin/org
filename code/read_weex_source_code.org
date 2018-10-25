@@ -286,8 +286,51 @@
 *** 线程模型
     <<weex_thread>>
     
-**** Weex 现场关系图
+**** Weex 线程间交互关系图
      [[./weex/imgs/img_weex_threads.jpg]]
+*** 项目目录结构
+    
+    #+NAME: Weex 目录结构(选择性列了一些比较重要的目录)
+    #+BEGIN_EXAMPLE
+    ./incubator-weex                        # 根目录 
+    ---------------------------------------------------------------------------------
+        - android/                          # Android SDK 相关目录
+            - commons/                      # 
+            - playground/                   # Android 模板工程
+            - sdk/                          # Android Weex SDK
+    ---------------------------------------------------------------------------------        
+        - ios/                              # iOS SDK 相关
+            - playground/                   # iOS 模板工程
+            - sdk/                          # iOS Weex SDK
+    ---------------------------------------------------------------------------------
+        - packages/                         # 打包好的 JSFramework 库
+            - weex-js-framework/            # 
+            - weex-js-runtime/              # 
+            - weex-legacy-framework/        # 
+            - weex-vanilla-framework/       # 
+    ---------------------------------------------------------------------------------        
+        - runtime/                          # JSFramework 源码目录 
+            - api/                          # 
+            - bridge/                       # 
+            - entries/                      # 
+            - frameworks/                   # 
+            - services/                     # 
+            - shared/                       # 
+            - vdom/                         # 
+    ---------------------------------------------------------------------------------            
+        - script/                           # 一些脚本文件
+    ---------------------------------------------------------------------------------
+        - weex_core/Source                  # Weex 底层支持代码
+            - IPC/                          # [Android] IPC 通信层
+            - android/                      # [Android] JNI 层
+            - base/                         # 
+            - core/                         # 
+            - include/                      # 
+            - third_party/                  # 
+            - wson/                         # wson 支持
+            - CMakeLists.txt                # CMake 打包脚本
+    #+END_EXAMPLE
+    
 ** DOING 源码分析-Android
 *** 初始化流程分析
     整个初始化的流程,简单来说就是:
