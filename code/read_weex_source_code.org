@@ -1462,10 +1462,97 @@
 
 **** Android 底层接收 ExecJS 执行指令的流程(IPC)
      execJS 方法调用的最后是将 JS 调用当成了一个数据指令通过 IPC 的方式发送出去的,现在我们来看下发送之后的消息是怎么处理的.
+***** 初始化 IPC 消息监听
+      #+NAME: script_bridge_in_multi_process.cpp
+      #+BEGIN_SRC c++
+        ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
+          // 之前的 script_side 配置
+          set_script_side(new bridge::script::ScriptSideInMultiProcess);
+          set_core_side(new CoreSideInScript);
+
+          // 多进程通信初始化,里面包含了对 IPC 监听的启动过程
+          std::unique_ptr<MultiProcessAndSoInitializer> initializer(new MultiProcessAndSoInitializer);
+        }
+      #+END_SRC
+
+      #+NAME: multi_process_and_so_initializer.cpp
+      #+BEGIN_SRC c++
+        bool MultiProcessAndSoInitializer::Init(const std::function<void(IPCHandler*)>& OnHandlerCreated,
+                                                const std::function<bool(std::unique_ptr<WeexJSConnection>, std::unique_ptr<IPCHandler>, std::unique_ptr<IPCHandler>)>& OnInitFinished,
+                                                const std::function<void(const char*, const char*, const char*)>& ReportException){
+          // other code...
+         startInitFrameWork:
+          try {
+            auto handler = std::move(createIPCHandler());
+            auto server_handler = std::move(createIPCHandler());
+            OnHandlerCreated(server_handler.get());
+            std::unique_ptr<WeexJSConnection> connection(new WeexJSConnection());
+            // 启动 IPC 服务,开启 listen()
+            auto sender = connection->start(handler.get(), server_handler.get(), reinit);
+            // other code...
+          } catch (IPCException& e) {
+            // other code...
+          }
+          return true;
+        }
+      #+END_SRC
+
+***** -> WeexJSConnection => start()
+      
+      #+NAME: WeexJSConnection.cpp
+      #+BEGIN_SRC c++
+        IPCSender *WeexJSConnection::start(IPCHandler *handler, IPCHandler *serverHandler, bool reinit) {
+          // other code...
+          int i = pthread_create(&ipcServerThread, &threadAttr, newIPCServer, &td);
+          while (newThreadStatus == UNFINISH) {
+            continue;
+          }
+
+          if(newThreadStatus == ERROR) {
+            throw IPCException("failed to map ashmem region");
+          }
+          // other code...
+        }
+      #+END_SRC
+      
+      newIPCServer
+      #+NAME: WeexJSConnection.cpp      
+      #+BEGIN_SRC c++
+        static void *newIPCServer(void *_td) {
+          ThreadData *td = static_cast<ThreadData *>(_td);
+          void *base = mmap(nullptr, IPCFutexPageQueue::ipc_size, PROT_READ | PROT_WRITE, MAP_SHARED,
+                            td->ipcServerFd, 0);
+          if (base == MAP_FAILED) {
+            int _errno = errno;
+            close(td->ipcServerFd);
+            //throw IPCException("failed to map ashmem region: %s", strerror(_errno));
+            newThreadStatus = ERROR;
+            return nullptr;
+          }
+
+          IPCHandler *handler = td->ipcServerHandler;
+          std::unique_ptr<IPCFutexPageQueue> futexPageQueue(
+                                                            new IPCFutexPageQueue(base, IPCFutexPageQueue::ipc_size, 0));
+          const std::unique_ptr<IPCHandler> &testHandler = createIPCHandler();
+          std::unique_ptr<IPCSender> sender(createIPCSender(futexPageQueue.get(), handler));
+          std::unique_ptr<IPCListener> listener =std::move(createIPCListener(futexPageQueue.get(), handler)) ;
+          newThreadStatus = SUCCESS;
+
+          try {
+            futexPageQueue->spinWaitPeer();
+            // 启动 IPC 消息监听
+            listener->listen();
+          } catch (IPCException &e) {
+            LOGE("server died");
+            close(td->ipcServerFd);
+            base::android::DetachFromVM();
+            pthread_exit(NULL);
+          }
+        }
+      #+END_SRC
 
 ***** -> IPCListener => listen()
-      WeexJSConnection
-
+      WeexJSConnection 启动 IPC 消息监听:
       #+NAME:IPCListener.cpp
       #+BEGIN_SRC c++
         void IPCListenerImpl::listen()
@@ -1493,7 +1580,6 @@
       #+END_SRC
 
 ***** -> IPCHandler => handler()
-
 
 *** Native 注册 Module
     <<weex_core_register_module>>
