@@ -1152,10 +1152,13 @@
      先来看下这一长串的调用,这步调用完成了调用 V8 Engine 提供的 API, 调用到了 JSFramework 的方法:
      #+NAME: wx_bridge.cpp
      #+BEGIN_SRC c++
+       // Step1
        WeexCoreManager::Instance()->getPlatformBridge()->core_side()->ExecJS(instance_id.getChars(), name_space.getChars(), function.getChars(), params);
+       // Step2
+       WeexCoreManager::Instance()->script_bridge()->script_side()->ExecJS(instanceId, nameSpace, func, params);
      #+END_SRC
 
-***** WeexCoreManager -> getPlatformBridge()
+***** WeexCoreManager => getPlatformBridge()
       #+NAME: weex_core_manager.h
       #+BEGIN_SRC c
         class WeexCoreManager {
@@ -1209,7 +1212,7 @@
         }
       #+END_SRC
 
-***** WeexCoreManager -> script_bridge()
+***** -> WeexCoreManager => script_bridge()
       
       WeexCoreManager 中，通过两个方法来操作 ~script_bridge_~ :
       #+NAME: weex_core_manager.h
@@ -1250,7 +1253,7 @@
         }
       #+END_SRC
       
-      ~isSingleProcess()~ 的值：
+      ~isSingleProcess()~ 的值(设置的话需要在初始化之前,默认值为 false)：
       #+NAME:params_utils.cpp
       #+BEGIN_SRC c++
         bool g_is_single_process = false;
@@ -1281,12 +1284,181 @@
           // other code...
         }
       #+END_SRC
-      这里的 ~g_is_single_process~ 是通过调用 JNI 接口 ~WXParams -> getUseSingleProcess()~ 的返回值来进行配置的
+      这里的 ~g_is_single_process~ 是通过调用 JNI 接口 ~WXParams => getUseSingleProcess()~ 的返回值来进行配置的
 
-      #+NAME: WXBridgeManager -> setUseSingleProcess()
+      #+NAME: WXBridgeManager => setUseSingleProcess()
       #+BEGIN_SRC java
       WXBridgeManager.getInstance().setUseSingleProcess(false); // ture or false
       #+END_SRC
       
+***** -> script_side()
+      来看下默认的实现吧,默认的 ~script_bridge_~ 是 ~ScriptBridgeInMultiProcess~
+      #+NAME: script_bridge_in_multi_process.cpp
+      #+BEGIN_SRC c++
+        ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
+          set_script_side(new bridge::script::ScriptSideInMultiProcess);
+          set_core_side(new CoreSideInScript);
+
+          //other code...
+        }
+      #+END_SRC
+      
+***** -> ExecJS()
+      一连串的调用,终于找到了实现:
+      #+NAME: script_side_in_multi_process.cpp
+      #+BEGIN_SRC c++
+        int ScriptSideInMultiProcess::ExecJS(const char *instanceId,
+                                             const char *nameSpace, const char *func,
+                                             std::vector<VALUE_WITH_TYPE *> &params) {
+          try {
+            if(sender_ == nullptr) {
+              LOGE("ExecJS sender is null");
+              return false;
+            }
+            std::unique_ptr<IPCSerializer> serializer(createIPCSerializer());
+            serializer->setMsg(static_cast<uint32_t>(IPCJSMsg::EXECJS));
+            serializer->add(instanceId, strlen(instanceId));
+            if (nameSpace)
+              serializer->add(nameSpace, strlen(nameSpace));
+            else {
+              uint16_t tmp = 0;
+              serializer->add(&tmp, 0);
+            }
+            serializer->add(func, strlen(func));
+
+            for (int i = 0; i < params.size(); i++) {
+              VALUE_WITH_TYPE *param = params[i];
+              addParamsToIPCSerializer(serializer.get(), param);
+            }
+
+            std::unique_ptr<IPCBuffer> buffer = serializer->finish();
+
+            // 在这里通过 IPC 的方式被发送走了,有 IPC 的地方,就有进程间通讯 emmmmm.... 继续往下跟吧
+            std::unique_ptr<IPCResult> result = sender_->send(buffer.get());
+            if (result->getType() != IPCType::INT32) {
+              LOGE("execJS Unexpected result type");
+              return false;
+            }
+
+            return result->get<jint>();
+
+          } catch (IPCException &e) {
+            LOGE("%s", e.msg());
+            // report crash here
+            WeexCoreManager::Instance()
+              ->getPlatformBridge()
+              ->platform_side()
+              ->ReportServerCrash(instanceId);
+            return false;
+          }
+        }
+      #+END_SRC
+      然而并不是个头,在这里通过 IPC 的方式发送到另一个进程去了.
+
+***** -> CoreSideInMultiProcess => sender_->send()
+      先来看下这个 ~sender_~ 对象, ~ScriptBridgeInMultiProcess~ 的 ~sender_~ 是在 ~ScriptSideInMultiProcess~ 中被赋值的:
+      #+NAME: script_side_in_multi_process.cpp
+      #+BEGIN_SRC c++
+        ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
+          // other code...
+          bool passable = initializer->Init
+            (
+             [this](IPCHandler *handler) { RegisterIPCCallback(handler); },
+             [this](std::unique_ptr<WeexJSConnection> connection,
+                    std::unique_ptr<IPCHandler> handler,
+                    std::unique_ptr<IPCHandler> server_handler) {
+               // 将 ScriptSideInMultiProcess 中的 sender 赋值为 WeexJSConnection -> sender()
+               static_cast<bridge::script::ScriptSideInMultiProcess *>(script_side())->set_sender(connection->sender());
+               connection_ = std::move(connection);
+               handler_ = std::move(handler);
+               server_handler_ = std::move(server_handler);
+               LOGE("ScriptBridgeInMultiProcess finish %x %x", server_handler_.get(),
+                    server_handler.get());
+               return true;
+             },
+             [this](const char *page_id, const char *func,
+                    const char *exception_string) {
+               WeexCoreManager::Instance()
+                 ->getPlatformBridge()
+                 ->platform_side()
+                 ->ReportException(page_id, func, exception_string);
+             });
+          // other code...
+        }
+      #+END_SRC
+
+      WeexJSConnection => sender()
+      #+NAME: WeexJSConnection.cpp
+      #+BEGIN_SRC c++
+        // m_impl: new WeexJSConnectionImpl
+        IPCSender* WeexJSConnection::sender() {
+          return m_impl->serverSender.get();
+        }
+      #+END_SRC
+
+***** -> IPCSender => send()
+      IPC 的功能是 Android 特有的,用共享内存的方式来实现 IPC 通信.
+      #+NAME: IPCSender.cpp
+      #+BEGIN_SRC c++
+        std::unique_ptr<IPCResult> IPCSenderImpl::send(IPCBuffer* buffer)
+        {
+          doSendBufferOnly(buffer);
+          if (checkBufferAsync(buffer))
+            return createVoidResult();
+          while (true) {
+            uint32_t msg = doReadPackage();
+            bool isAsync = !!(msg & MSG_FLAG_ASYNC);
+            msg &= MSG_MASK;
+            if (msg == MSG_END) {
+              std::unique_ptr<IPCResult> result = assembleResult();
+              releaseBlob();
+              return result;
+            } else if (msg == MSG_TERMINATE) {
+              releaseBlob();
+              throw IPCException("peer terminates");
+            }
+            std::unique_ptr<IPCArguments> arguments = assembleArguments();
+            releaseBlob();
+            std::unique_ptr<IPCResult> sendBack = m_handler->handle(msg, arguments.get());
+            if (!isAsync) {
+              std::unique_ptr<IPCBuffer> resultBuffer = generateResultBuffer(sendBack.get());
+              doSendBufferOnly(resultBuffer.get());
+            }
+          }
+        }
+      #+END_SRC
+
+      #+NAME: IPCCommunicator.cpp
+      #+BEGIN_SRC c++
+        void IPCCommunicator::doSendBufferOnly(const void* _data, size_t length)
+        {
+          const char* data = static_cast<const char*>(_data);
+          size_t pageSize = m_futexPageQueue->getPageSize();
+          ssize_t byteTransfered;
+          uint32_t* dstLength = static_cast<uint32_t*>(m_futexPageQueue->getCurrentWritePage());
+          // special handle the first part, which need a size
+          // as header.
+          dstLength[0] = length;
+
+          IPC_LOGD("send bytes: length: %zu", length);
+          byteTransfered = std::min(length, pageSize - sizeof(uint32_t));
+          memcpy(dstLength + 1, data, byteTransfered);
+          m_futexPageQueue->stepWrite();
+          // multiple page package
+          if (length > byteTransfered) {
+            data += byteTransfered;
+            length -= byteTransfered;
+            IPC_LOGD("sent bytes: remaining length: %zu, transfered: %zu", length, byteTransfered);
+
+            while (length > 0) {
+              byteTransfered = doSendBufferPage(data, length, pageSize);
+              data += byteTransfered;
+              length -= byteTransfered;
+              IPC_LOGD("sent bytes: remaining length: %zu, transfered: %zu", length, byteTransfered);
+            }
+          }
+        }
+      #+END_SRC
+
 *** Native 渲染 Weex Js
     <<weex_core_render>>
