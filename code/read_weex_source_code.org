@@ -1,7 +1,7 @@
 #+TITLE: Weex 源码分析
 #+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e)
 
-* TODO Weex Source Code [7/11]
+* TODO Weex Source Code [7/12]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
@@ -1084,10 +1084,11 @@
      InitConfig config=new InitConfig.Builder().setFramework("your framework").build();
      #+END_SRC
 ** TODO Weex Core 代码分析
-*** Native 注册 Module
-    <<weex_core_register_module>>
-*** Native 注册 Component
-    <<weex_core_register_component>>
+*** Android Native 层调用 ExecJS 的流程
+    Android SDK 代码分析中, ~WXBridgeManager.java~ 提供的很多方法都是通过 ~WXBridge.java~ 中定义的 JNI 接口,
+    来调用 weexcore.so 中的方法, 再去调用 JSFramework 中的一些方法,来完成 Android Java 环境和 JS 环境的相互调用的.
+
+**** TODO Android Java 和 JS 通信关系图    
 **** Android JNI 接口的实现
      WXBridge 中对 execJS 方法的 JNI 接口定义:
      #+NAME: WXBridge.java
@@ -1147,8 +1148,7 @@
        }
      #+END_SRC
 
-**** Android JNI 层调用 V8 Engine 的流程
-
+**** Android 底层发送 ExecJS 执行指令的流程(IPC)
      先来看下这一长串的调用,这步调用完成了调用 V8 Engine 提供的 API, 调用到了 JSFramework 的方法:
      #+NAME: wx_bridge.cpp
      #+BEGIN_SRC c++
@@ -1357,7 +1357,7 @@
 
 ***** -> CoreSideInMultiProcess => sender_->send()
       先来看下这个 ~sender_~ 对象, ~ScriptBridgeInMultiProcess~ 的 ~sender_~ 是在 ~ScriptSideInMultiProcess~ 中被赋值的:
-      #+NAME: script_side_in_multi_process.cpp
+      #+NAME: script_bridge_in_multi_process.cpp
       #+BEGIN_SRC c++
         ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
           // other code...
@@ -1460,5 +1460,46 @@
         }
       #+END_SRC
 
+**** Android 底层接收 ExecJS 执行指令的流程(IPC)
+     execJS 方法调用的最后是将 JS 调用当成了一个数据指令通过 IPC 的方式发送出去的,现在我们来看下发送之后的消息是怎么处理的.
+
+***** -> IPCListener => listen()
+      WeexJSConnection
+
+      #+NAME:IPCListener.cpp
+      #+BEGIN_SRC c++
+        void IPCListenerImpl::listen()
+        {
+          while (true) {
+            uint32_t msg = doReadPackage();
+            bool isAsync = !!(msg & MSG_FLAG_ASYNC);
+            msg &= MSG_MASK;
+            if (msg == MSG_END)
+              throw IPCException("unexpected MSG_END");
+            else if (msg == MSG_TERMINATE) {
+              releaseBlob();
+              throw IPCException("peer terminates");
+            }
+            std::unique_ptr<IPCArguments> arguments = assembleArguments();
+            releaseBlob();
+            IPCArguments*  pArguments = arguments.get();
+            std::unique_ptr<IPCResult> sendBack = m_handler->handle(msg, pArguments);
+            if (!isAsync) {
+              std::unique_ptr<IPCBuffer> resultBuffer = generateResultBuffer(sendBack.get());
+              doSendBufferOnly(resultBuffer.get());
+            }
+          }
+        }
+      #+END_SRC
+
+***** -> IPCHandler => handler()
+
+
+*** Native 注册 Module
+    <<weex_core_register_module>>
+*** Native 注册 Component
+    <<weex_core_register_component>>
+
 *** Native 渲染 Weex Js
     <<weex_core_render>>
+
