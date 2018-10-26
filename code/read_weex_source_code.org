@@ -1,7 +1,7 @@
 #+TITLE: Weex 源码分析
-#+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e)
+#+TODO: TODO(t) DOING(d) PAUSE(p!) RESUME(r!) | DONE(e)
 
-* TODO Weex Source Code [7/12]
+* TODO Weex Source Code [9/16]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
@@ -1083,13 +1083,14 @@
      #+BEGIN_SRC java
      InitConfig config=new InitConfig.Builder().setFramework("your framework").build();
      #+END_SRC
-** TODO Weex Core 代码分析
-*** Android Native 层调用 ExecJS 的流程
+** DOING Weex Core 代码分析
+*** Android & JS 调用流程分析
     Android SDK 代码分析中, ~WXBridgeManager.java~ 提供的很多方法都是通过 ~WXBridge.java~ 中定义的 JNI 接口,
     来调用 weexcore.so 中的方法, 再去调用 JSFramework 中的一些方法,来完成 Android Java 环境和 JS 环境的相互调用的.
 
-**** TODO Android Java 和 JS 通信关系图    
-**** Android JNI 接口的实现
+**** TODO Android Java 和 JS 通信关系图
+**** DONE Android JNI 接口的实现
+     CLOSED: [2018-10-26 五 18:11]
      WXBridge 中对 execJS 方法的 JNI 接口定义:
      #+NAME: WXBridge.java
      #+BEGIN_SRC java
@@ -1148,7 +1149,8 @@
        }
      #+END_SRC
 
-**** Android IPCSender
+**** DONE Android IPCSender
+     CLOSED: [2018-10-26 五 18:11]
      先来看下这一长串的调用,这步调用完成了调用 V8 Engine 提供的 API, 调用到了 JSFramework 的方法:
      #+NAME: wx_bridge.cpp
      #+BEGIN_SRC c++
@@ -1365,7 +1367,8 @@
             (
              [this](IPCHandler *handler) { RegisterIPCCallback(handler); },
              [this](std::unique_ptr<WeexJSConnection> connection,
-                    std::unique_ptr<IPCHandler> handler,
+
+             std::unique_ptr<IPCHandler> handler,
                     std::unique_ptr<IPCHandler> server_handler) {
                // 将 ScriptSideInMultiProcess 中的 sender 赋值为 WeexJSConnection -> sender()
                static_cast<bridge::script::ScriptSideInMultiProcess *>(script_side())->set_sender(connection->sender());
@@ -1460,9 +1463,21 @@
         }
       #+END_SRC
 
-**** Android IPCListener
+**** DOING Android IPCListener
      execJS 方法调用的最后是将 JS 调用当成了一个数据指令通过 IPC 的方式发送出去的,现在我们来看下发送之后的消息是怎么处理的.
 ***** 初始化 IPC 消息监听
+
+      初始化 Framework 的时候会设置 ~ScriptBridge~ 对象(~ScriptBridgeInMultiProcess~):
+      #+NAME: wx_bridge.cpp
+      #+BEGIN_SRC c++
+        static jint InitFramework(JNIEnv* env, jobject object, jstring script, jobject params) {
+          // other code...
+          WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
+          // other code...
+        }
+      #+END_SRC
+      
+      ~ScriptBridgeInMultiProcess~ 对象的初始化方法中会创建 ~MultiProcessAndSoInitializer~ 对象:
       #+NAME: script_bridge_in_multi_process.cpp
       #+BEGIN_SRC c++
         ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
@@ -1475,6 +1490,7 @@
         }
       #+END_SRC
 
+      ~MultiProcessAndSoInitializer~ 对象初始化的时候调用 ~WeexJSConnection~ 的 ~start()~ 方法启动 IPC 服务:
       #+NAME: multi_process_and_so_initializer.cpp
       #+BEGIN_SRC c++
         bool MultiProcessAndSoInitializer::Init(const std::function<void(IPCHandler*)>& OnHandlerCreated,
@@ -1499,6 +1515,19 @@
 
 ***** -> WeexJSConnection => start()
       
+      先来看下 ~pthread_create~ 方法, 它主要用来创建线程:
+      #+BEGIN_SRC c++
+        #include <pthread.h>
+        /*
+         * pthread_t: 指向线程标识符的指针
+         * pthread_attr_t: 设置线程属性
+         * start_routine: 线程运行函数的起始地址
+         * arg: 最后一个参数是运行函数的参数
+         */
+        int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg);
+      #+END_SRC
+
+      在 ~WeexJSConnection~ 的 ~start~ 方法中调用了 ~pthread_create()~ 来创建 IPC 服务线程:
       #+NAME: WeexJSConnection.cpp
       #+BEGIN_SRC c++
         IPCSender *WeexJSConnection::start(IPCHandler *handler, IPCHandler *serverHandler, bool reinit) {
@@ -1515,26 +1544,15 @@
         }
       #+END_SRC
       
-      newIPCServer
+      ~pthread_create()~ 方法中传入的函数参数 ~newIPCServer()~ 的定义,在这个方法中开启了监听 ~IPCListener => listen()~ :
+      <<weex_ipc_handler_create>>
       #+NAME: WeexJSConnection.cpp      
       #+BEGIN_SRC c++
         static void *newIPCServer(void *_td) {
-          ThreadData *td = static_cast<ThreadData *>(_td);
-          void *base = mmap(nullptr, IPCFutexPageQueue::ipc_size, PROT_READ | PROT_WRITE, MAP_SHARED,
-                            td->ipcServerFd, 0);
-          if (base == MAP_FAILED) {
-            int _errno = errno;
-            close(td->ipcServerFd);
-            //throw IPCException("failed to map ashmem region: %s", strerror(_errno));
-            newThreadStatus = ERROR;
-            return nullptr;
-          }
-
-          IPCHandler *handler = td->ipcServerHandler;
-          std::unique_ptr<IPCFutexPageQueue> futexPageQueue(
-                                                            new IPCFutexPageQueue(base, IPCFutexPageQueue::ipc_size, 0));
+          // other code...
           const std::unique_ptr<IPCHandler> &testHandler = createIPCHandler();
           std::unique_ptr<IPCSender> sender(createIPCSender(futexPageQueue.get(), handler));
+          // 创建了 IPCListener 来监听 IPC 消息
           std::unique_ptr<IPCListener> listener =std::move(createIPCListener(futexPageQueue.get(), handler)) ;
           newThreadStatus = SUCCESS;
 
@@ -1552,15 +1570,26 @@
       #+END_SRC
 
 ***** -> IPCListener => listen()
-      WeexJSConnection 启动 IPC 消息监听:
+      
+      创建一个 ~IPCListener~, 实际创建的是 ~IPCListenerImpl~ 的一个实例,它内部实现了 ~listen()~ 方法:
+      #+NAME: IPCListener.cpp
+      #+BEGIN_SRC c++
+        // 
+        std::unique_ptr<IPCListener> createIPCListener(IPCFutexPageQueue* futexPageQueue, IPCHandler* handler) {
+          return std::unique_ptr<IPCListener>(new IPCListenerImpl(futexPageQueue, handler));
+        }
+      #+END_SRC
+
+      ~IPCListenerImpl~ 内部实现的 ~listen()~ 方法, 在线程中开启消息队列, 从共享内存中读取 ~IPCSender~ 写入的消息, 并交给 ~IPCHandler~ 来处理:
       #+NAME:IPCListener.cpp
       #+BEGIN_SRC c++
-        void IPCListenerImpl::listen()
-        {
+        void IPCListenerImpl::listen() {
+          // 开启一个消息循环
           while (true) {
             uint32_t msg = doReadPackage();
             bool isAsync = !!(msg & MSG_FLAG_ASYNC);
             msg &= MSG_MASK;
+            // 抛异常的方式结束消息循环
             if (msg == MSG_END)
               throw IPCException("unexpected MSG_END");
             else if (msg == MSG_TERMINATE) {
@@ -1570,6 +1599,7 @@
             std::unique_ptr<IPCArguments> arguments = assembleArguments();
             releaseBlob();
             IPCArguments*  pArguments = arguments.get();
+            // IPCHandler 来处理收到的消息和参数
             std::unique_ptr<IPCResult> sendBack = m_handler->handle(msg, pArguments);
             if (!isAsync) {
               std::unique_ptr<IPCBuffer> resultBuffer = generateResultBuffer(sendBack.get());
@@ -1579,9 +1609,11 @@
         }
       #+END_SRC
 
-**** Android IPCHandler
+**** TODO Android IPCHandler
+
 
 ***** -> IPCHandler => handler()
+      创建 IPCHandler 对象: [[weex_ipc_handler_create][WeexJSConnection => newIPCServer()]]  方法中创建了一个 IPCHandler 实例.
 
 *** Native 注册 Module
     <<weex_core_register_module>>
