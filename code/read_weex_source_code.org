@@ -1148,7 +1148,7 @@
        }
      #+END_SRC
 
-**** Android 底层发送 ExecJS 执行指令的流程(IPC)
+**** Android IPCSender
      先来看下这一长串的调用,这步调用完成了调用 V8 Engine 提供的 API, 调用到了 JSFramework 的方法:
      #+NAME: wx_bridge.cpp
      #+BEGIN_SRC c++
@@ -1460,7 +1460,7 @@
         }
       #+END_SRC
 
-**** Android 底层接收 ExecJS 执行指令的流程(IPC)
+**** Android IPCListener
      execJS 方法调用的最后是将 JS 调用当成了一个数据指令通过 IPC 的方式发送出去的,现在我们来看下发送之后的消息是怎么处理的.
 ***** 初始化 IPC 消息监听
       #+NAME: script_bridge_in_multi_process.cpp
@@ -1578,6 +1578,8 @@
           }
         }
       #+END_SRC
+
+**** Android IPCHandler
 
 ***** -> IPCHandler => handler()
 
