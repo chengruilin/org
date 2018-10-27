@@ -1,7 +1,7 @@
 #+TITLE: Weex 源码分析
 #+TODO: TODO(t) DOING(d) PAUSE(p!) RESUME(r!) | DONE(e)
 
-* TODO Weex Source Code [12/18]
+* TODO Weex Source Code [13/18]
   :PROPERTIES:
   :COOKIE_DATA: todo recursive
   :END:
@@ -1673,7 +1673,8 @@
         }
       #+END_SRC
 
-**** DOING Android IPCHandler
+**** DONE Android IPCHandler
+     CLOSED: [2018-10-27 Sat 14:40]
 ***** WeexJSConnection => newIPCServer() -> handler
       #+NAME: WeexJSConnection.cpp
       #+BEGIN_SRC c++
@@ -1740,34 +1741,58 @@
         }
       #+END_SRC
 
-***** 默认注册的 IPCHandler
-      | Enum Msg Value      | Handler Value               | Function(Ignore arguments)                        | Source File   |
-      |---------------------+-----------------------------+---------------------------------------------------+---------------|
-      | SETJSFVERSION       | HandleSetJSVersion          | @CalledByNative public void setJSFrmVersion()     | WXBridge.java |
-      | REPORTEXCEPTION     | HandleReportException       | @CalledByNative public void reportJSException()   | WXBridge.java |
-      | CALLNATIVE          | HandleCallNative            | @CalledByNative public int callNative()           | WXBridge.java |
-      | CALLNATIVEMODULE    | HandleCallNativeModule      | @CalledByNative public Object callNativeModule()  | WXBridge.java |
-      | CALLNATIVECOMPONENT | HandleCallNativeComponent   | @CalledByNative public void callNativeComponent() | WXBridge.java |
-      | CALLADDELEMENT      | HandleCallAddElement        | @CalledByNative public int callAddElement()       | WXBridge.java |
-      | SETTIMEOUT          | HandleSetTimeout            | @CalledByNative public void setTimeoutNative()    | WXBridge.java |
-      | NATIVELOG           | HandleCallNativeLog         |                                                   | WXBridge.java |
-      | CALLCREATEBODY      | FunctionCallCreateBody      |                                                   | WXBridge.java |
-      | CALLUPDATEFINISH    | FunctionCallUpdateFinish    |                                                   | WXBridge.java |
-      | CALLCREATEFINISH    | FunctionCallCreateFinish    |                                                   | WXBridge.java |
-      | CALLREFRESHFINISH   | FunctionCallRefreshFinish   |                                                   | WXBridge.java |
-      | CALLUPDATEATTRS     | FunctionCallUpdateAttrs     |                                                   | WXBridge.java |
-      | CALLUPDATESTYLE     | FunctionCallUpdateStyle     |                                                   | WXBridge.java |
-      | CALLREMOVEELEMENT   | FunctionCallRemoveElement   |                                                   | WXBridge.java |
-      | CALLMOVEELEMENT     | FunctionCallMoveElement     |                                                   | WXBridge.java |
-      | CALLADDEVENT        | FunctionCallAddEvent        |                                                   | WXBridge.java |
-      | CALLREMOVEEVENT     | FunctionCallRemoveEvent     |                                                   | WXBridge.java |
-      | CALLGCANVASLINK     | HandleCallGCanvasLinkNative |                                                   | WXBridge.java |
-      | CALLT3DLINK         | HandleT3DLinkNative         |                                                   | WXBridge.java |
-      | SETINTERVAL         | HandleSetInterval           |                                                   | WXBridge.java |
-      | CLEARINTERVAL       | HandleClearInterval         |                                                   | WXBridge.java |
-      | POSTMESSAGE         | HandlePostMessage           |                                                   | WXBridge.java |
-      | DISPATCHMESSAGE     | HandleDispatchMessage       |                                                   | WXBridge.java |
+      ~ScriptBridgeInMultiProcess~ 的构造方法中，会调用内部的 IPCCallback 注册：
+      #+NAME: script_bridge_in_multi_process.cpp
+      #+BEGIN_SRC c++
+        ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
+          // other code...
+          [this](IPCHandler *handler) { RegisterIPCCallback(handler); }
+            // other code...
+        }
+      #+END_SRC
 
+***** 默认注册的 IPCHandler
+      
+      ~ScriptBridgeInMultiProcess => RegisterIPCCallback()~ 方法中，注册了很多内置的 IPC 回调方法:
+      #+NAME: script_bridge_in_multi_process.cpp
+      #+BEGIN_SRC c++
+        void ScriptBridgeInMultiProcess::RegisterIPCCallback(IPCHandler *handler) {
+          LOGE("RegisterIPCCallback is running");
+          handler->registerHandler(static_cast<uint32_t>(IPCProxyMsg::SETJSFVERSION),
+                                   HandleSetJSVersion);
+          //省略了一系列 registerHandler 方法
+        }
+      #+END_SRC
+
+      ~RegisterIPCCallback()~ 方法中注册的所有的 ~IPCHandler~ 回调：
+      #+NAME: IPCProxyMsg 对应关系（方法中省略了参数）
+      | Key(enum IPCProxyMsg) | Handler Value               | Function(Ignore arguments)                   | Source File             |
+      |-----------------------+-----------------------------+----------------------------------------------+-------------------------|
+      | SETJSFVERSION         | HandleSetJSVersion          | public void setJSFrmVersion()                | WXBridge.java           |
+      | REPORTEXCEPTION       | HandleReportException       | public void reportJSException()              | WXBridge.java           |
+      | CALLNATIVE            | HandleCallNative            | public int callNative()                      | WXBridge.java           |
+      | CALLNATIVEMODULE      | HandleCallNativeModule      | public Object callNativeModule()             | WXBridge.java           |
+      | CALLNATIVECOMPONENT   | HandleCallNativeComponent   | public void callNativeComponent()            | WXBridge.java           |
+      | CALLADDELEMENT        | HandleCallAddElement        | public int callAddElement()                  | WXBridge.java           |
+      | SETTIMEOUT            | HandleSetTimeout            | public void setTimeoutNative()               | WXBridge.java           |
+      | NATIVELOG             | HandleCallNativeLog         | public void d(String msg)                    | WXLogUtils.java         |
+      | CALLCREATEBODY        | FunctionCallCreateBody      | public int callCreateBody()                  | WXBridge.java           |
+      | CALLUPDATEFINISH      | FunctionCallUpdateFinish    | public int callUpdateFinish()                | WXBridge.java           |
+      | CALLCREATEFINISH      | FunctionCallCreateFinish    | public int callCreateFinish()                | WXBridge.java           |
+      | CALLREFRESHFINISH     | FunctionCallRefreshFinish   | public int callRefreshFinish()               | WXBridge.java           |
+      | CALLUPDATEATTRS       | FunctionCallUpdateAttrs     | public int callUpdateAttrs()                 | WXBridge.java           |
+      | CALLUPDATESTYLE       | FunctionCallUpdateStyle     | public int callUpdateStyle()                 | WXBridge.java           |
+      | CALLREMOVEELEMENT     | FunctionCallRemoveElement   | public int callRemoveElement()               | WXBridge.java           |
+      | CALLMOVEELEMENT       | FunctionCallMoveElement     | public int callMoveElement()                 | WXBridge.java           |
+      | CALLADDEVENT          | FunctionCallAddEvent        | public int callAddEvent()                    | WXBridge.java           |
+      | CALLREMOVEEVENT       | FunctionCallRemoveEvent     | public int callRemoveElement()               | WXBridge.java           |
+      |-----------------------+-----------------------------+----------------------------------------------+-------------------------|
+      | CALLGCANVASLINK       | HandleCallGCanvasLinkNative | const char *CallGCanvasFun()                 | ExtendJSApi.cpp         |
+      | CALLT3DLINK           | HandleT3DLinkNative         | const char* CallT3dFunc()                    | ExtendJSApi.cpp         |
+      | SETINTERVAL           | HandleSetInterval           | int CoreSideInScript::SetInterval()          | code_side_in_script.cpp |
+      | CLEARINTERVAL         | HandleClearInterval         | int CoreSideInScript::ClearInterval()        | code_side_in_script.cpp |
+      | POSTMESSAGE           | HandlePostMessage           | static void Java_WMLBridge_postMessage()     | wml_bridge.cpp          |
+      | DISPATCHMESSAGE       | HandleDispatchMessage       | static void Java_WMLBridge_dispatchMessage() | wml_bridge.cpp          |
 
 *** Native 注册 Module
     <<weex_core_register_module>>
