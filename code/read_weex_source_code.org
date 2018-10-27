@@ -1159,10 +1159,21 @@
      #+BEGIN_SRC c++
        // JNI 实现方法中的调用
        WeexCoreManager::Instance()->getPlatformBridge()->core_side()->ExecJS(instance_id.getChars(), name_space.getChars(), function.getChars(), params);
-       // ExecJS 方法调用 ->
+       // ExecJS 方法调用
        WeexCoreManager::Instance()->script_bridge()->script_side()->ExecJS(instanceId, nameSpace, func, params);
      #+END_SRC
 
+     整个 ~ExecJS~ 默认的调用链可以表示为：
+     #+BEGIN_EXAMPLE
+     WeexCoreManager => getPlatformBridge()       #file: wx_bridge.cpp 
+     -> AndroidBridgeInSimple => core_side()      #file: android_bridge.cpp
+     -> CoreSideInPlatform => ExecJS()            #file: core_side_in_platform.cpp
+     -> WeexCoreManager => script_bridge()        #file: wx_bridge.cpp
+     -> ScriptBridgeInMultiProcess =>             #file: script_bridge_in_multi_process.cpp
+     -> ScriptSideInMultiProcess => ExecJS()      #file: script_side_in_multi_process.cpp
+     -> IPCSender => send()                       #file: IPCSender.cpp
+     #+END_EXAMPLE
+     
 ***** WeexCoreManager => getPlatformBridge()
       #+NAME: weex_core_manager.h
       #+BEGIN_SRC c
@@ -1796,6 +1807,9 @@
 
 *** Native 注册 Module
     <<weex_core_register_module>>
+
+**** Android 注册 Module
+     
 *** Native 注册 Component
     <<weex_core_register_component>>
 
