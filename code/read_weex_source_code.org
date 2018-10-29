@@ -1,5 +1,6 @@
 #+TITLE: Weex 源码分析
 #+TODO: TODO(t) DOING(d) PAUSE(p!) RESUME(r!) | DONE(e)
+#+STARTUP: overview
 
 * TODO Weex Source Code [13/18]
   :PROPERTIES:
@@ -985,7 +986,7 @@
 
 *** iOS Render Engine
 
-** TODO 源码分析-JS
+** DOING 源码分析-JS
 *** JSFramework
     <<weex_jsframework>>
 **** framework 是个啥?
