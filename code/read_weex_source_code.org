@@ -433,8 +433,20 @@
            };
      #+END_SRC
      其中有两个重要的方法,继续往下追 ~initFramework~ 方法和 ~register~ 方法,分两小节来介绍.
+***** WXSoInstallMgrSdk => initSo
+      
+      加载打包在 APK 内的所有 so 文件
+      - libJavaScriptCore.so
+      - libweexcore.so
+      - libweexjsb.so
+      - libweexjss.so
+      - libweexjst.so
 
-***** WXBridgeManager -> initFramework
+      #+BEGIN_SRC c++
+      // V8_SO_NAME = "weexcore.so" 但是方法内部查询了 so 目录下的所有 so 文件并加载
+      WXSoInstallMgrSdk.initSo(V8_SO_NAME, 1, config!=null?config.getUtAdapter():null);
+      #+END_SRC
+***** WXBridgeManager => initFramework
       可能需要了解下这里的 framework 是什么概念, [[weex_jsframework][传送门]].
 
       先来看下 InitConfig 的 framework 为空的情况(这个参数默认为空):
@@ -507,51 +519,97 @@
       有关 Module 注册: [[weex_register_module][传送门]]
       有关 Component 注册: [[weex_register_module][传送门]]
 
-***** native -> initFramework
-      上一节中提到的 initFramework 代码 ~mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport)~ 实际调用的是 native 层的代码:
+***** JNI => initFrameworkEnv
+      ~mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport)~ 实际调用的是 native 层的代码.
+      先来看下它对应的 JNI 的接口声明：
+      #+NAME: WXBridge_jni.h
+      #+BEGIN_SRC c++
+        static const JNINativeMethod kMethodsWXBridge[] =
+          {
+          // 对应 private native int nativeInitFrameworkEnv(String framework, WXParams params, String cacheDir, boolean pieSupport);
+          // Z 对应 Java 中的 boolean
+           { "nativeInitFrameworkEnv",
+             "("
+             "Ljava/lang/String;"
+             "Lcom/taobao/weex/bridge/WXParams;"
+             "Ljava/lang/String;"
+             "Z"
+             ")"
+             "I", reinterpret_cast<void*>(InitFrameworkEnv) }
+           // other native methods...
+          }
+      #+END_SRC
+
+      跟直接用包名声明的方式不用, 这里使用了 ~JNIEnv => RegisterNatives()~ 方式来绑定调用关系.
+      ~reinterpret_cast<void*>(InitFrameworkEnv)~ 指定了 Native 实现的方法名: InitFrameworkEnv
       #+NAME: wx_bridge.cpp
-      #+BEGIN_SRC c
+      #+BEGIN_SRC c++
+        // framework
+        // cacheDir 为 App 的 CacheDir
+        // pirSupport 默认为 true (SDK < JELLY_BEAN)
+        static jint InitFrameworkEnv(JNIEnv* env, jobject jcaller, jstring framework,
+                                     jobject params, jstring cacheDir,
+                                     jboolean pieSupport) {
+          const char* cache = env->GetStringUTFChars(cacheDir, nullptr);
+          if (strlen(cache) > 0) {
+            SoUtils::set_cache_dir(const_cast<char*>(cache));
+          }
+          SoUtils::set_pie_support(pieSupport);
+          jint ret = InitFramework(env, jcaller, framework, params);
+          env->ReleaseStringUTFChars(cacheDir, cache);
+          return ret;
+        }
+      #+END_SRC
+
+      ~InitFramework()~方法:
+      #+NAME:wx_bridge.cpp
+      #+BEGIN_SRC c++
         static jint InitFramework(JNIEnv* env, jobject object, jstring script, jobject params) {
           WXBridge::Instance()->Reset(env, object);
           // Init platform thread --- ScriptThread
           WeexCoreManager::Instance()->InitScriptThread();
           // Exception handler for so
-          SoUtils::RegisterExceptionHanler([](const char* status_code, const char* error_msg) {
-              WeexCoreManager::Instance()
-                ->getPlatformBridge()
-                ->platform_side()
-                ->ReportNativeInitStatus(status_code, error_msg);
-            });
+          SoUtils::RegisterExceptionHanler([](const char* status_code, const char* error_msg)
+                                           {
+                                             WeexCoreManager::Instance()
+                                               ->getPlatformBridge()
+                                               ->platform_side()
+                                               ->ReportNativeInitStatus(status_code, error_msg);
+                                           });
           // Init platform bridge
           PlatformBridge* bridge = new AndroidBridgeInSimple;
           WeexCoreManager::Instance()->set_platform_bridge(bridge);
           // Init params
-          std::vector<INIT_FRAMEWORK_PARAMS*> params_vector = initFromParam(env, params, [](const char* status_code, const char* error_msg) {
-              WeexCoreManager::Instance()
-                ->getPlatformBridge()
-                ->platform_side()
-                ->ReportNativeInitStatus(status_code, error_msg);
-            });
+          std::vector<INIT_FRAMEWORK_PARAMS*> params_vector =
+            initFromParam(env, params, [](const char* status_code, const char* error_msg)
+                                       {
+                                         WeexCoreManager::Instance()
+                                           ->getPlatformBridge()
+                                           ->platform_side()
+                                           ->ReportNativeInitStatus(status_code, error_msg);
+                                       });
           // If parse init params error, return false
           if (params_vector.empty()) return false;
           // Set project mode
-          if (isSingleProcess()) {
-            WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_SO);
-          } else {
-            WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_PROCESS);
-          }
-          // Init script bridge
-          if (WeexCoreManager::Instance()->project_mode() ==
-              WeexCoreManager::ProjectMode::MULTI_PROCESS) {
-            WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
-          } else {
-            WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiSo);
-          }
+
+          WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_PROCESS);
+          WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
+
           // It means initialization failed when any bridge is not passable
           if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
               !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
-            return false;
+
+            if(isSingleProcess()) {
+              WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_SO);
+              WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiSo);
+
+              if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
+                  !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
+                return false;
+              }
+            }
           }
+
           // for environment
           bridge->core_side()->SetPlatform(WXCoreEnvironment::getInstance()->platform());
           bridge->core_side()->SetDeviceWidthAndHeight(WXCoreEnvironment::getInstance()->DeviceWidth(), WXCoreEnvironment::getInstance()->DeviceHeight());
@@ -565,13 +623,15 @@
           bridge->core_side()->SetMeasureFunctionAdapter();
           ScopedJStringUTF8 c_script(env, script);
           // Call InitFramework
-          auto result = bridge->core_side()->InitFramework(c_script.getChars(), params_vector);
+          auto result =
+            bridge->core_side()->InitFramework(c_script.getChars(), params_vector);
           freeParams(params_vector);
           return result;
         }
       #+END_SRC
-***** WXSDKEngine -> regiser
-      ~WXSDKEngine~ 的 ~register~ 方法注册了一系列内置的 Component 和 Module
+
+***** WXSDKEngine => regiser
+      初始化 Framework 层之后， ~WXSDKEngine~ 调用了 ~register()~ 方法注册了一系列内置的 Component 和 Module
       #+NAME: 内嵌的 Component 组件
       | Component         | Class                         |
       |-------------------+-------------------------------|
@@ -625,7 +685,6 @@
       | meta         | WXMetaModule.class        |
       | webSocket    | WebSocketModule.class     |
       | locale       | WXLocaleModule.class      |
-
 **** WXSDKEngine -> registerApplicationOptions
      可以认为是获取了 App 的一些环境配置
      | key                  | value                                      |
@@ -1164,6 +1223,7 @@
      #+END_SRC
 
      整个 ~ExecJS~ 默认的调用链可以表示为：
+     #+NAME: execJS 调用顺序
      #+BEGIN_EXAMPLE
      WeexCoreManager => getPlatformBridge()       #file: wx_bridge.cpp 
      -> AndroidBridgeInSimple => core_side()      #file: android_bridge.cpp
