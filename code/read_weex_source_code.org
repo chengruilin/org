@@ -434,7 +434,7 @@
      #+END_SRC
      其中有两个重要的方法,继续往下追 ~initFramework~ 方法和 ~register~ 方法,分两小节来介绍.
 ***** WXSoInstallMgrSdk => initSo
-      
+
       加载打包在 APK 内的所有 so 文件
       - libJavaScriptCore.so
       - libweexcore.so
@@ -442,193 +442,47 @@
       - libweexjss.so
       - libweexjst.so
 
-      #+BEGIN_SRC c++
-      // V8_SO_NAME = "weexcore.so" 但是方法内部查询了 so 目录下的所有 so 文件并加载
+      ~WXSDKEngine => doInitInternal()~ 方法中调用了 ~WXSoInstallMgrSdk => initSo()~ 方法:
+      #+NAME: WXSDKEngine.java
+      #+BEGIN_SRC java
+      // V8_SO_NAME = "weexcore.so"
       WXSoInstallMgrSdk.initSo(V8_SO_NAME, 1, config!=null?config.getUtAdapter():null);
       #+END_SRC
+
+      ~WXSoInstallMgrSdk => initSo()~ 方法内部实现:
+      #+BEGIN_SRC java
+        /**
+         ,* Load so library.
+         ,*
+         ,* If a library loader adapter exists, use this adapter to load library,
+         ,* otherwise use {@link System#loadLibrary(String)} to load library.
+         ,* If failed to load library, try to extract the so library and load it
+         ,* from arembi in the .apk
+         ,*
+         ,* @param libName library name, like webp, not necessary to be libwep.so
+         ,* @param version the version of the so library
+         ,*/
+        public static boolean initSo(String libName, int version, IWXUserTrackAdapter utAdapter) {
+            // other code...
+
+            // copy startup so
+            copyStartUpSo();
+
+            // other code...
+            if (mSoLoader != null) {
+                mSoLoader.doLoadLibrary(libName);
+            } else {
+                System.loadLibrary(libName);
+            }
+            // other code...
+        }
+      #+END_SRC
+
 ***** WXBridgeManager => initFramework
       可能需要了解下这里的 framework 是什么概念, [[weex_jsframework][传送门]].
-
-      先来看下 InitConfig 的 framework 为空的情况(这个参数默认为空):
-      #+NAME: WXBridgeManager.java
-      #+BEGIN_SRC java
-        // InitConfig -> framework 默认为空
-        private void initFramework(String framework) {
-            // 首先检查 so 文件是否初始化成功
-            if (WXSDKEngine.isSoInitialized() && !isJSFrameworkInit()) {
-                if (TextUtils.isEmpty(framework)) {
-                    // isSandBoxContext 默认为 true
-                    if (!isSandBoxContext) {
-                        framework = WXFileUtils.loadAsset("main.js", WXEnvironment.getApplication());
-                    } else {
-                        // 默认加载 assets 目录下的 weex-main-jsfm.js 文件来启动 JSFramework
-                        framework = WXFileUtils.loadAsset("weex-main-jsfm.js", WXEnvironment.getApplication());
-                    }
-                }
-                if (TextUtils.isEmpty(framework)) {
-                    // 抛出异常到 JS 端显示
-                    return;
-                }
-                try {
-                    //监听 JSFramework 启动状态
-                    if (WXSDKManager.getInstance().getWXStatisticsListener() != null) {
-                        WXSDKManager.getInstance().getWXStatisticsListener().onJsFrameworkStart();
-                    }
-
-                    String crashFile = "";
-                    try {
-                        crashFile = WXEnvironment.getApplication().getApplicationContext().getCacheDir().getPath();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    boolean pieSupport = true;
-                    try {
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                            pieSupport = false;
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    // extends initFramework
-                    // 调用 WXBridge -> initFramework -> nativeInitFramework -> weexcore.so 底层方法初始化 JSFramework
-                    if (mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport) == INIT_FRAMEWORK_OK) {
-                        // 打了一堆日志(渲染速度监控相关的)
-                        setJSFrameworkInit(true);
-
-                        //监听 JSFramework 准备状态
-                        if (WXSDKManager.getInstance().getWXStatisticsListener() != null) {
-                            WXSDKManager.getInstance().getWXStatisticsListener().onJsFrameworkReady();
-                        }
-                        // Module/Component/JSService 有注册失败的话,在这里可以完成重新注册
-                        execRegisterFailTask();
-                        // 注册 Dom Module
-                        registerDomModule();
-                    } else {
-                        //抛异常到 JS
-                    }
-                } catch (Throwable e) {
-                    //抛异常到 JS
-                }
-
-            }
-        }
-      #+END_SRC
-
+      关于 JSFramework 的初始化: [[weex_jsframework_init][传送门]]
       有关 Module 注册: [[weex_register_module][传送门]]
       有关 Component 注册: [[weex_register_module][传送门]]
-
-***** JNI => initFrameworkEnv
-      ~mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport)~ 实际调用的是 native 层的代码.
-      先来看下它对应的 JNI 的接口声明：
-      #+NAME: WXBridge_jni.h
-      #+BEGIN_SRC c++
-        static const JNINativeMethod kMethodsWXBridge[] =
-          {
-          // 对应 private native int nativeInitFrameworkEnv(String framework, WXParams params, String cacheDir, boolean pieSupport);
-          // Z 对应 Java 中的 boolean
-           { "nativeInitFrameworkEnv",
-             "("
-             "Ljava/lang/String;"
-             "Lcom/taobao/weex/bridge/WXParams;"
-             "Ljava/lang/String;"
-             "Z"
-             ")"
-             "I", reinterpret_cast<void*>(InitFrameworkEnv) }
-           // other native methods...
-          }
-      #+END_SRC
-
-      跟直接用包名声明的方式不用, 这里使用了 ~JNIEnv => RegisterNatives()~ 方式来绑定调用关系.
-      ~reinterpret_cast<void*>(InitFrameworkEnv)~ 指定了 Native 实现的方法名: InitFrameworkEnv
-      #+NAME: wx_bridge.cpp
-      #+BEGIN_SRC c++
-        // framework
-        // cacheDir 为 App 的 CacheDir
-        // pirSupport 默认为 true (SDK < JELLY_BEAN)
-        static jint InitFrameworkEnv(JNIEnv* env, jobject jcaller, jstring framework,
-                                     jobject params, jstring cacheDir,
-                                     jboolean pieSupport) {
-          const char* cache = env->GetStringUTFChars(cacheDir, nullptr);
-          if (strlen(cache) > 0) {
-            SoUtils::set_cache_dir(const_cast<char*>(cache));
-          }
-          SoUtils::set_pie_support(pieSupport);
-          jint ret = InitFramework(env, jcaller, framework, params);
-          env->ReleaseStringUTFChars(cacheDir, cache);
-          return ret;
-        }
-      #+END_SRC
-
-      ~InitFramework()~方法:
-      #+NAME:wx_bridge.cpp
-      #+BEGIN_SRC c++
-        static jint InitFramework(JNIEnv* env, jobject object, jstring script, jobject params) {
-          WXBridge::Instance()->Reset(env, object);
-          // Init platform thread --- ScriptThread
-          WeexCoreManager::Instance()->InitScriptThread();
-          // Exception handler for so
-          SoUtils::RegisterExceptionHanler([](const char* status_code, const char* error_msg)
-                                           {
-                                             WeexCoreManager::Instance()
-                                               ->getPlatformBridge()
-                                               ->platform_side()
-                                               ->ReportNativeInitStatus(status_code, error_msg);
-                                           });
-          // Init platform bridge
-          PlatformBridge* bridge = new AndroidBridgeInSimple;
-          WeexCoreManager::Instance()->set_platform_bridge(bridge);
-          // Init params
-          std::vector<INIT_FRAMEWORK_PARAMS*> params_vector =
-            initFromParam(env, params, [](const char* status_code, const char* error_msg)
-                                       {
-                                         WeexCoreManager::Instance()
-                                           ->getPlatformBridge()
-                                           ->platform_side()
-                                           ->ReportNativeInitStatus(status_code, error_msg);
-                                       });
-          // If parse init params error, return false
-          if (params_vector.empty()) return false;
-          // Set project mode
-
-          WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_PROCESS);
-          WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
-
-          // It means initialization failed when any bridge is not passable
-          if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
-              !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
-
-            if(isSingleProcess()) {
-              WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_SO);
-              WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiSo);
-
-              if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
-                  !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
-                return false;
-              }
-            }
-          }
-
-          // for environment
-          bridge->core_side()->SetPlatform(WXCoreEnvironment::getInstance()->platform());
-          bridge->core_side()->SetDeviceWidthAndHeight(WXCoreEnvironment::getInstance()->DeviceWidth(), WXCoreEnvironment::getInstance()->DeviceHeight());
-          auto options = WXCoreEnvironment::getInstance()->options();
-          auto it = options.begin();
-          for (; it != options.end(); it++) {
-            bridge->core_side()->AddOption(it->first, it->second);
-          }
-          // Set measure function
-          WeexCoreManager::Instance()->set_measure_function_adapter(new MeasureFunctionAdapterImplAndroid());
-          bridge->core_side()->SetMeasureFunctionAdapter();
-          ScopedJStringUTF8 c_script(env, script);
-          // Call InitFramework
-          auto result =
-            bridge->core_side()->InitFramework(c_script.getChars(), params_vector);
-          freeParams(params_vector);
-          return result;
-        }
-      #+END_SRC
 
 ***** WXSDKEngine => regiser
       初始化 Framework 层之后， ~WXSDKEngine~ 调用了 ~register()~ 方法注册了一系列内置的 Component 和 Module
@@ -725,7 +579,7 @@
                ,* width 为-1 默认全屏，可以自己定制。
                ,* height =-1 默认全屏，可以自己定制。
                ,*/
-              mWXSDKInstance.render("WXSample", WXFileUtils.loadFileContent("hello.js", this), null, null, -1, -1, WXRenderStrategy.APPEND_ASYNC);
+              mWXSDKInstance.render("WXSample", WXFileUtils.loadFileOrAsset("hello.js", this), null, null, -1, -1, WXRenderStrategy.APPEND_ASYNC);
           }
 
           /* other methods */
@@ -783,6 +637,7 @@
           mRendered = true;
       }
      #+END_SRC
+
 **** WXBridgeManager -> createInstance
      render 方法调用最终会调用到这个方法中
      #+NAME: WXBridgeManager.java
@@ -833,6 +688,7 @@
                try {
                    BundType type = BundType.Others;
                    try {
+                       // BundType.Vue or BundType.Rax
                        type = getBundleType(instance.getBundleUrl(), template);
                    } catch (Throwable e) {
                    }
@@ -864,13 +720,11 @@
                    // 省略日志什么的
 
                    WXJSObject instanceIdObj = new WXJSObject(WXJSObject.String, instance.getInstanceId());
+                   // template 为加载的 JS 内容
                    WXJSObject instanceObj = new WXJSObject(WXJSObject.String, template);
-                   WXJSObject optionsObj = new WXJSObject(WXJSObject.JSON,
-                                                          options == null ? "{}"
-                                                          : WXJsonUtils.fromObjectToJSONString(options));
+                   WXJSObject optionsObj = new WXJSObject(WXJSObject.JSON,options == null ? "{}" : WXJsonUtils.fromObjectToJSONString(options));
                    optionsObj = optionObjConvert(isSandBoxContext, type, optionsObj);
-                   WXJSObject dataObj = new WXJSObject(WXJSObject.JSON,
-                                                       data == null ? "{}" : data);
+                   WXJSObject dataObj = new WXJSObject(WXJSObject.JSON, data == null ? "{}" : data);
 
                    WXJSObject apiObj;
                    if (type == BundType.Rax) {
@@ -904,7 +758,7 @@
                        invokeCreateInstanceContext(instance.getInstanceId(), null, "createInstanceContext", args, false);
                        return;
                    } else {
-                   invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
+                       invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
                        return;
                    }
                } catch (Throwable e) {
@@ -913,7 +767,7 @@
            }
        }
      #+END_SRC
-     这里最终处理完交给 WXBridge 来调用 execJS -> nativeExecJS: [[weex_core_render][传送门]]
+     后续的渲染工作就交给 native 层来完成,可以看下底层的实现:  [[weex_core_render][传送门]]
 
 *** JS Bridge
     来看下 Android 的 SDK 中用来和 JS Engine（V8）进行双向通信的代码,主要的类有 WXBridgeManager.java 和 WXBridge.java.
@@ -1137,11 +991,245 @@
 **** framework 是个啥?
      Weex 通过调用 JS Framework 提供的接口来调用原生功能并且渲染真实 UI.代码层面其实就是 weex 提供的一个 js 库,用来完成 js 调用原生功能的一个组件.
 **** 配置 framework
-     在 weex 初始化时,通过设置 InitConfig 的 framework 参数,来配置 framework
+     在 weex 初始化时,通过设置 InitConfig 的 framework 参数,来配置 framework:
      #+NAME: InitConfig.java
      #+BEGIN_SRC java
+     // 如果不设置,默认为打包在 Android SDK 中的 main.js
      InitConfig config=new InitConfig.Builder().setFramework("your framework").build();
      #+END_SRC
+*** JSFramework 初始化
+    <<weex_jsframework_init>>
+**** Android SDK 中的初始化流程
+***** WXSDKEngine => doInitInternal()
+      WeexSDK 初始化的时候会在 ~WXSDKEngine.java~ 的 ~doInitInternal()~方法中进行 JSFramework 的初始化:
+      #+NAME: WXSDKEngine.java
+      #+BEGIN_SRC java
+        private static void doInitInternal(final Application application,final InitConfig config){
+            WXBridgeManager.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        WXSDKManager sm = WXSDKManager.getInstance();
+                        // code init SO libs
+                        // 调用 WXSDKManager 的 initScriptsFramework()方法
+                        sm.initScriptsFramework(config!=null?config.getFramework():null);
+                    }
+                });
+        }
+      #+END_SRC
+
+***** -> WXSDKManager => initScriptsFramework()
+      WXSDKManager 的 ~initScriptsFramework()~ 方法调用了 ~WXBridgeManager~ 的 ~initScriptsFramework()~方法.
+
+***** -> WXBridgeManager => initScriptsFramework()
+
+      将初始化 JSFramework 的工作交给 JSHandler 来处理, 调用了 ~WXBridgeManager => invokeInitFramework(Message)~ 方法:
+      #+NAME: WXBridgeManager.java
+      #+BEGIN_SRC java
+        public synchronized void initScriptsFramework(String framework) {
+            Message msg = mJSHandler.obtainMessage();
+            msg.obj = framework;
+            msg.what = WXJSBridgeMsgType.INIT_FRAMEWORK;
+            msg.setTarget(mJSHandler);
+            msg.sendToTarget();
+        }
+      #+END_SRC
+
+***** -> WXBridgeManager => invokeInitFramework()
+      简单检查了下参数和内存情况, 内存允许(可用内容大于 120MB)的情况下, 去初始化 JSFramework, 否则是在渲染页面的时候再去初始化 JSFramework
+      #+BEGIN_SRC java
+        private void invokeInitFramework(Message msg) {
+            String framework = "";
+            if (msg.obj != null) {
+                framework = (String) msg.obj;
+            }
+
+            // LOW_MEM_VALUE = 120(单位是 MB)
+            if (WXUtils.getAvailMemory(WXEnvironment.getApplication()) > LOW_MEM_VALUE) {
+                initFramework(framework);
+            }
+        }
+      #+END_SRC
+
+      顺便围观下怎么取可用内存:
+      #+NAME: WXUtils.java
+      #+BEGIN_SRC java
+        public static long getAvailMemory(Context context){
+            ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+            am.getMemoryInfo(mi);
+            //mi.availMem; 当前系统的可用内存
+            //return Formatter.formatFileSize(context, mi.availMem);// 将获取的内存大小规格化
+            WXLogUtils.w("app AvailMemory ---->>>"+mi.availMem/(1024*1024));
+            return mi.availMem/(1024*1024);
+        }
+      #+END_SRC
+
+***** -> WXBridgeManager => initFramework()
+      #+NAME: WXBridgeManager.java
+      #+BEGIN_SRC java
+        private void initFramework(String framework) {
+            if (WXSDKEngine.isSoInitialized() && !isJSFrameworkInit()) {
+                // other code
+                if (TextUtils.isEmpty(framework)) {
+                    IWXJsFileLoaderAdapter wxJsFileLoaderAdapter = WXSDKEngine.getIWXJsFileLoaderAdapter();
+                    if (!isSandBoxContext) {
+                        // adapter
+                        if(TextUtils.isEmpty(framework)) {
+                            framework = WXFileUtils.loadAsset("main.js", WXEnvironment.getApplication());
+                        }
+                    } else {
+                        // adapter
+                        if(TextUtils.isEmpty(framework)) {
+                            framework = WXFileUtils.loadAsset("weex-main-jsfm.js", WXEnvironment.getApplication());
+                        }
+                    }
+                }
+                // check framework
+                try {
+                    // 监听 code
+                    boolean pieSupport = true;
+                    try {
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                            pieSupport = false;
+                        }
+                    } catch (Exception e) {
+                    }
+                    // extends initFramework
+                    if (mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport) == INIT_FRAMEWORK_OK) {
+                        // 日志+监听
+                        execRegisterFailTask();
+                        WXEnvironment.JsFrameworkInit = true;
+                        registerDomModule();
+                    } else {
+                        // 错误日志
+                    }
+                } catch (Throwable e) {
+                    // 错误日志
+                }
+
+            }
+        }
+      #+END_SRC
+**** WeexCore 中的处理
+***** JNI => initFrameworkEnv
+      ~mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport)~ 实际调用的是 native 层的代码.
+      先来看下它对应的 JNI 的接口声明：
+      #+NAME: WXBridge_jni.h
+      #+BEGIN_SRC c++
+         static const JNINativeMethod kMethodsWXBridge[] =
+           {
+           // 对应 private native int nativeInitFrameworkEnv(String framework, WXParams params, String cacheDir, boolean pieSupport);
+           // Z 对应 Java 中的 boolean
+            { "nativeInitFrameworkEnv",
+              "("
+              "Ljava/lang/String;"
+              "Lcom/taobao/weex/bridge/WXParams;"
+              "Ljava/lang/String;"
+              "Z"
+              ")"
+              "I", reinterpret_cast<void*>(InitFrameworkEnv) }
+            // other native methods...
+           }
+      #+END_SRC
+
+      跟直接用包名声明的方式不用, 这里使用了 ~JNIEnv => RegisterNatives()~ 方式来绑定调用关系.
+      ~reinterpret_cast<void*>(InitFrameworkEnv)~ 指定了 Native 实现的方法名: InitFrameworkEnv
+      #+NAME: wx_bridge.cpp
+      #+BEGIN_SRC c++
+         // framework
+         // cacheDir 为 App 的 CacheDir
+         // pirSupport 默认为 true (SDK < JELLY_BEAN)
+         static jint InitFrameworkEnv(JNIEnv* env, jobject jcaller, jstring framework,
+                                      jobject params, jstring cacheDir,
+                                      jboolean pieSupport) {
+           const char* cache = env->GetStringUTFChars(cacheDir, nullptr);
+           if (strlen(cache) > 0) {
+             SoUtils::set_cache_dir(const_cast<char*>(cache));
+           }
+           SoUtils::set_pie_support(pieSupport);
+           jint ret = InitFramework(env, jcaller, framework, params);
+           env->ReleaseStringUTFChars(cacheDir, cache);
+           return ret;
+         }
+      #+END_SRC
+
+      ~InitFramework()~ 方法:
+      #+NAME:wx_bridge.cpp
+      #+BEGIN_SRC c++
+        static jint InitFramework(JNIEnv* env, jobject object, jstring script, jobject params) {
+          WXBridge::Instance()->Reset(env, object);
+          // Init platform thread --- ScriptThread
+          WeexCoreManager::Instance()->InitScriptThread();
+          // Exception handler for so
+          SoUtils::RegisterExceptionHanler([](const char* status_code, const char* error_msg)
+                                           {
+                                             WeexCoreManager::Instance()
+                                               ->getPlatformBridge()
+                                               ->platform_side()
+                                               ->ReportNativeInitStatus(status_code, error_msg);
+                                           });
+          // Init platform bridge
+          PlatformBridge* bridge = new AndroidBridgeInSimple;
+          WeexCoreManager::Instance()->set_platform_bridge(bridge);
+          // Init params
+          std::vector<INIT_FRAMEWORK_PARAMS*> params_vector =
+            initFromParam(env, params, [](const char* status_code, const char* error_msg)
+                                       {
+                                         WeexCoreManager::Instance()
+                                           ->getPlatformBridge()
+                                           ->platform_side()
+                                           ->ReportNativeInitStatus(status_code, error_msg);
+                                       });
+          // If parse init params error, return false
+          if (params_vector.empty()) return false;
+          // Set project mode
+
+          WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_PROCESS);
+          WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
+
+          // It means initialization failed when any bridge is not passable
+          if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
+              !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
+
+            if(isSingleProcess()) {
+              WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_SO);
+              WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiSo);
+
+              if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
+                  !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
+                return false;
+              }
+            }
+          }
+
+          // for environment
+          bridge->core_side()->SetPlatform(WXCoreEnvironment::getInstance()->platform());
+          bridge->core_side()->SetDeviceWidthAndHeight(WXCoreEnvironment::getInstance()->DeviceWidth(), WXCoreEnvironment::getInstance()->DeviceHeight());
+          auto options = WXCoreEnvironment::getInstance()->options();
+          auto it = options.begin();
+          for (; it != options.end(); it++) {
+            bridge->core_side()->AddOption(it->first, it->second);
+          }
+          // Set measure function
+          WeexCoreManager::Instance()->set_measure_function_adapter(new MeasureFunctionAdapterImplAndroid());
+          bridge->core_side()->SetMeasureFunctionAdapter();
+          ScopedJStringUTF8 c_script(env, script);
+          // Call InitFramework
+          auto result =
+            bridge->core_side()->InitFramework(c_script.getChars(), params_vector);
+          freeParams(params_vector);
+          return result;
+        }
+      #+END_SRC
+***** -> CoreSideInPlatform => InitFramework()
+      #+BEGIN_SRC c++
+        int CoreSideInPlatform::InitFramework(const char *script, std::vector<INIT_FRAMEWORK_PARAMS *> &params) {
+          return WeexCoreManager::Instance()
+            ->script_bridge()
+            ->script_side()
+            ->InitFramework(script, params);
+        }
+      #+END_SRC
 ** DOING Weex Core 代码分析
 *** Android & JS 调用流程分析
     Android SDK 代码分析中, ~WXBridgeManager.java~ 提供的很多方法都是通过 ~WXBridge.java~ 中定义的 JNI 接口,
@@ -1225,7 +1313,7 @@
      整个 ~ExecJS~ 默认的调用链可以表示为：
      #+NAME: execJS 调用顺序
      #+BEGIN_EXAMPLE
-     WeexCoreManager => getPlatformBridge()       #file: wx_bridge.cpp 
+     WeexCoreManager => getPlatformBridge()       #file: wx_bridge.cpp
      -> AndroidBridgeInSimple => core_side()      #file: android_bridge.cpp
      -> CoreSideInPlatform => ExecJS()            #file: core_side_in_platform.cpp
      -> WeexCoreManager => script_bridge()        #file: wx_bridge.cpp
@@ -1233,7 +1321,7 @@
      -> ScriptSideInMultiProcess => ExecJS()      #file: script_side_in_multi_process.cpp
      -> IPCSender => send()                       #file: IPCSender.cpp
      #+END_EXAMPLE
-     
+
 ***** WeexCoreManager => getPlatformBridge()
       #+NAME: weex_core_manager.h
       #+BEGIN_SRC c
@@ -1539,10 +1627,10 @@
           }
         }
       #+END_SRC
-      
+
 ***** IPCSender/IPCListener/IPCHandler 的创建
       ~newIPCServer()~ 方法中完成了 IPC 流程中三个重要角色的创建：
-      
+
       #+NAME: WeexJSConnection.cpp
       #+BEGIN_SRC c++
         // 初始化 IPCHandler 来处理消息
@@ -1601,7 +1689,7 @@
 
 ***** -> WeexJSConnection => sender()
       这里的实际发送消息的 IPCSender 对象，实际是在 [[weex_new_ipc_server][IPC 服务创建]] 的时候进行初始化的.
-      
+
       初始化的时候调用的设置 IPCSender 代码：
       #+BEGIN_SRC c++
       std::unique_ptr<IPCSender> sender(createIPCSender(futexPageQueue.get(), handler));
@@ -1615,7 +1703,7 @@
           return std::unique_ptr<IPCSender>(new IPCSenderImpl(futexPageQueue, handler));
         }
       #+END_SRC
-      
+
 ***** -> IPCSenderImpl => send()
       实际调用了 ~IPCCommunicator => doSendBufferOnly()~ 来发送 IPC 消息：
       #+NAME: IPCSender.cpp
@@ -1702,7 +1790,7 @@
             // other code...
           }
         }
-      
+
       #+END_SRC
 ***** -> IPCListener => createIPCListener()
       创建一个 ~IPCListener~, 实际创建的是 ~IPCListenerImpl~ 的一个实例,它内部实现了 ~listen()~ 方法:
@@ -1788,7 +1876,7 @@
           MapType m_map;
         };
       #+END_SRC
-      
+
       注册消息回调的方法, 比较简单，就是将一个 int 值作为 key，将一个回调方法作为 value 插入到声明好的一个 Map 中:
       #+NAME: IPCHandler.cpp
       #+BEGIN_SRC c++
@@ -1823,7 +1911,7 @@
       #+END_SRC
 
 ***** 默认注册的 IPCHandler
-      
+
       ~ScriptBridgeInMultiProcess => RegisterIPCCallback()~ 方法中，注册了很多内置的 IPC 回调方法:
       #+NAME: script_bridge_in_multi_process.cpp
       #+BEGIN_SRC c++
@@ -1869,9 +1957,15 @@
     <<weex_core_register_module>>
 
 **** Android 注册 Module
-     
+
 *** Native 注册 Component
     <<weex_core_register_component>>
 
-*** Native 渲染 Weex Js
+*** Native 渲染流程分析
     <<weex_core_render>>
+
+    #+NAME: WXBridgeManager.java
+    #+BEGIN_SRC java
+    // METHOD_CREATE_INSTANCE = "createInstance"
+    invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
+    #+END_SRC

@@ -36,9 +36,9 @@
    DEADLINE: <2018-11-09 五>
 
    - State "DOING"      from "TODO"       [2018-10-22 一 10:56]
-** TODO [[file:code/read_flutter_source_code.org][Flutter]]                                                      :@code:
+** TODO [[file:code/read_flutter_source_code.org][flutter]]                                                      :@code:
    DEADLINE: <2018-11-23 五>
-
+** TODO [[file:code/read_react_native_source_code.org][React Native]]                                                 :@code:
 ** TODO [[file:code/read_java_source_code.org][Java]]                                                         :@code:
 
 * Develop
