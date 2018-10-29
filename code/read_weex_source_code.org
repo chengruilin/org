@@ -1223,12 +1223,145 @@
         }
       #+END_SRC
 ***** -> CoreSideInPlatform => InitFramework()
+      #+NAME: core_side_in_platform.cpp
       #+BEGIN_SRC c++
         int CoreSideInPlatform::InitFramework(const char *script, std::vector<INIT_FRAMEWORK_PARAMS *> &params) {
           return WeexCoreManager::Instance()
             ->script_bridge()
             ->script_side()
             ->InitFramework(script, params);
+        }
+      #+END_SRC
+***** -> ScriptSideInMultiProcess => InitFramework()
+      #+NAME: script_side_in_multi_process.cpp
+      #+BEGIN_SRC c++
+
+        int ScriptSideInMultiProcess::InitFramework(const char *script, std::vector<INIT_FRAMEWORK_PARAMS *> &params) {
+          try {
+            // check sender != null
+            std::unique_ptr<IPCSerializer> serializer(createIPCSerializer());
+            serializer->setMsg(static_cast<uint32_t>(IPCJSMsg::INITFRAMEWORK));
+            serializer->add(script, strlen(script));
+            for (auto it = params.begin(); it != params.end(); ++it) {
+              serializer->add((*it)->type->content, (*it)->type->length);
+              serializer->add((*it)->value->content, (*it)->value->length);
+            }
+            std::unique_ptr<IPCBuffer> buffer = serializer->finish();
+            std::unique_ptr<IPCResult> result = sender_->send(buffer.get());
+            if (result->getType() != IPCType::INT32) {
+              LOGE("initFramework Unexpected result type");
+              bridge()->core_side()->ReportException("", "initFramework", "error, initFramework Unexpected result type");
+              return false;
+            }
+          } catch (IPCException &e) {
+            LOGE("%s", e.msg());
+            return false;
+          }
+          return true;
+        }
+      #+END_SRC
+***** -> weex_js_engine => initFramework()
+      #+NAME: com_taobao_weex_bridge_WXBridge.cpp
+      #+BEGIN_SRC c++
+        jint Java_com_taobao_weex_bridge_WXBridge_initFramework(JNIEnv *env,
+                                                                jobject object, jstring script,
+                                                                jobject params) {
+          jThis = env->NewGlobalRef(object);
+
+          // no flush to avoid SIGILL
+          // const char* str= "--noflush_code_incrementally --noflush_code --noage_code";
+          const char *str = "--noflush_code --noage_code --nocompact_code_space"
+            " --expose_gc";
+          v8::V8::SetFlagsFromString(str, strlen(str));
+
+          v8::V8::Initialize();
+          globalIsolate = v8::Isolate::GetCurrent();
+
+          v8::HandleScope handleScope;
+
+          WXEnvironment = v8::ObjectTemplate::New();
+
+          jclass c_params = env->GetObjectClass(params);
+
+          jmethodID m_platform = env->GetMethodID(c_params, "getPlatform", "()Ljava/lang/String;");
+          jobject platform = env->CallObjectMethod(params, m_platform);
+          WXEnvironment->Set("platform", jString2V8String(env, (jstring) platform));
+          env->DeleteLocalRef(platform);
+
+          jmethodID m_osVersion = env->GetMethodID(c_params, "getOsVersion", "()Ljava/lang/String;");
+          jobject osVersion = env->CallObjectMethod(params, m_osVersion);
+          WXEnvironment->Set("osVersion", jString2V8String(env, (jstring) osVersion));
+          env->DeleteLocalRef(osVersion);
+
+          jmethodID m_appVersion = env->GetMethodID(c_params, "getAppVersion", "()Ljava/lang/String;");
+          jobject appVersion = env->CallObjectMethod(params, m_appVersion);
+          WXEnvironment->Set("appVersion", jString2V8String(env, (jstring) appVersion));
+          env->DeleteLocalRef(appVersion);
+
+          jmethodID m_weexVersion = env->GetMethodID(c_params, "getWeexVersion", "()Ljava/lang/String;");
+          jobject weexVersion = env->CallObjectMethod(params, m_weexVersion);
+          WXEnvironment->Set("weexVersion", jString2V8String(env, (jstring) weexVersion));
+          env->DeleteLocalRef(weexVersion);
+
+          jmethodID m_deviceModel = env->GetMethodID(c_params, "getDeviceModel", "()Ljava/lang/String;");
+          jobject deviceModel = env->CallObjectMethod(params, m_deviceModel);
+          WXEnvironment->Set("deviceModel", jString2V8String(env, (jstring) deviceModel));
+          env->DeleteLocalRef(deviceModel);
+
+          jmethodID m_appName = env->GetMethodID(c_params, "getAppName", "()Ljava/lang/String;");
+          jobject appName = env->CallObjectMethod(params, m_appName);
+          WXEnvironment->Set("appName", jString2V8String(env, (jstring) appName));
+          env->DeleteLocalRef(appName);
+
+          jmethodID m_deviceWidth = env->GetMethodID(c_params, "getDeviceWidth", "()Ljava/lang/String;");
+          jobject deviceWidth = env->CallObjectMethod(params, m_deviceWidth);
+          WXEnvironment->Set("deviceWidth", jString2V8String(env, (jstring) deviceWidth));
+          env->DeleteLocalRef(deviceWidth);
+
+          jmethodID m_deviceHeight = env->GetMethodID(c_params, "getDeviceHeight",
+                                                      "()Ljava/lang/String;");
+          jobject deviceHeight = env->CallObjectMethod(params, m_deviceHeight);
+          WXEnvironment->Set("deviceHeight", jString2V8String(env, (jstring) deviceHeight));
+          env->DeleteLocalRef(deviceHeight);
+
+          jmethodID m_options = env->GetMethodID(c_params, "getOptions", "()Ljava/lang/Object;");
+          jobject options = env->CallObjectMethod(params, m_options);
+          jclass jmapclass = env->FindClass("java/util/HashMap");
+          jmethodID jkeysetmid = env->GetMethodID(jmapclass, "keySet", "()Ljava/util/Set;");
+          jmethodID jgetmid = env->GetMethodID(jmapclass, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
+          jobject jsetkey = env->CallObjectMethod(options, jkeysetmid);
+          jclass jsetclass = env->FindClass("java/util/Set");
+          jmethodID jtoArraymid = env->GetMethodID(jsetclass, "toArray", "()[Ljava/lang/Object;");
+          jobjectArray jobjArray = (jobjectArray)env->CallObjectMethod(jsetkey, jtoArraymid);
+          env->DeleteLocalRef(jsetkey);
+          if (jobjArray != NULL) {
+            jsize arraysize = env->GetArrayLength(jobjArray);
+            for(int i = 0; i < arraysize; i++) {
+              jstring jkey = (jstring)env->GetObjectArrayElement(jobjArray, i);
+              jstring jvalue = (jstring)env->CallObjectMethod(options, jgetmid, jkey);
+              const char *c_key = env->GetStringUTFChars(jkey, NULL);
+              const char *c_value = env->GetStringUTFChars(jvalue, NULL);
+              LOGI("options array k:%s v:%s", c_key, c_value);
+              WXEnvironment->Set(c_key, jString2V8String(env, jvalue));
+              env->DeleteLocalRef(jkey);
+              env->DeleteLocalRef(jvalue);
+            }
+            env->DeleteLocalRef(jobjArray);
+          }
+          env->DeleteLocalRef(options);
+
+          V8context = CreateShellContext();
+
+          const char *scriptStr = env->GetStringUTFChars(script, NULL);
+          if (scriptStr == NULL || !ExecuteJavaScript(globalIsolate, v8::String::New(scriptStr), true)) {
+            return false;
+          }
+
+          setJSFVersion(env);
+          env->ReleaseStringUTFChars(script, scriptStr);
+          env->DeleteLocalRef(c_params);
+
+          return true;
         }
       #+END_SRC
 ** DOING Weex Core 代码分析
@@ -1516,6 +1649,52 @@
               ->ReportServerCrash(instanceId);
             return false;
           }
+        }
+      #+END_SRC
+
+***** -> weex_js_engine => exexJS()                                :confirm:
+      在项目里中的代码中没有找到接收 ~IPCJSMsg::EXECJS~, 在 weex 内核的代码中找到了关于执行 JS 的一段方法：
+      #+NAME: com_taobao_weex_bridge_WXBridge.cpp
+      #+BEGIN_SRC c++
+        /**
+         ,* Called to execute JavaScript such as . createInstance(),destroyInstance ext.
+         ,*
+         ,*/
+        jint Java_com_taobao_weex_bridge_WXBridge_execJS(JNIEnv *env, jobject this1, jstring jinstanceid,
+                                                         jstring jnamespace, jstring jfunction,
+                                                         jobjectArray jargs) {
+          v8::HandleScope handleScope;
+          v8::Isolate::Scope isolate_scope(globalIsolate);
+          v8::Context::Scope ctx_scope(V8context);
+          v8::TryCatch try_catch;
+          int length = env->GetArrayLength(jargs);
+          v8::Handle<v8::Value> obj[length];
+
+          // 省略将 jargs 转换为 obj[] 的代码
+
+          const char *func = env->GetStringUTFChars(jfunction, 0);
+          v8::Handle<v8::Object> global = V8context->Global();
+          v8::Handle<v8::Function> function;
+          v8::Handle<v8::Value> result;
+          // 根据 jnamespace 和 jfunction 找到需要运行的函数，并获得返回值
+          if (jnamespace == NULL) {
+            function = v8::Handle<v8::Function>::Cast(global->Get(v8::String::New(func)));
+            result = function->Call(global, length, obj);
+          }
+          else {
+            v8::Handle<v8::Object> master = v8::Handle<v8::Object>::Cast(global->Get(jString2V8String(env, jnamespace)));
+            function = v8::Handle<v8::Function>::Cast(master->Get(jString2V8String(env, jfunction)));
+            result = function->Call(master, length, obj);
+          }
+
+          if (result.IsEmpty()) {
+            assert(try_catch.HasCaught());
+            ReportException(globalIsolate, &try_catch, jinstanceid, func);
+            env->ReleaseStringUTFChars(jfunction, func);
+            return false;
+          }
+          env->ReleaseStringUTFChars(jfunction, func);
+          return true;
         }
       #+END_SRC
 
