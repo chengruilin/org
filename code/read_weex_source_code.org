@@ -1111,7 +1111,7 @@
             }
         }
       #+END_SRC
-**** WeexCore 中的处理
+**** Android WeexCore 中的处理
 ***** JNI => initFrameworkEnv
       ~mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport)~ 实际调用的是 native 层的代码.
       先来看下它对应的 JNI 的接口声明：
@@ -1260,107 +1260,25 @@
           return true;
         }
       #+END_SRC
-***** -> weex_js_engine => initFramework()
+***** -> weex_js_engine => initFramework()                         :confirm:
+      IPC 接收 ~IPCJSMsg::INITFRAMEWORK~ 方法没有在项目中暴露出来，查看 weex_js_engine 中有这么一个实现方法,　在这个方法中实际加载了 main.js 文件：
       #+NAME: com_taobao_weex_bridge_WXBridge.cpp
       #+BEGIN_SRC c++
         jint Java_com_taobao_weex_bridge_WXBridge_initFramework(JNIEnv *env,
                                                                 jobject object, jstring script,
                                                                 jobject params) {
-          jThis = env->NewGlobalRef(object);
-
-          // no flush to avoid SIGILL
-          // const char* str= "--noflush_code_incrementally --noflush_code --noage_code";
-          const char *str = "--noflush_code --noage_code --nocompact_code_space"
-            " --expose_gc";
-          v8::V8::SetFlagsFromString(str, strlen(str));
-
-          v8::V8::Initialize();
-          globalIsolate = v8::Isolate::GetCurrent();
-
-          v8::HandleScope handleScope;
-
-          WXEnvironment = v8::ObjectTemplate::New();
-
-          jclass c_params = env->GetObjectClass(params);
-
-          jmethodID m_platform = env->GetMethodID(c_params, "getPlatform", "()Ljava/lang/String;");
-          jobject platform = env->CallObjectMethod(params, m_platform);
-          WXEnvironment->Set("platform", jString2V8String(env, (jstring) platform));
-          env->DeleteLocalRef(platform);
-
-          jmethodID m_osVersion = env->GetMethodID(c_params, "getOsVersion", "()Ljava/lang/String;");
-          jobject osVersion = env->CallObjectMethod(params, m_osVersion);
-          WXEnvironment->Set("osVersion", jString2V8String(env, (jstring) osVersion));
-          env->DeleteLocalRef(osVersion);
-
-          jmethodID m_appVersion = env->GetMethodID(c_params, "getAppVersion", "()Ljava/lang/String;");
-          jobject appVersion = env->CallObjectMethod(params, m_appVersion);
-          WXEnvironment->Set("appVersion", jString2V8String(env, (jstring) appVersion));
-          env->DeleteLocalRef(appVersion);
-
-          jmethodID m_weexVersion = env->GetMethodID(c_params, "getWeexVersion", "()Ljava/lang/String;");
-          jobject weexVersion = env->CallObjectMethod(params, m_weexVersion);
-          WXEnvironment->Set("weexVersion", jString2V8String(env, (jstring) weexVersion));
-          env->DeleteLocalRef(weexVersion);
-
-          jmethodID m_deviceModel = env->GetMethodID(c_params, "getDeviceModel", "()Ljava/lang/String;");
-          jobject deviceModel = env->CallObjectMethod(params, m_deviceModel);
-          WXEnvironment->Set("deviceModel", jString2V8String(env, (jstring) deviceModel));
-          env->DeleteLocalRef(deviceModel);
-
-          jmethodID m_appName = env->GetMethodID(c_params, "getAppName", "()Ljava/lang/String;");
-          jobject appName = env->CallObjectMethod(params, m_appName);
-          WXEnvironment->Set("appName", jString2V8String(env, (jstring) appName));
-          env->DeleteLocalRef(appName);
-
-          jmethodID m_deviceWidth = env->GetMethodID(c_params, "getDeviceWidth", "()Ljava/lang/String;");
-          jobject deviceWidth = env->CallObjectMethod(params, m_deviceWidth);
-          WXEnvironment->Set("deviceWidth", jString2V8String(env, (jstring) deviceWidth));
-          env->DeleteLocalRef(deviceWidth);
-
-          jmethodID m_deviceHeight = env->GetMethodID(c_params, "getDeviceHeight",
-                                                      "()Ljava/lang/String;");
-          jobject deviceHeight = env->CallObjectMethod(params, m_deviceHeight);
-          WXEnvironment->Set("deviceHeight", jString2V8String(env, (jstring) deviceHeight));
-          env->DeleteLocalRef(deviceHeight);
-
-          jmethodID m_options = env->GetMethodID(c_params, "getOptions", "()Ljava/lang/Object;");
-          jobject options = env->CallObjectMethod(params, m_options);
-          jclass jmapclass = env->FindClass("java/util/HashMap");
-          jmethodID jkeysetmid = env->GetMethodID(jmapclass, "keySet", "()Ljava/util/Set;");
-          jmethodID jgetmid = env->GetMethodID(jmapclass, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
-          jobject jsetkey = env->CallObjectMethod(options, jkeysetmid);
-          jclass jsetclass = env->FindClass("java/util/Set");
-          jmethodID jtoArraymid = env->GetMethodID(jsetclass, "toArray", "()[Ljava/lang/Object;");
-          jobjectArray jobjArray = (jobjectArray)env->CallObjectMethod(jsetkey, jtoArraymid);
-          env->DeleteLocalRef(jsetkey);
-          if (jobjArray != NULL) {
-            jsize arraysize = env->GetArrayLength(jobjArray);
-            for(int i = 0; i < arraysize; i++) {
-              jstring jkey = (jstring)env->GetObjectArrayElement(jobjArray, i);
-              jstring jvalue = (jstring)env->CallObjectMethod(options, jgetmid, jkey);
-              const char *c_key = env->GetStringUTFChars(jkey, NULL);
-              const char *c_value = env->GetStringUTFChars(jvalue, NULL);
-              LOGI("options array k:%s v:%s", c_key, c_value);
-              WXEnvironment->Set(c_key, jString2V8String(env, jvalue));
-              env->DeleteLocalRef(jkey);
-              env->DeleteLocalRef(jvalue);
-            }
-            env->DeleteLocalRef(jobjArray);
-          }
-          env->DeleteLocalRef(options);
-
+          // 配置 WXEnvironment
+          WXEnvironment->Set(c_key, jString2V8String(env, jvalue));
+          // 创建 V8Context
           V8context = CreateShellContext();
-
           const char *scriptStr = env->GetStringUTFChars(script, NULL);
+          // 执行 script 脚本内容
           if (scriptStr == NULL || !ExecuteJavaScript(globalIsolate, v8::String::New(scriptStr), true)) {
             return false;
           }
-
           setJSFVersion(env);
           env->ReleaseStringUTFChars(script, scriptStr);
           env->DeleteLocalRef(c_params);
-
           return true;
         }
       #+END_SRC
