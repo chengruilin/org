@@ -770,6 +770,8 @@
      #+END_SRC
      后续的渲染工作就交给 native 层来完成,可以看下底层的实现:  [[weex_core_render][传送门]]
 
+**** JSFramework 渲染过程
+     [[weex_jsf_render][JSFramework 页面渲染]]
 *** JS Bridge
     来看下 Android 的 SDK 中用来和 JS Engine（V8）进行双向通信的代码,主要的类有 WXBridgeManager.java 和 WXBridge.java.
     与 native 的 JS 方法的调用都运行在 JsBridge 线程中。
@@ -1282,6 +1284,8 @@
           return true;
         }
       #+END_SRC
+**** JSFramework 处理页面渲染
+     <<weex_jsf_render>>
 ** DOING Weex Core 代码分析
 *** Android & JS 调用流程分析
     Android SDK 代码分析中, ~WXBridgeManager.java~ 提供的很多方法都是通过 ~WXBridge.java~ 中定义的 JNI 接口,
