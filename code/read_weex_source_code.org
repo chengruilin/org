@@ -1284,8 +1284,29 @@
           return true;
         }
       #+END_SRC
-**** JSFramework 处理页面渲染
+**** JSFramework 处理 Native 中传递的调用
      <<weex_jsf_render>>
+
+***** Methods
+      
+      | Methods                   | Description |
+      |---------------------------+-------------|
+      | createInstance            |             |
+      | destroyInstance           |             |
+      | callJS                    |             |
+      | setTimeoutCallback        |             |
+      | registerModules           |             |
+      | registerComponents        |             |
+      | fireEvent                 |             |
+      | fireEventSync             |             |
+      | componentHook             |             |
+      | callback                  |             |
+      | refreshInstance           |             |
+      | fireEventOnDataRenderNode |             |
+      | notifyTrimMemory          |             |
+      | notifySerializeCodeCache  |             |
+      | createInstanceContext     |             |
+
 ** DOING Weex Core 代码分析
 *** Android & JS 调用流程分析
     Android SDK 代码分析中, ~WXBridgeManager.java~ 提供的很多方法都是通过 ~WXBridge.java~ 中定义的 JNI 接口,
@@ -2066,8 +2087,11 @@
 *** Native 渲染流程分析
     <<weex_core_render>>
 
+    ~WXBridgeManager => invokeExecJS()~ 之后通过 ~WXBridge => execJS()~ 调用到了底层的方法：
     #+NAME: WXBridgeManager.java
     #+BEGIN_SRC java
     // METHOD_CREATE_INSTANCE = "createInstance"
     invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
     #+END_SRC
+
+    之后的流程就是通过 IPC 以消息的方式通知到 JSFramework 环境调用响应的方法。
