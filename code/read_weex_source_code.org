@@ -1284,11 +1284,12 @@
           return true;
         }
       #+END_SRC
-**** JSFramework 处理 Native 中传递的调用
-     <<weex_jsf_render>>
+*** JSFramework 处理 Native 的调用
+    <<weex_jsf_render>>
 
 ***** Methods
-      
+      列了下 ~WXBridgeManager.java~ 中声明的一些 call JS 的方法:
+      #+NAME: Native Call JS Function
       | Methods                   | Description |
       |---------------------------+-------------|
       | createInstance            |             |
@@ -1307,6 +1308,260 @@
       | notifySerializeCodeCache  |             |
       | createInstanceContext     |             |
 
+***** 渲染 Weex 页面
+****** Native => render("weex_page.js")
+       ~WXSDKInstance => render()~ 来渲染一个 weex 页面:
+       #+NAME: Weex render demo
+       #+BEGIN_SRC java
+         /**
+          ,* WXSample 可以替换成自定义的字符串，针对埋点有效。
+          ,* template 是.we transform 后的 js 文件。
+          ,* option 可以为空，或者通过 option 传入 js 需要的参数。例如 bundle js 的地址等。
+          ,* jsonInitData 可以为空。
+          ,* width 为-1 默认全屏，可以自己定制。
+          ,* height =-1 默认全屏，可以自己定制。
+          ,*/
+         mWXSDKInstance.render("WXSample", WXFileUtils.loadFileContent("hello.js", this), null, null, -1, -1, WXRenderStrategy.APPEND_ASYNC);
+       #+END_SRC
+       内部其实时把这个 render 调用转成了 IPC 消息的方式来调用到 JSFramework 中的 ~createInstance()~ 方法,这里的具体步骤文档中有提到,就不详细展开了.
+       
+****** -> JSFramework => createInstance()
+       #+NAME: runtime/api/init.js
+       #+BEGIN_SRC javascript
+         function createInstance (id, code, config, data) {
+           // 忽略各种检查和配置参数的代码
+           const instanceContext = createInstanceContext(id, config, data)
+           if (typeof framework.createInstance === 'function') {
+             // Temporary compatible with some legacy APIs in Rax,
+             // some Rax page is using the legacy ".we" framework.
+             if (bundleType === 'Rax' || bundleType === 'Weex') {
+               const raxInstanceContext = Object.assign({
+                 config,
+                 created: Date.now(),
+                 framework: bundleType
+               }, instanceContext)
+               return framework.createInstance(id, code, config, data, raxInstanceContext)
+             }
+             return framework.createInstance(id, code, config, data, instanceContext)
+           }
+           // console.error(`[JS Framework] Can't find available "createInstance" method in ${bundleType}!`)
+           runInContext(code, instanceContext)
+         }
+       #+END_SRC
+
+****** -> JS => createInstanceContext()
+       #+NAME: runtime/api/init.js
+       #+BEGIN_SRC javascript
+         function createInstanceContext (id, options = {}, data) {
+           const weex = new WeexInstance(id, options)
+           const bundleType = options.bundleType || 'Vue'
+           instanceTypeMap[id] = bundleType
+           const framework = runtimeConfig.frameworks[bundleType]
+           if (!framework) {
+             return new Error(`[JS Framework] Invalid bundle type "${bundleType}".`)
+           }
+
+           // prepare js service
+           const services = createServices(id, {
+             weex,
+             config: options,
+             created: Date.now(),
+             framework: bundleType,
+             bundleType
+           }, runtimeConfig)
+           Object.freeze(services)
+
+           // prepare runtime context
+           const runtimeContext = Object.create(null)
+           Object.assign(runtimeContext, services, {
+             weex,
+             getJSFMVersion,
+             requireModule: (...args) => weex.requireModule(...args),
+             __WEEX_CALL_JAVASCRIPT__: receiveTasks,
+             services // Temporary compatible with some legacy APIs in Rax
+           })
+           Object.freeze(runtimeContext)
+
+           // prepare instance context
+           const instanceContext = Object.assign({}, runtimeContext)
+           // 检查 framework 中有没有 createInstanceContext 方法,有的话就调用,没有的话就用 runtimeContext
+           if (typeof framework.createInstanceContext === 'function') {
+             Object.assign(instanceContext, framework.createInstanceContext(id, runtimeContext, data))
+           }
+           Object.freeze(instanceContext)
+           return instanceContext
+         }
+       #+END_SRC
+
+****** -> framework(legacy) => createInstance()
+       #+NAME: runtime/api/frameworks/legacy/static/create.js
+       #+BEGIN_SRC javascript
+         /**
+          ,* Create a Weex instance.
+          ,*
+          ,* @param  {string} id
+          ,* @param  {string} code
+          ,* @param  {object} options
+          ,*         option `HAS_LOG` enable print log
+          ,* @param  {object} data
+          ,* @param  {object} info { created, ... services }
+          ,*/
+         export function createInstance (id, code, options, data, info) {
+           const { services } = info || {}
+           resetTarget()
+           let instance = instanceMap[id]
+           /* istanbul ignore else */
+           options = options || {}
+           let result
+           /* istanbul ignore else */
+           if (!instance) {
+             instance = new App(id, options)
+             instanceMap[id] = instance
+             result = initApp(instance, code, data, services)
+           }
+           else {
+             result = new Error(`invalid instance id "${id}"`)
+           }
+           return (result instanceof Error) ? result : instance
+         }
+       #+END_SRC
+****** -> initApp()
+       #+NAME: runtime/frameworks/legacy/app/ctrl/init.js
+       #+BEGIN_SRC javascript
+         export function init (app, code, data, services) {
+           console.debug('[JS Framework] Intialize an instance with:\n', data)
+           let result
+
+           // prepare app env methods
+           const bundleDefine = (...args) => defineFn(app, ...args)
+           const bundleBootstrap = (name, config, _data) => {
+             result = bootstrap(app, name, config, _data || data)
+             updateActions(app)
+             app.doc.listener.createFinish()
+             console.debug(`[JS Framework] After intialized an instance(${app.id})`)
+           }
+           const bundleVm = Vm
+           /* istanbul ignore next */
+           const bundleRegister = (...args) => register(app, ...args)
+           /* istanbul ignore next */
+           const bundleRender = (name, _data) => {
+             result = bootstrap(app, name, {}, _data)
+           }
+           /* istanbul ignore next */
+           const bundleRequire = name => _data => {
+             result = bootstrap(app, name, {}, _data)
+           }
+           const bundleDocument = app.doc
+           /* istanbul ignore next */
+           const bundleRequireModule = name => app.requireModule(removeWeexPrefix(name))
+
+           const weexGlobalObject = {
+             config: app.options,
+             define: bundleDefine,
+             bootstrap: bundleBootstrap,
+             requireModule: bundleRequireModule,
+             document: bundleDocument,
+             Vm: bundleVm
+           }
+
+           Object.freeze(weexGlobalObject)
+
+           // prepare code
+           let functionBody
+           /* istanbul ignore if */
+           if (typeof code === 'function') {
+             // `function () {...}` -> `{...}`
+             // not very strict
+             functionBody = code.toString().substr(12)
+           }
+           /* istanbul ignore next */
+           else if (code) {
+             functionBody = code.toString()
+           }
+           // wrap IFFE and use strict mode
+           functionBody = `(function(global){\n\n"use strict";\n\n ${functionBody} \n\n})(Object.create(this))`
+
+           // run code and get result
+           const { WXEnvironment } = global
+           const timerAPIs = {}
+
+           /* istanbul ignore if */
+           if (WXEnvironment && WXEnvironment.platform !== 'Web') {
+             // timer APIs polyfill in native
+             const timer = app.requireModule('timer')
+             Object.assign(timerAPIs, {
+               setTimeout: (...args) => {
+                 const handler = function () {
+                   args[0](...args.slice(2))
+                 }
+                 timer.setTimeout(handler, args[1])
+                 return app.doc.taskCenter.callbackManager.lastCallbackId.toString()
+               },
+               setInterval: (...args) => {
+                 const handler = function () {
+                   args[0](...args.slice(2))
+                 }
+                 timer.setInterval(handler, args[1])
+                 return app.doc.taskCenter.callbackManager.lastCallbackId.toString()
+               },
+               clearTimeout: (n) => {
+                 timer.clearTimeout(n)
+               },
+               clearInterval: (n) => {
+                 timer.clearInterval(n)
+               }
+             })
+           }
+           // run code and get result
+           const globalObjects = Object.assign({
+             define: bundleDefine,
+             require: bundleRequire,
+             bootstrap: bundleBootstrap,
+             register: bundleRegister,
+             render: bundleRender,
+             __weex_define__: bundleDefine, // alias for define
+             __weex_bootstrap__: bundleBootstrap, // alias for bootstrap
+             __weex_document__: bundleDocument,
+             __weex_require__: bundleRequireModule,
+             __weex_viewmodel__: bundleVm,
+             weex: weexGlobalObject
+           }, timerAPIs, services)
+           if (!callFunctionNative(globalObjects, functionBody)) {
+             // If failed to compile functionBody on native side,
+             // fallback to callFunction.
+             callFunction(globalObjects, functionBody)
+           }
+
+           return result
+         }
+       #+END_SRC
+****** -> runInContext()
+       #+NAME: runtime/api/init.js
+       #+BEGIN_SRC javascript
+         /**
+          ,* Run js code in a specific context.
+          ,* @param {string} code
+          ,* @param {object} context
+          ,*/
+         function runInContext (code, context) {
+           const keys = []
+           const args = []
+           for (const key in context) {
+             keys.push(key)
+             args.push(context[key])
+           }
+
+           const bundle = `
+             (function (global) {
+               ${code}
+             })(Object.create(this))
+           `
+
+           return (new Function(...keys, bundle))(...args)
+         }
+       #+END_SRC
+
+*** JSFramework 调用 Native 方法
 ** DOING Weex Core 代码分析
 *** Android & JS 调用流程分析
     Android SDK 代码分析中, ~WXBridgeManager.java~ 提供的很多方法都是通过 ~WXBridge.java~ 中定义的 JNI 接口,
