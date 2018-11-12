@@ -773,7 +773,7 @@
 **** JSFramework 渲染过程
      [[weex_jsf_render][JSFramework 页面渲染]]
 *** JS Bridge
-    来看下 Android 的 SDK 中用来和 JS Engine（V8）进行双向通信的代码,主要的类有 WXBridgeManager.java 和 WXBridge.java.
+    来看下 Android 的 SDK 中用来和 JS Engine（JavaScriptCore）进行双向通信的代码,主要的类有 WXBridgeManager.java 和 WXBridge.java.
     与 native 的 JS 方法的调用都运行在 JsBridge 线程中。
 **** WXBridgeManager.java
      负责通过 WXBridge.java 提供的一系列 native 接口,来完成 Java 环境和 JS 之间的交互.
@@ -1539,10 +1539,10 @@
        #+NAME: runtime/api/init.js
        #+BEGIN_SRC javascript
          /**
-          ,* Run js code in a specific context.
-          ,* @param {string} code
-          ,* @param {object} context
-          ,*/
+          * Run js code in a specific context.
+          * @param {string} code
+          * @param {object} context
+          */
          function runInContext (code, context) {
            const keys = []
            const args = []
@@ -1556,11 +1556,39 @@
                ${code}
              })(Object.create(this))
            `
-
            return (new Function(...keys, bundle))(...args)
          }
        #+END_SRC
 
+       #+BEGIN_SRC javascript
+       // 将 functionBody 作为函数体，各种 arg 作为参数，创建一个新的函数
+       let func = new Function ([arg1[, arg2[, ...argN]],] functionBody)
+       #+END_SRC
+****** -> 加载实际页面
+
+       开发中创建一个 text 标签：
+       #+NAME: weex page
+       #+BEGIN_SRC javascript
+         <template>
+           <text class="message">Now, let's use Vue.js to build your Weex app.</text>
+         </template>
+       #+END_SRC
+
+       实际打包生产的代码
+       #+BEGIN_SRC javascript
+         /* 1 */
+         (function(module, exports) {
+           module.exports={render:function (){
+             var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+             return _c('text', {
+               staticClass: ["message"]
+             }, [_vm._v("Now, let's use Vue.js to build your Weex app.")])
+           },staticRenderFns: []}
+           module.exports.render._withStripped = true
+
+           /***/ })
+       #+END_SRC
+****** 
 *** JSFramework 调用 Native 方法
 ** DOING Weex Core 代码分析
 *** Android & JS 调用流程分析
