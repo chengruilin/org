@@ -1560,6 +1560,32 @@
          }
        #+END_SRC
 
+***** 注册 Component
+      #+NAME: runtime/api/component.js
+      #+BEGIN_SRC javascript
+        /**
+         ,* Register native components information.
+         ,* @param {array} newComponents
+         ,*/
+        export function registerComponents (newComponents) {
+          if (Array.isArray(newComponents)) {
+            newComponents.forEach(component => {
+              if (!component) {
+                return
+              }
+              if (typeof component === 'string') {
+                weexComponents[component] = true
+              }
+              else if (typeof component === 'object' && typeof component.type === 'string') {
+                weexComponents[component.type] = component
+                registerElement(component.type, component.methods)
+              }
+            })
+          }
+        }
+      #+END_SRC
+
+***** 注册 Module
        #+BEGIN_SRC javascript
        // 将 functionBody 作为函数体，各种 arg 作为参数，创建一个新的函数
        let func = new Function ([arg1[, arg2[, ...argN]],] functionBody)
@@ -1588,6 +1614,7 @@
 
            /***/ })
        #+END_SRC
+
 *** JSFramework 调用 Native 方法
 ** DOING Weex Core 代码分析
 *** Android & JS 调用流程分析
