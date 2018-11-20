@@ -1588,7 +1588,6 @@
 
            /***/ })
        #+END_SRC
-****** 
 *** JSFramework 调用 Native 方法
 ** DOING Weex Core 代码分析
 *** Android & JS 调用流程分析
