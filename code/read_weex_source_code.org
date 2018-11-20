@@ -1560,7 +1560,6 @@
          }
        #+END_SRC
 
-<<<<<<< HEAD
 ***** 注册 Component
       #+NAME: runtime/api/component.js
       #+BEGIN_SRC javascript
