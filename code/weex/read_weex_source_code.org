@@ -10,7 +10,15 @@
 #+REVEAL_EXTRA_CSS: ./export/my_reveal_style.css
 
 * DONE Weex 使用相关
+
+  - 扩展 Weex 的功能
+  - Weex 的生命周期
+  
 ** DONE Weex 扩展(Android)
+   - 自定义 Module
+   - 自定义 Component
+   - 扩展 Adapter
+
 *** DONE Module
 
     #+BEGIN_NOTES
@@ -26,7 +34,7 @@
     6. Register: WXSDKEngine.registerModule("myModule", MyModule.class);
 
     #+REVEAL: split
-    Weex Module Sample:
+    自定义一个 Module
     #+BEGIN_SRC java
       public class MyModule extends WXModule {
 
@@ -45,12 +53,12 @@
     #+END_SRC
 
     #+REVEAL: split
-    Register code:
+    注册一个 Module
     #+BEGIN_SRC java
       WXSDKEngine.registerModule("MyModule", MyModule.class);
     #+END_SRC
 
-    Js call:
+    在 Weex 页面中调用 Module
     #+BEGIN_SRC html
       <template>
         <div>
@@ -82,7 +90,7 @@
     5. WXSDKEngine.registerComponent("richText", RichText.class);
 
     #+REVEAL: split
-    Weex Component Sample:
+    自定义一个 Component
     #+BEGIN_SRC java
       public class RichText extends WXComponent<TextView> {
 
@@ -106,12 +114,12 @@
     #+END_SRC
 
     #+REVEAL: split
-    Register code:
+    注册 Component
     #+BEGIN_SRC java
       WXSDKEngine.registerComponent("richText", RichText.class);
     #+END_SRC
 
-    Js call:
+    在 Weex 页面中使用 Component
     #+BEGIN_SRC html
       <template>
         <div>
@@ -121,7 +129,6 @@
     #+END_SRC
 
 *** DONE Adapter
-    #+REVEAL: split
 **** IWXImgLoaderAdapter
      图片加载适配器,使用方法:
      #+BEGIN_SRC java
@@ -169,7 +176,6 @@
            void sendRequest(WXRequest request, OnHttpListener listener);
        }
      #+END_SRC
-     #+REVEAL: split
 **** IWXUserTrackAdapter
      埋点适配器,接口定义:
      #+BEGIN_SRC java
@@ -184,7 +190,6 @@
      #+BEGIN_SRC java
      WXSDKEngine.setActivityNavBarSetter(new IActivityNavBarSetter(){});
      #+END_SRC
-     #+REVEAL: split
 **** IWXStorageAdapter
      本地存储适配器,默认 DefaultWXStorage
 **** IWXJSExceptionAdapter
@@ -290,19 +295,13 @@
      - 先执行开发者定义的 destroyed 方法,再清除内部属性
      - 添加的全局或者 this 的属性,建议在 destroyed 方法中手动清除,避免内存泄露
 
+
 * DONE 架构分析
-** 调用流程图
-   [[./imgs/img_weex_arch_flow.png]]
+  - 源码目录结构
+  - Weex 框架结构
+  - Weex 调用流程
+  - 线程模型
 
-** 框架结构图
-   图片出处: https://zhuanlan.zhihu.com/p/25326775
-   [[./imgs/img_weex_framework_classes.jpeg]]
-
-** 线程模型
-   <<weex_thread>>
-
-*** Weex 线程间交互关系图
-    [[./imgs/img_weex_threads.jpg]]
 ** 项目目录结构
 
    #+NAME: Weex 目录结构(选择性列了一些比较重要的目录)
@@ -346,7 +345,19 @@
            - CMakeLists.txt                # CMake 打包脚本
    #+END_SRC
 
-* DOING 源码分析-Android
+** 框架结构图
+   图片出处: https://zhuanlan.zhihu.com/p/25326775
+   [[./imgs/img_weex_framework_classes.jpeg]]
+** 调用流程图
+   [[./imgs/img_weex_arch_flow.png]]
+
+** 线程模型
+   <<weex_thread>>
+
+*** Weex 线程间交互关系图
+    [[./imgs/img_weex_threads.jpg]]
+
+* 源码分析-Android
 ** 初始化流程分析
    整个初始化的流程,简单来说就是:
    1. 获取 Application 对象
@@ -1017,14 +1028,14 @@
     Native 注册 Component: [[weex_core_register_module][传送门]]
 
 ** Android Render Engine
-* TODO 源码分析-iOS
+* 源码分析-iOS
 ** 初始化流程分析
 
 ** JS Bridge
 
 ** iOS Render Engine
 
-* DOING 源码分析-JS
+* 源码分析-JS
 ** JSFramework
    <<weex_jsframework>>
 *** framework 是个啥?
@@ -1652,7 +1663,7 @@
       #+END_SRC
 
 ** JSFramework 调用 Native 方法
-* DOING Weex Core 代码分析
+* Weex Core 代码分析
 ** Android & JS 调用流程分析
    Android SDK 代码分析中, ~WXBridgeManager.java~ 提供的很多方法都是通过 ~WXBridge.java~ 中定义的 JNI 接口,
    来调用 weexcore.so 中的方法, 再去调用 JSFramework 中的一些方法,来完成 Android Java 环境和 JS 环境的相互调用的.
