@@ -2,7 +2,7 @@
 #+TODO: TODO(t) DOING(d) PAUSE(p!) RESUME(r!) | DONE(e)
 #+AUTHOR: Qiezi
 #+STARTUP: overview
-#+OPTIONS: num:nil toc:nil 
+#+OPTIONS: num:nil toc:nil
 #+OPTIONS: todo:nil
 #+REVEAL_PLUGINS: (highlight)
 #+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
@@ -10,23 +10,10 @@
 #+REVEAL_THEME: night
 #+REVEAL_EXTRA_CSS: ./export/my_reveal_style.css
 
-* DONE Weex 使用相关
-
-  - 扩展 Weex 的功能
-  - Weex 的生命周期
-  
-** DONE Weex 扩展(Android)
-   - 自定义 Module
-   - 自定义 Component
-   - 扩展 Adapter
-
-*** DONE Module
-
-    #+BEGIN_NOTES
-    实现源码分析:[[weex_register_module][传送门]]
-    #+END_NOTES
-
-    Module 扩展非 UI 功能
+* 使用指南
+** Weex 扩展(Android)
+*** Module
+    Module 用于扩展非 UI 功能
     1. extends WXModule
     2. @JsMethod(uiThread = false or true)
     3. public function
@@ -34,9 +21,8 @@
     5. 方法参数:int,double,float,String,Map,List
     6. Register: WXSDKEngine.registerModule("myModule", MyModule.class);
 
-    #+REVEAL: split
-    自定义一个 Module
-    #+BEGIN_SRC java
+**** 自定义一个 Module
+     #+BEGIN_SRC java
       public class MyModule extends WXModule {
 
           //run ui thread
@@ -51,16 +37,15 @@
               //implement your module logic here
           }
       }
-    #+END_SRC
+     #+END_SRC
 
-    #+REVEAL: split
-    注册一个 Module
-    #+BEGIN_SRC java
+**** 注册一个 Module
+     #+BEGIN_SRC java
       WXSDKEngine.registerModule("MyModule", MyModule.class);
-    #+END_SRC
+     #+END_SRC
 
-    在 Weex 页面中调用 Module
-    #+BEGIN_SRC html
+**** 在 Weex 页面中调用 Module
+     #+BEGIN_SRC html
       <template>
         <div>
           <text onclick="click">testMyModule</text>
@@ -76,13 +61,9 @@
           }
         }
       </script>
-    #+END_SRC
+     #+END_SRC
 
-*** DONE Component
-    #+BEGIN_NOTES
-    实现源码分析:[[weex_register_component][传送门]]
-    #+END_NOTES
-
+*** Component
     Component 扩展实现 Native 控件
     1. extends WXComponent
     2. @WXComponentProp(name=value(value is attr or style of dsl))
@@ -90,9 +71,8 @@
     4. 方法参数:int,double,float,String,Map,List
     5. WXSDKEngine.registerComponent("richText", RichText.class);
 
-    #+REVEAL: split
-    自定义一个 Component
-    #+BEGIN_SRC java
+**** 自定义一个 Component
+     #+BEGIN_SRC java
       public class RichText extends WXComponent<TextView> {
 
           public RichText(WXSDKInstance instance, WXDomObject dom, WXVContainer parent) {
@@ -112,119 +92,96 @@
               getHostView().setText("tel: " + telNumber);
           }
       }
-    #+END_SRC
+     #+END_SRC
 
-    #+REVEAL: split
-    注册 Component
-    #+BEGIN_SRC java
+**** 注册 Component
+     #+BEGIN_SRC java
       WXSDKEngine.registerComponent("richText", RichText.class);
-    #+END_SRC
+     #+END_SRC
 
-    在 Weex 页面中使用 Component
-    #+BEGIN_SRC html
+**** 在 Weex 页面中使用 Component
+     #+BEGIN_SRC html
       <template>
         <div>
           <richText tel="12305" style="width:200;height:100">12305</richText>
         </div>
       </template>
+     #+END_SRC
+
+*** Adapter
+    - IWXImgLoaderAdapter
+    - IWXHttpAdapter
+    - IWXUserTrackAdapter
+    - IActivityNavBarSetter
+    - IWXStorageAdapter
+
+    IWXJSExceptionAdapter 图片加载适配器,使用方法:
+    #+BEGIN_SRC java
+      public class ImageAdapter implements IWXImgLoaderAdapter {
+
+          public ImageAdapter() {
+          }
+
+          @Override
+          public void setImage(final String url, final ImageView view,
+                               WXImageQuality quality, WXImageStrategy strategy) {
+
+              WXSDKManager.getInstance().postOnUiThread(new Runnable() {
+
+                      @Override
+                      public void run() {
+                          if(view==null||view.getLayoutParams()==null){
+                              return;
+                          }
+                          if (TextUtils.isEmpty(url)) {
+                              view.setImageBitmap(null);
+                              return;
+                          }
+                          String temp = url;
+                          if (url.startsWith("//")) {
+                              temp = "http:" + url;
+                          }
+                          if (view.getLayoutParams().width <= 0
+                              || view.getLayoutParams().height <= 0) {
+                              return;
+                          }
+                          Picasso.with(WXEnvironment.getApplication())
+                              .load(temp)
+                              .into(view);
+                      }
+                  },0);
+          }
+      }
     #+END_SRC
+** Lifecycle
+   #+BEGIN_NOTES
+   此处图片出处: [[https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG][WeexLiftcycle 的讨论]]
+   #+END_NOTES
+*** Workflow
+**** Create Instance
+     [[./imgs/img_weex_lifecycle_create_instance.jpeg]]
+**** Refresh Instance
+     [[./imgs/img_weex_lifecycle_refresh_instance.jpeg]]
 
-*** DONE Adapter
-**** IWXImgLoaderAdapter
-     图片加载适配器,使用方法:
-     #+BEGIN_SRC java
-       public class ImageAdapter implements IWXImgLoaderAdapter {
+**** Fire Event/Callback
+     [[./imgs/img_weex_lifecycle_fire_event.jpeg]]
 
-           public ImageAdapter() {
-           }
+**** Destroy Instance
+     [[./imgs/img_weex_lifecycle_destroy_instance.jpeg]]
 
-           @Override
-           public void setImage(final String url, final ImageView view,
-                                WXImageQuality quality, WXImageStrategy strategy) {
+**** Navigate
+     [[./imgs/img_weex_lifecycle_navigate.jpeg]]
 
-               WXSDKManager.getInstance().postOnUiThread(new Runnable() {
-
-                       @Override
-                       public void run() {
-                           if(view==null||view.getLayoutParams()==null){
-                               return;
-                           }
-                           if (TextUtils.isEmpty(url)) {
-                               view.setImageBitmap(null);
-                               return;
-                           }
-                           String temp = url;
-                           if (url.startsWith("//")) {
-                               temp = "http:" + url;
-                           }
-                           if (view.getLayoutParams().width <= 0
-                                || view.getLayoutParams().height <= 0) {
-                               return;
-                           }
-                           Picasso.with(WXEnvironment.getApplication())
-                               .load(temp)
-                               .into(view);
-                       }
-                   },0);
-           }
-       }
-     #+END_SRC
-     #+REVEAL: split
-**** IWXHttpAdapter
-     网络请求适配器,接口定义:
-     #+BEGIN_SRC java
-       public interface IWXHttpAdapter {
-           void sendRequest(WXRequest request, OnHttpListener listener);
-       }
-     #+END_SRC
-**** IWXUserTrackAdapter
-     埋点适配器,接口定义:
-     #+BEGIN_SRC java
-       public interface IWXUserTrackAdapter {
-           void commit(Context context, String eventId, String type, WXPerformance perf, Map<String, Serializable> params);
-       }
-     #+END_SRC
-
-     #+REVEAL: split
-**** IActivityNavBarSetter
-     Weex 导航适配器
-**** IWXStorageAdapter
-     本地存储适配器,默认 DefaultWXStorage
-**** IWXJSExceptionAdapter
-     处理 JS 异常,默认忽略
-
-** DONE Lifecycle
-    #+BEGIN_NOTES
-    此处图片出处: [[https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG][WeexLiftcycle 的讨论]]
-    #+END_NOTES
-
-*** Create Instance
-    [[./imgs/img_weex_lifecycle_create_instance.jpeg]]
-
-*** Refresh Instance
-    [[./imgs/img_weex_lifecycle_refresh_instance.jpeg]]
-
-*** Fire Event/Callback
-    [[./imgs/img_weex_lifecycle_fire_event.jpeg]]
-
-*** Destroy Instance
-    [[./imgs/img_weex_lifecycle_destroy_instance.jpeg]]
-
-*** Navigate
-    [[./imgs/img_weex_lifecycle_navigate.jpeg]]
-    
 *** 组件生命周期解析
+**** 生命周期图解
+     #+BEGIN_SRC org
+      ------      --------      -------             -----------
+     | init | -> | create | -> | ready |           | destroyed |
+      ------      --------      -------             -----------
+     #+END_SRC
 
-    生命周期图解:
-    #+BEGIN_EXAMPLE
-     ------      --------      -------             -----------
-    | init | -> | create | -> | ready |           | destroyed |
-     ------      --------      -------             -----------
-    #+END_EXAMPLE
-
-    #+REVEAL: split
-    生命周期用法:
-    #+BEGIN_SRC javascript
+     生命周期用法
+     #+BEGIN_SRC javascript
       <script>
         module.exports = {
           data: {},
@@ -244,10 +201,9 @@
           }
         }
       </script>
-    #+END_SRC
+     #+END_SRC
 
-     #+REVEAL: split
-**** init:
+**** init
      - 初始化内部变量,添加事件功能
      - 没有执行数据绑定,没有创建 Virtual-DOM,所以不能通过 this 获取到 data 中的数据,不能调用到 methods 中定义的方法,也不能获取到 Virtual-DOM 的节点
      - 可以在方法内初始化一些内部变量,绑定一些自定义事件
@@ -257,8 +213,7 @@
      - 可以通过 this 操作 data 中的数据,可以调用 methods 中的方法,但是不能获取到 Virtual-DOM 的节点
      - 可以在方法中修改 data 中数据,不会触发额外的渲染
 
-     #+REVEAL: split
-**** ready:
+**** ready
      - 表示组件已经渲染完成
      - 首先执行子组件的 ready 方法
      - 可以获得 Virtual-DOM 的节点,也可以获取子组件的 Virtual-DOM 实例
@@ -284,20 +239,13 @@
       }
      #+END_SRC
 
-     #+REVEAL: split
 **** destroyed
      - 组件销毁时被调用
      - 自底向上执行(先触发子组件的 destroyed 方法,再触发自身的)
      - 先执行开发者定义的 destroyed 方法,再清除内部属性
      - 添加的全局或者 this 的属性,建议在 destroyed 方法中手动清除,避免内存泄露
 
-
-* DONE 架构分析
-  - 源码目录结构
-  - Weex 框架结构
-  - Weex 调用流程
-  - 线程模型
-
+* 架构分析
 ** 项目目录结构
 
    #+NAME: Weex 目录结构(选择性列了一些比较重要的目录)
@@ -350,12 +298,10 @@
    [[./imgs/img_weex_arch_flow.png]]
 
 ** 线程模型
-   <<weex_thread>>
-
 *** Weex 线程间交互关系图
     [[./imgs/img_weex_threads.jpg]]
 
-* 源码分析-Android
+* Android SDK
 ** 初始化流程分析
    整个初始化的流程,简单来说就是:
    1. 获取 Application 对象
@@ -377,7 +323,6 @@
       }
     #+END_SRC
 
-    #+REVEAL: split
     此处调用了 WXSDKEngine 方法，那么这个方法里面做了什么事情呢，我们来看下：
     #+NAME: WXSDKEngine.java
     #+BEGIN_SRC java
@@ -447,8 +392,7 @@
       }
     #+END_SRC
 
-    #+REVEAL: split
-    可以看到其中几步重要的操作通过 ~Wxbridgemanager.Getinstance().post()~ 在线程中完成,详细的线程模型可以查 [[weex_thread]]:
+    可以看到其中几步重要的操作通过 ~Wxbridgemanager.Getinstance().post()~ 在线程中完成:
     #+NAME: WXSDKEngine.java
     #+BEGIN_SRC java
     WXBridgeManager.getInstance().post(new Runnable() {
@@ -459,7 +403,6 @@
           };
     #+END_SRC
     其中有两个重要的方法,继续往下追 ~initFramework~ 方法和 ~register~ 方法,分两小节来介绍.
-    #+REVEAL: split
 **** WXSoInstallMgrSdk => initSo
 
      加载打包在 APK 内的所有 so 文件
@@ -469,15 +412,13 @@
      - libweexjss.so
      - libweexjst.so
 
-     #+REVEAL: split  
      ~WXSDKEngine => doInitInternal()~ 方法中调用了 ~WXSoInstallMgrSdk => initSo()~ 方法:
      #+NAME: WXSDKEngine.java
      #+BEGIN_SRC java
      // V8_SO_NAME = "weexcore.so"
      WXSoInstallMgrSdk.initSo(V8_SO_NAME, 1, config!=null?config.getUtAdapter():null);
      #+END_SRC
-     
-     #+REVEAL: split
+
      ~WXSoInstallMgrSdk => initSo()~ 方法内部实现:
      #+BEGIN_SRC java
        /**
@@ -507,14 +448,13 @@
        }
      #+END_SRC
 
-     #+REVEAL: split
-**** WXBridgeManager => initFramework
-     - 可能需要了解下这里的 framework 是什么概念, [[weex_jsframework][传送门]].
+**** WXBridgeManager => initFramework()
+     - 可能需要了解下这里的 framework 是什么概念, [[weex_jsframework][传送门]]
      - 关于 JSFramework 的初始化: [[weex_jsframework_init][传送门]]
      - 有关 Module 注册: [[weex_register_module][传送门]]
      - 有关 Component 注册: [[weex_register_module][传送门]]
-     #+REVEAL: split
-**** WXSDKEngine => regiser
+
+**** WXSDKEngine => regiser()
      初始化 Framework 层之后， ~WXSDKEngine~ 调用了 ~register()~ 方法注册了一系列内置的 Component 和 Module
      内嵌的 Component 组件
      #+BEGIN_SRC org
@@ -554,7 +494,6 @@
      | header            | WXHeader.class                |
      #+END_SRC
 
-     #+REVEAL: split
      内嵌的 Module 组件
      #+BEGIN_SRC org
      | Module       | Class                     |
@@ -574,7 +513,7 @@
      | webSocket    | WebSocketModule.class     |
      | locale       | WXLocaleModule.class      |
      #+END_SRC
-     
+
 *** WXSDKEngine -> registerApplicationOptions()
     可以认为是获取了 App 的一些环境配置
     #+BEGIN_SRC org
@@ -585,7 +524,6 @@
     | status_bar_height    | get status bar height                      |
     #+END_SRC
 
-    #+REVEAL: split
     获取 status_bar_height 的方式：
     #+NAME: WXSDKEngine.java
     #+BEGIN_SRC java
@@ -708,8 +646,7 @@
               }, instanceId);
       }
     #+END_SRC
-    
-    #+REVEAL: split
+
     来看下 createInstance 方法最后调用到的 invokeCreateInstance 方法
     #+NAME: WXBridgeManager.java
     #+BEGIN_SRC java
@@ -841,7 +778,6 @@
       }
     #+END_SRC
 
-    #+REVEAL: split
     WXComponentRegistry -> registerComponent
     #+NAME: WXComponentRegistry.java
     #+BEGIN_SRC java
@@ -879,7 +815,6 @@
       }
     #+END_SRC
 
-    #+REVEAL: split
     WXBridgeManager -> invokeRegisterComponents
     #+NAME: WXBridgeManager.java
     #+BEGIN_SRC java
@@ -921,7 +856,6 @@
     WXSDKEngine.registerModule("MyModule", MyModule.class);
     #+END_SRC
 
-    #+REVEAL: split
     WXSDKEngine -> registerModule
     #+NAME: WXSDKEngine.java
     #+BEGIN_SRC java
@@ -943,7 +877,6 @@
       }
     #+END_SRC
 
-    #+REVEAL: split
     WXModuleManager -> regiserModule
     #+NAME: WXModuleManager.java
     #+BEGIN_SRC java
@@ -978,7 +911,6 @@
       }
     #+END_SRC
 
-    #+REVEAL: split
     WXBridgeManager -> registerModules
     #+NAME: WXBridgeManager.java
     #+BEGIN_SRC java
@@ -998,8 +930,7 @@
           }
       }
     #+END_SRC
-    
-    #+REVEAL: split
+
     WXBridgeManager -> invokeRegisterModules
     #+NAME: WXBridgeManager.java
     #+BEGIN_SRC java
@@ -1026,14 +957,14 @@
     Native 注册 Component: [[weex_core_register_module][传送门]]
 
 ** Android Render Engine
-* 源码分析-iOS
+* iOS SDK
 ** 初始化流程分析
 
 ** JS Bridge
 
 ** iOS Render Engine
 
-* 源码分析-JS
+* JSFramework
 ** JSFramework
    <<weex_jsframework>>
 *** framework 是个啥?
@@ -1661,14 +1592,13 @@
       #+END_SRC
 
 ** JSFramework 调用 Native 方法
-* Weex Core 代码分析
+* Weex Core
 ** Android & JS 调用流程分析
    Android SDK 代码分析中, ~WXBridgeManager.java~ 提供的很多方法都是通过 ~WXBridge.java~ 中定义的 JNI 接口,
    来调用 weexcore.so 中的方法, 再去调用 JSFramework 中的一些方法,来完成 Android Java 环境和 JS 环境的相互调用的.
 
-*** TODO Android Java 和 JS 通信关系图
-*** DONE WXBridge => execJS 的 JNI 接口和实现
-    CLOSED: [2018-10-26 五 18:11]
+*** Android Java 和 JS 通信关系图
+*** WXBridge => execJS 的 JNI 接口和实现
 
 **** JNI 接口定义和声明
      WXBridge 中对 execJS 方法的 JNI 接口 ~nativeExecJS()~ 的定义:
@@ -1730,7 +1660,6 @@
      #+END_SRC
 
 *** DONE ExecJS 方法的调用流程
-    CLOSED: [2018-10-27 Sat 00:12]
 
     先来看下这一长串的调用,这步调用完成了调用 V8 Engine 提供的 API, 调用到了 JSFramework 的方法:
     #+NAME: wx_bridge.cpp
@@ -1996,7 +1925,6 @@
      #+END_SRC
 
 *** DONE WeexJSConnection 创建并启动 IPC 服务
-    CLOSED: [2018-10-26 Fri 23:56]
 
     IPC 服务其实实在 WeexSDK 初始化的时候创建的, 通过 JNI 调用 weexcore.so 中的方法创建并启动.
 
@@ -2118,7 +2046,6 @@
        std::unique_ptr<IPCListener> listener =std::move(createIPCListener(futexPageQueue.get(), handler)) ;
      #+END_SRC
 *** DONE Android IPCSender
-    CLOSED: [2018-10-26 五 18:11]
 
     WXBridge 的 execJS 方法实际是调用了 CoreSideInMultiProcess 中的 IPCSender 的 send() 方法发送 IPC 消息的.
 
@@ -2250,7 +2177,6 @@
      #+END_SRC
 
 *** DONE Android IPCListener
-    CLOSED: [2018-10-27 Sat 01:00]
 
 **** WeexJSConnection => newIPCServer() -> listener
      在创建 IPC 服务的时候创建了 IPCListener 的实例,并开启了消息监听:
@@ -2310,7 +2236,6 @@
      #+END_SRC
 
 *** DONE Android IPCHandler
-    CLOSED: [2018-10-27 Sat 14:40]
 **** WeexJSConnection => newIPCServer() -> handler
      #+NAME: WeexJSConnection.cpp
      #+BEGIN_SRC c++
@@ -2431,16 +2356,9 @@
      | DISPATCHMESSAGE       | HandleDispatchMessage       | static void Java_WMLBridge_dispatchMessage() | wml_bridge.cpp          |
 
 ** Native 注册 Module
-   <<weex_core_register_module>>
-
 *** Android 注册 Module
-
 ** Native 注册 Component
-   <<weex_core_register_component>>
-
 ** Native 渲染流程分析
-   <<weex_core_render>>
-
    ~WXBridgeManager => invokeExecJS()~ 之后通过 ~WXBridge => execJS()~ 调用到了底层的方法：
    #+NAME: WXBridgeManager.java
    #+BEGIN_SRC java
