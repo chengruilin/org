@@ -1,16 +1,21 @@
 #+TITLE: Weex 源码分析
 #+TODO: TODO(t) DOING(d) PAUSE(p!) RESUME(r!) | DONE(e)
+#+AUTHOR: Qiezi
 #+STARTUP: overview
-#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
-#+OPTIONS: num:nil toc:nil
+#+OPTIONS: num:nil toc:nil 
 #+OPTIONS: todo:nil
 #+REVEAL_PLUGINS: (highlight)
+#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
+#+REVEAL_DEFAULT_FRAG_STYLE: fade-out
+#+REVEAL_EXTRA_CSS: ./export/my_reveal_style.css
 
 * DONE Weex 使用相关
 ** DONE Weex 扩展(Android)
 *** DONE Module
 
+    #+BEGIN_NOTES
     实现源码分析:[[weex_register_module][传送门]]
+    #+END_NOTES
 
     Module 扩展非 UI 功能
     1. extends WXModule
@@ -65,8 +70,9 @@
     #+END_SRC
 
 *** DONE Component
-
+    #+BEGIN_NOTES
     实现源码分析:[[weex_register_component][传送门]]
+    #+END_NOTES
 
     Component 扩展实现 Native 控件
     1. extends WXComponent
@@ -171,6 +177,7 @@
            void commit(Context context, String eventId, String type, WXPerformance perf, Map<String, Serializable> params);
        }
      #+END_SRC
+
      #+REVEAL: split
 **** IActivityNavBarSetter
      Weex 导航适配器,使用方法:
@@ -185,7 +192,9 @@
 
 ** DONE Lifecycle
 *** Workflow
+    #+BEGIN_NOTES
     此处图片出处: [[https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG][WeexLiftcycle 的讨论]]
+    #+END_NOTES
 
     #+REVEAL: split
     Create Instance:
@@ -359,6 +368,7 @@
       }
     #+END_SRC
 
+    #+REVEAL: split
     此处调用了 WXSDKEngine 方法，那么这个方法里面做了什么事情呢，我们来看下：
     #+NAME: WXSDKEngine.java
     #+BEGIN_SRC java
@@ -428,7 +438,8 @@
       }
     #+END_SRC
 
-    可以看到其中几步重要的操作通过 ~WXBridgeManager.getInstance().post()~ 在线程中完成,详细的线程模型可以查 [[weex_thread]]:
+    #+REVEAL: split
+    可以看到其中几步重要的操作通过 ~Wxbridgemanager.Getinstance().post()~ 在线程中完成,详细的线程模型可以查 [[weex_thread]]:
     #+NAME: WXSDKEngine.java
     #+BEGIN_SRC java
     WXBridgeManager.getInstance().post(new Runnable() {
@@ -439,6 +450,7 @@
           };
     #+END_SRC
     其中有两个重要的方法,继续往下追 ~initFramework~ 方法和 ~register~ 方法,分两小节来介绍.
+    #+REVEAL: split
 **** WXSoInstallMgrSdk => initSo
 
      加载打包在 APK 内的所有 so 文件
@@ -448,13 +460,15 @@
      - libweexjss.so
      - libweexjst.so
 
+     #+REVEAL: split  
      ~WXSDKEngine => doInitInternal()~ 方法中调用了 ~WXSoInstallMgrSdk => initSo()~ 方法:
      #+NAME: WXSDKEngine.java
      #+BEGIN_SRC java
      // V8_SO_NAME = "weexcore.so"
      WXSoInstallMgrSdk.initSo(V8_SO_NAME, 1, config!=null?config.getUtAdapter():null);
      #+END_SRC
-
+     
+     #+REVEAL: split
      ~WXSoInstallMgrSdk => initSo()~ 方法内部实现:
      #+BEGIN_SRC java
        /**
@@ -484,15 +498,17 @@
        }
      #+END_SRC
 
+     #+REVEAL: split
 **** WXBridgeManager => initFramework
-     可能需要了解下这里的 framework 是什么概念, [[weex_jsframework][传送门]].
-     关于 JSFramework 的初始化: [[weex_jsframework_init][传送门]]
-     有关 Module 注册: [[weex_register_module][传送门]]
-     有关 Component 注册: [[weex_register_module][传送门]]
-
+     - 可能需要了解下这里的 framework 是什么概念, [[weex_jsframework][传送门]].
+     - 关于 JSFramework 的初始化: [[weex_jsframework_init][传送门]]
+     - 有关 Module 注册: [[weex_register_module][传送门]]
+     - 有关 Component 注册: [[weex_register_module][传送门]]
+     #+REVEAL: split
 **** WXSDKEngine => regiser
      初始化 Framework 层之后， ~WXSDKEngine~ 调用了 ~register()~ 方法注册了一系列内置的 Component 和 Module
-     #+NAME: 内嵌的 Component 组件
+     内嵌的 Component 组件
+     #+BEGIN_SRC org
      | Component         | Class                         |
      |-------------------+-------------------------------|
      | text              | WXText.class                  |
@@ -527,8 +543,11 @@
      | loading           | WXLoading.class               |
      | loading-indicator | WXLoadingIndicator.class      |
      | header            | WXHeader.class                |
+     #+END_SRC
 
-     #+NAME: 内嵌的 Module 组件
+     #+REVEAL: split
+     内嵌的 Module 组件
+     #+BEGIN_SRC org
      | Module       | Class                     |
      |--------------+---------------------------|
      | modal        | WXModalUIModule.class     |
@@ -545,14 +564,19 @@
      | meta         | WXMetaModule.class        |
      | webSocket    | WebSocketModule.class     |
      | locale       | WXLocaleModule.class      |
+     #+END_SRC
+     
 *** WXSDKEngine -> registerApplicationOptions()
     可以认为是获取了 App 的一些环境配置
+    #+BEGIN_SRC org
     | key                  | value                                      |
     |----------------------+--------------------------------------------|
     | screen_width_pixels  | resources.getDisplayMetricx().widthPixels  |
     | screen_height_pixels | resources.getDisplayMetricx().heightPixels |
     | status_bar_height    | get status bar height                      |
+    #+END_SRC
 
+    #+REVEAL: split
     获取 status_bar_height 的方式：
     #+NAME: WXSDKEngine.java
     #+BEGIN_SRC java
@@ -675,7 +699,8 @@
               }, instanceId);
       }
     #+END_SRC
-
+    
+    #+REVEAL: split
     来看下 createInstance 方法最后调用到的 invokeCreateInstance 方法
     #+NAME: WXBridgeManager.java
     #+BEGIN_SRC java
@@ -788,7 +813,7 @@
 *** 注册 Component
     <<weex_register_component>>
 
-    再来看下如何手动注册一个 Component 组件:
+    来看下如何手动注册一个 Component 组件:
     #+NAME: WXSDKEngine.java
     #+BEGIN_SRC java
       // 调用 SDK 提供的 API 注册一个 Component 实现
@@ -807,6 +832,7 @@
       }
     #+END_SRC
 
+    #+REVEAL: split
     WXComponentRegistry -> registerComponent
     #+NAME: WXComponentRegistry.java
     #+BEGIN_SRC java
@@ -844,6 +870,7 @@
       }
     #+END_SRC
 
+    #+REVEAL: split
     WXBridgeManager -> invokeRegisterComponents
     #+NAME: WXBridgeManager.java
     #+BEGIN_SRC java
@@ -885,6 +912,7 @@
     WXSDKEngine.registerModule("MyModule", MyModule.class);
     #+END_SRC
 
+    #+REVEAL: split
     WXSDKEngine -> registerModule
     #+NAME: WXSDKEngine.java
     #+BEGIN_SRC java
@@ -906,6 +934,7 @@
       }
     #+END_SRC
 
+    #+REVEAL: split
     WXModuleManager -> regiserModule
     #+NAME: WXModuleManager.java
     #+BEGIN_SRC java
@@ -940,6 +969,7 @@
       }
     #+END_SRC
 
+    #+REVEAL: split
     WXBridgeManager -> registerModules
     #+NAME: WXBridgeManager.java
     #+BEGIN_SRC java
@@ -959,7 +989,8 @@
           }
       }
     #+END_SRC
-
+    
+    #+REVEAL: split
     WXBridgeManager -> invokeRegisterModules
     #+NAME: WXBridgeManager.java
     #+BEGIN_SRC java
