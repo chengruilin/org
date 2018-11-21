@@ -26,7 +26,7 @@
 ** DOING [[file:doc/doc_info_elisp.org][Elisp Document]]                                       :@read:@emacs:
 
 * Source Code
-** DOING [[file:code/read_weex_source_code.org][Weex]]                                                        :@code:
+** DOING [[file:code/weex/read_weex_source_code.org][Weex]]                                                         :@code:
 
 ** TODO [[file:code/read_flutter_source_code.org][flutter]]                                                      :@code:
 
