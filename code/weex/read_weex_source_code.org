@@ -7,6 +7,7 @@
 #+REVEAL_PLUGINS: (highlight)
 #+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
 #+REVEAL_DEFAULT_FRAG_STYLE: fade-out
+#+REVEAL_THEME: night
 #+REVEAL_EXTRA_CSS: ./export/my_reveal_style.css
 
 * DONE Weex 使用相关
@@ -186,37 +187,32 @@
 
      #+REVEAL: split
 **** IActivityNavBarSetter
-     Weex 导航适配器,使用方法:
-     #+BEGIN_SRC java
-     WXSDKEngine.setActivityNavBarSetter(new IActivityNavBarSetter(){});
-     #+END_SRC
+     Weex 导航适配器
 **** IWXStorageAdapter
      本地存储适配器,默认 DefaultWXStorage
 **** IWXJSExceptionAdapter
      处理 JS 异常,默认忽略
 
 ** DONE Lifecycle
-*** Workflow
     #+BEGIN_NOTES
     此处图片出处: [[https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG][WeexLiftcycle 的讨论]]
     #+END_NOTES
 
-    #+REVEAL: split
-    Create Instance:
+*** Create Instance
     [[./imgs/img_weex_lifecycle_create_instance.jpeg]]
-    #+REVEAL: split
-    Refresh Instance:
-    [[./imgs/img_weex_lifecycle_refresh_instance.jpeg]]
-    #+REVEAL: split
-    Fire Event/Callback:
-    [[./imgs/img_weex_lifecycle_fire_event.jpeg]]
-    #+REVEAL: split
-    Destroy Instance:
-    [[./imgs/img_weex_lifecycle_destroy_instance.jpeg]]
-    #+REVEAL: split
-    Navigate:
-    [[./imgs/img_weex_lifecycle_navigate.jpeg]]
 
+*** Refresh Instance
+    [[./imgs/img_weex_lifecycle_refresh_instance.jpeg]]
+
+*** Fire Event/Callback
+    [[./imgs/img_weex_lifecycle_fire_event.jpeg]]
+
+*** Destroy Instance
+    [[./imgs/img_weex_lifecycle_destroy_instance.jpeg]]
+
+*** Navigate
+    [[./imgs/img_weex_lifecycle_navigate.jpeg]]
+    
 *** 组件生命周期解析
 
     生命周期图解:
@@ -346,7 +342,9 @@
    #+END_SRC
 
 ** 框架结构图
+   #+BEGIN_NOTES
    图片出处: https://zhuanlan.zhihu.com/p/25326775
+   #+END_NOTES
    [[./imgs/img_weex_framework_classes.jpeg]]
 ** 调用流程图
    [[./imgs/img_weex_arch_flow.png]]
