@@ -565,7 +565,7 @@
    #+END_SRC
    来分析下 WXSDKInstance -> render() 方法的内部实现, 除了参数检查之外,它其实调用的是内部的 rednerInternal 方法.
 
-*** WXSDKInstance -> renderInternal
+*** WXSDKInstance => renderInternal()
     redner 方法内部调用了内部的 renderInternal 方法来进行 Weex 页面的渲染，来看下代码：
     #+NAME: WXSDKInstance.class
     #+BEGIN_SRC java
@@ -616,7 +616,7 @@
      }
     #+END_SRC
 
-*** WXBridgeManager -> createInstance
+*** WXBridgeManager => createInstance()
     render 方法调用最终会调用到这个方法中
     #+NAME: WXBridgeManager.java
     #+BEGIN_SRC java
@@ -647,83 +647,27 @@
               }, instanceId);
       }
     #+END_SRC
-
+*** WXBridgeManager => invokeCreateInstance()
     来看下 createInstance 方法最后调用到的 invokeCreateInstance 方法
     #+NAME: WXBridgeManager.java
     #+BEGIN_SRC java
-      private void invokeCreateInstance(@NonNull WXSDKInstance instance, String template,
-                                        Map<String, Object> options, String data) {
+      private void invokeCreateInstance(@NonNull WXSDKInstance instance, String template, Map<String, Object> options, String data) {
           // add for sandbox, will delete on sandbox ok
           initFramework("");
-
           if (mMock) {
               mock(instance.getInstanceId());
           } else {
-
               //省略 JSFramework 环境检查
-
               WXModuleManager.registerWhenCreateInstance();
               try {
                   BundType type = BundType.Others;
-                  try {
-                      // BundType.Vue or BundType.Rax
-                      type = getBundleType(instance.getBundleUrl(), template);
-                  } catch (Throwable e) {
-                  }
-
-                  try {
-                      if (options == null) {
-                          options = new HashMap<>();
-                      }
-                      // on file there is { "framework": "Vue" } or others
-                      if (options.get(BUNDLE_TYPE) == null) {
-                          // may vue or Rax
-                          if (type == BundType.Vue) {
-                              options.put(BUNDLE_TYPE, "Vue");
-                          } else if (type == BundType.Rax) {
-                              options.put(BUNDLE_TYPE, "Rax");
-                          } else {
-                              options.put(BUNDLE_TYPE, "Others");
-                          }
-                          instance.getApmForInstance().addProperty(WXInstanceApm.KEY_PAGE_PROPERTIES_BUNDLE_TYPE, options.get(BUNDLE_TYPE));
-                      }
-                      if (options.get("env") == null) {
-                          options.put("env", mInitParams.toMap());
-                      }
-                  } catch (Throwable e) {
-                      e.printStackTrace();
-                  }
-                  instance.bundleType = type;
-
-                  // 省略日志什么的
-
-                  WXJSObject instanceIdObj = new WXJSObject(WXJSObject.String, instance.getInstanceId());
-                  // template 为加载的 JS 内容
-                  WXJSObject instanceObj = new WXJSObject(WXJSObject.String, template);
-                  WXJSObject optionsObj = new WXJSObject(WXJSObject.JSON,options == null ? "{}" : WXJsonUtils.fromObjectToJSONString(options));
-                  optionsObj = optionObjConvert(isSandBoxContext, type, optionsObj);
-                  WXJSObject dataObj = new WXJSObject(WXJSObject.JSON, data == null ? "{}" : data);
-
-                  WXJSObject apiObj;
-                  if (type == BundType.Rax) {
-                      if (mRaxApi == null) {
-                          mRaxApi =  WXFileUtils.loadAsset("weex-rax-api.js", WXEnvironment.getApplication());
-                      }
-                      apiObj = new WXJSObject(WXJSObject.String,
-                                              mRaxApi);
-                  } else {
-                      apiObj = new WXJSObject(WXJSObject.String,
-                                              "");
-                  }
-
+                  // 创建 WXJSObject 对象
                   // When render strategy is data_render, put it into options. Others keep null.
                   WXJSObject renderStrategy = null;
                   if (instance.getRenderStrategy() == WXRenderStrategy.DATA_RENDER) {
                       renderStrategy = new WXJSObject(WXJSObject.String, WXRenderStrategy.DATA_RENDER.getFlag());
                   }
-
-                  WXJSObject[] args = {instanceIdObj, instanceObj, optionsObj,
-                                       dataObj, apiObj, renderStrategy};
+                  WXJSObject[] args = {instanceIdObj, instanceObj, optionsObj, dataObj, apiObj, renderStrategy};
                   instance.setTemplate(template);
                   instance.getApmForInstance().onStage(WXInstanceApm.KEY_PAGE_STAGES_LOAD_BUNDLE_END);
 
@@ -731,8 +675,7 @@
                       invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
                       return;
                   }
-                  if (type == BundType.Vue || type == BundType.Rax
-                      || instance.getRenderStrategy() == WXRenderStrategy.DATA_RENDER) {
+                  if (type == BundType.Vue || type == BundType.Rax || instance.getRenderStrategy() == WXRenderStrategy.DATA_RENDER) {
                       invokeCreateInstanceContext(instance.getInstanceId(), null, "createInstanceContext", args, false);
                       return;
                   } else {
@@ -746,9 +689,52 @@
       }
     #+END_SRC
     后续的渲染工作就交给 native 层来完成
+*** WXBridgeManager => callCreateBody()
+    #+NAME: WXBridgeManager.java
+    #+BEGIN_SRC java
+      public int callCreateBody(String pageId, String componentType, String ref,
+                                HashMap<String, String> styles, HashMap<String, String> attributes, HashSet<String> events,
+                                float[] margins, float[] paddings, float[] borders) {
+          // 省略代码
+          try {
+              WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(pageId);
+              if (instance != null) {
+                  final BasicGraphicAction action = new GraphicActionCreateBody(instance, ref, componentType,
+                                                                                styles, attributes, events, margins, paddings, borders);
+                  WXSDKManager.getInstance().getWXRenderManager().postGraphicAction(action.getPageId(), action);
+              }
+          } catch (Exception e) {
+              //错误处理
+          }
+          return IWXBridge.INSTANCE_RENDERING;
+      }
+    #+END_SRC
 
-*** JSFramework 渲染过程
-    [[weex_jsf_render][JSFramework 页面渲染]]
+*** WXBridgeManager => callAddElement()
+    #+NAME: WXBridgeManager.java
+    #+BEGIN_SRC java
+      public int callAddElement(String pageId, String componentType, String ref, int index, String parentRef,
+                                HashMap<String, String> styles, HashMap<String, String> attributes, HashSet<String> events,
+                                float[] margins, float[] paddings, float[] borders,boolean willLayout) {
+          // 省略代码
+          try {
+              WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(pageId);
+              if (instance != null) {
+                  final GraphicActionAddElement action = new GraphicActionAddElement(instance, ref, componentType, parentRef, index,
+                                                                                     styles, attributes, events, margins, paddings, borders);
+                  if(willLayout) {
+                      instance.addInActiveAddElementAction(ref, action);
+                  }else{
+                      WXSDKManager.getInstance().getWXRenderManager().postGraphicAction(pageId, action);
+                  }
+              }
+          } catch (Exception e) {
+              // 错误处理
+          }
+
+          return IWXBridge.INSTANCE_RENDERING;
+      }
+    #+END_SRC
 ** JS Bridge
    来看下 Android 的 SDK 中用来和 JS Engine（JavaScriptCore）进行双向通信的代码,主要的类有 WXBridgeManager.java 和 WXBridge.java.
    与 native 的 JS 方法的调用都运行在 JsBridge 线程中。
@@ -2023,7 +2009,6 @@
       #+END_SRC
 ***** -> JavaScriptCore => callAddElement()
       ~callAddElement()~ 最终调用了 IPC 消息调用了各自 SDK 中的 callAddElement 方法，使用原生的方式渲染页面
-      
 **** 注册 Component
      #+NAME: runtime/api/component.js
      #+BEGIN_SRC javascript
