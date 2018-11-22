@@ -21,10 +21,6 @@
   font-size: 0.7em;
 }
 
-.reveal img {
-  max-height:80%;
-}
-
 .reveal ul li {
   list-style-type:none;
   margin: 0;
@@ -35,6 +31,6 @@
 }
 
 .reveal .date {
-  font-size: 0.5em;
+  font-size: 0.8em;
 }
 
