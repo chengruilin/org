@@ -1,9 +1,8 @@
 #+TITLE: Weex 源码分析
 #+TODO: TODO(t) DOING(d) PAUSE(p!) RESUME(r!) | DONE(e)
-#+AUTHOR: Qiezi
+#+AUTHOR: 茄子
 #+STARTUP: overview
-#+OPTIONS: num:nil toc:nil
-#+OPTIONS: todo:nil
+#+OPTIONS: num:nil toc:nil todo:nil
 #+REVEAL_PLUGINS: (highlight)
 #+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
 #+REVEAL_DEFAULT_FRAG_STYLE: fade-out
@@ -454,10 +453,7 @@
      #+END_SRC
 
 **** WXBridgeManager => initFramework()
-     - 可能需要了解下这里的 framework 是什么概念, [[weex_jsframework][传送门]]
-     - 关于 JSFramework 的初始化: [[weex_jsframework_init][传送门]]
-     - 有关 Module 注册: [[weex_register_module][传送门]]
-     - 有关 Component 注册: [[weex_register_module][传送门]]
+     在别的节点对 initFramework 的具体流程进行分析。
 
 **** WXSDKEngine => regiser()
      初始化 Framework 层之后， ~WXSDKEngine~ 调用了 ~register()~ 方法注册了一系列内置的 Component 和 Module
@@ -851,11 +847,7 @@
       }
     #+END_SRC
 
-    Native 注册 Component: [[weex_core_register_component][传送门]]
-
 *** 注册 Module
-    <<weex_register_module>>
-
     来看下 Android 应用中注册 Module 的方式:
     #+BEGIN_SRC java
     WXSDKEngine.registerModule("MyModule", MyModule.class);
@@ -958,8 +950,6 @@
           //忽略错误信息打印
       }
     #+END_SRC
-
-    Native 注册 Component: [[weex_core_register_module][传送门]]
 
 ** Android Render Engine
 * iOS SDK
@@ -1540,6 +1530,45 @@
         }
       #+END_SRC
 
+***** -> 打包生成的 JS 文件
+      根据 ~runInContext()~ 方法中的 JS 代码生成规则，最终生成的 JavaScript Function 对象如下：
+      #+BEGIN_SRC javascript
+        (function (global) {
+          (function (modules) { // webpackBootstrap
+            // 省略代码
+            return __webpack_require__(__webpack_require__.s = 3);
+          })
+          ([
+            (function (module, exports, __webpack_require__) {
+              // 省略代码
+              // module.exports
+            }),
+            (function (module, exports) {
+              //省略代码
+              //module.exports
+            }),
+            ,
+            (function (module, exports, __webpack_require__) {
+              //省略代码
+              //module.exports
+            }),
+            (function (module, exports, __webpack_require__) {
+              //省略代码
+              //module.exports
+            }), (function (module, exports) {
+              //省略代码
+              //module.exports
+            }), (function (module, exports, __webpack_require__) {
+              //省略代码
+              //module.exports
+            }), (function (module, exports) {
+              //省略代码
+              //module.exports
+            })
+          ]);
+        })(Object.create(this));
+      #+END_SRC
+
 ***** -> 加载实际页面
 
       开发中创建一个 text 标签：
@@ -1564,7 +1593,6 @@
 
           /***/ })
       #+END_SRC
-
 **** 注册 Component
      #+NAME: runtime/api/component.js
      #+BEGIN_SRC javascript
