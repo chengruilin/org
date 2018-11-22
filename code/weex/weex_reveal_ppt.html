@@ -1,68 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8"/>
-    <title>Weex 源码简读</title>
-    <meta name="author" content="(茄子)"/>
-    <style type="text/css">
-     .underline { text-decoration: underline; }
-    </style>
-    <link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+<head>
+<meta charset="utf-8"/>
+<title>Weex 源码简读</title>
+<meta name="author" content="(茄子)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
 
-    <link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/night.css" id="theme"/>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/night.css" id="theme"/>
 
-    <link rel="stylesheet" href="./export/my_reveal_style.css"/>
-    <link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/css/zenburn.css"/>
-    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
-    <script>
-     if( window.location.search.match( /print-pdf/gi ) ) {
-       var link = document.createElement( 'link' );
-       link.rel = 'stylesheet';
-       link.type = 'text/css';
-       link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
-       document.getElementsByTagName( 'head' )[0].appendChild( link );
-     }
-    </script>
-  </head>
-  <body>
-    <div class="reveal">
-      <div class="slides">
-        <section id="sec-title-slide"><h1 class="title">Weex 源码简读</h1><h2 class="author">茄子</h2><p class="date">2018-11-23</p>
-        </section>
+<link rel="stylesheet" href="./export/my_reveal_style.css"/>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/css/zenburn.css"/>
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Weex 源码简读</h1><h2 class="author">茄子</h2><p class="date">Created: 2018-11-23 Fri 02:10</p>
+</section>
 
-        <section>
-          <section id="slide-orgda42377">
-            <h2 id="orgda42377">使用指南</h2>
-            <div class="outline-text-2" id="text-orgda42377">
-            </div>
-          </section>
-          <section id="slide-orge430b67">
-            <h3 id="orge430b67">Weex 扩展(Android)</h3>
-            <div class="outline-text-3" id="text-orge430b67">
-            </div>
-          </section>
-          <section id="slide-org26567f2">
-            <h4 id="org26567f2">Module</h4>
-            <p>
-              Module 用于扩展非 UI 功能
-            </p>
-            <ol>
-              <li>extends WXModule</li>
-              <li>@JsMethod(uiThread = false or true)</li>
-              <li>public function</li>
-              <li>-keep public class * extends com.taobao.weex.common.WXModule{*;}</li>
-              <li>方法参数:int,double,float,String,Map,List</li>
-              <li>Register: WXSDKEngine.registerModule("myModule", MyModule.class);</li>
+<section>
+<section id="slide-orgd357627">
+<h2 id="orgd357627">使用指南</h2>
+<div class="outline-text-2" id="text-orgd357627">
+</div>
+</section>
+<section id="slide-orge41dd6b">
+<h3 id="orge41dd6b">Weex 扩展(Android)</h3>
+<div class="outline-text-3" id="text-orge41dd6b">
+</div>
+</section>
+<section id="slide-org659ac60">
+<h4 id="org659ac60">Module</h4>
+<p>
+Module 用于扩展非 UI 功能
+</p>
+<ol>
+<li>extends WXModule</li>
+<li>@JsMethod(uiThread = false or true)</li>
+<li>public function</li>
+<li>-keep public class * extends com.taobao.weex.common.WXModule{*;}</li>
+<li>方法参数:int,double,float,String,Map,List</li>
+<li>Register: WXSDKEngine.registerModule("myModule", MyModule.class);</li>
 
-            </ol>
-          </section>
-          <section >
+</ol>
+</section>
+<section >
 
-            <ul class="org-ul">
-              <li><a id="orgc000b24"></a>自定义一个 Module<br />
-                <div class="org-src-container">
+<ul class="org-ul">
+<li><a id="org26b50d1"></a>自定义一个 Module<br />
+<div class="org-src-container">
 
-                  <pre><code class="java" >public class MyModule extends WXModule {
+<pre><code class="java" >public class MyModule extends WXModule {
 
     //run ui thread
     @JSMethod (uiThread = true)
@@ -76,126 +76,126 @@
         //implement your module logic here
     }
 }
-                  </code></pre>
-                </div>
-              </li>
+</code></pre>
+</div>
+</li>
 
-              <li><a id="org7423fcd"></a>注册一个 Module<br />
-                <div class="org-src-container">
+<li><a id="orgb56e674"></a>注册一个 Module<br />
+<div class="org-src-container">
 
-                  <pre><code class="java" >WXSDKEngine.registerModule("MyModule", MyModule.class);
-                  </code></pre>
-                </div>
-              </li>
+<pre><code class="java" >WXSDKEngine.registerModule("MyModule", MyModule.class);
+</code></pre>
+</div>
+</li>
 
-              <li><a id="org93126f9"></a>在 Weex 页面中调用 Module<br />
-                <div class="org-src-container">
+<li><a id="org17132e1"></a>在 Weex 页面中调用 Module<br />
+<div class="org-src-container">
 
-                  <pre><code class="html" ><template>
-                    <div>
-                      <text onclick="click">testMyModule</text>
-                    </div>
-                  </template>
+<pre><code class="html" ><template>
+  <div>
+    <text onclick="click">testMyModule</text>
+  </div>
+</template>
 
-                  <script>
-                   module.exports = {
-                     methods: {
-                       click: function() {
-                         weex.requireModule('MyModule').printLog("I am a weex Module");
-                       }
-                     }
-                   }
-                  </script>
-                  </code></pre>
-                </div>
-              </li>
-            </ul>
+<script>
+  module.exports = {
+    methods: {
+      click: function() {
+        weex.requireModule('MyModule').printLog("I am a weex Module");
+      }
+    }
+  }
+</script>
+</code></pre>
+</div>
+</li>
+</ul>
 
-          </section>
-          <section id="slide-org6f8bae6">
-            <h4 id="org6f8bae6">Component</h4>
-            <p>
-              Component 扩展实现 Native 控件
-            </p>
-            <ol>
-              <li>extends WXComponent</li>
-              <li>@WXComponentProp(name=value(value is attr or style of dsl))</li>
-              <li>-keep public class * extends com.taobao.weex.common.WXComponent{*;}</li>
-              <li>方法参数:int,double,float,String,Map,List</li>
-              <li>WXSDKEngine.registerComponent("richText", RichText.class);</li>
+</section>
+<section id="slide-org3a7a862">
+<h4 id="org3a7a862">Component</h4>
+<p>
+Component 扩展实现 Native 控件
+</p>
+<ol>
+<li>extends WXComponent</li>
+<li>@WXComponentProp(name=value(value is attr or style of dsl))</li>
+<li>-keep public class * extends com.taobao.weex.common.WXComponent{*;}</li>
+<li>方法参数:int,double,float,String,Map,List</li>
+<li>WXSDKEngine.registerComponent("richText", RichText.class);</li>
 
-            </ol>
-          </section>
-          <section >
+</ol>
+</section>
+<section >
 
-            <ul class="org-ul">
-              <li><a id="orgac9eb4a"></a>自定义一个 Component<br />
-                <div class="org-src-container">
+<ul class="org-ul">
+<li><a id="org7d1ed99"></a>自定义一个 Component<br />
+<div class="org-src-container">
 
-                  <pre><code class="java" >public class RichText extends WXComponent<TextView> {
+<pre><code class="java" >public class RichText extends WXComponent<TextView> {
 
-                    public RichText(WXSDKInstance instance, WXDomObject dom, WXVContainer parent) {
-                    super(instance, dom, parent);
-                    }
+    public RichText(WXSDKInstance instance, WXDomObject dom, WXVContainer parent) {
+        super(instance, dom, parent);
+    }
 
-                    @Override
-                    protected TextView initComponentHostView(@NonNull Context context) {
-                    TextView textView = new TextView(context);
-                    textView.setTextSize(20);
-                    textView.setTextColor(Color.BLACK);
-                    return textView;
-                    }
+    @Override
+    protected TextView initComponentHostView(@NonNull Context context) {
+        TextView textView = new TextView(context);
+        textView.setTextSize(20);
+        textView.setTextColor(Color.BLACK);
+        return textView;
+    }
 
-                    @WXComponentProp(name = "tel")
-                    public void setTel(String telNumber) {
-                    getHostView().setText("tel: " + telNumber);
-                    }
-                    }
-                  </code></pre>
-                </div>
-              </li>
+    @WXComponentProp(name = "tel")
+    public void setTel(String telNumber) {
+        getHostView().setText("tel: " + telNumber);
+    }
+}
+</code></pre>
+</div>
+</li>
 
-              <li><a id="org2335b99"></a>注册 Component<br />
-                <div class="org-src-container">
+<li><a id="org9817ca7"></a>注册 Component<br />
+<div class="org-src-container">
 
-                  <pre><code class="java" >WXSDKEngine.registerComponent("richText", RichText.class);
-                  </code></pre>
-                </div>
-              </li>
+<pre><code class="java" >WXSDKEngine.registerComponent("richText", RichText.class);
+</code></pre>
+</div>
+</li>
 
-              <li><a id="org2b8ae24"></a>在 Weex 页面中使用 Component<br />
-                <div class="org-src-container">
+<li><a id="org218427b"></a>在 Weex 页面中使用 Component<br />
+<div class="org-src-container">
 
-                  <pre><code class="html" ><template>
-                    <div>
-                      <richText tel="12305" style="width:200;height:100">12305</richText>
-                    </div>
-                  </template>
-                  </code></pre>
-                </div>
-              </li>
-            </ul>
+<pre><code class="html" ><template>
+  <div>
+    <richText tel="12305" style="width:200;height:100">12305</richText>
+  </div>
+</template>
+</code></pre>
+</div>
+</li>
+</ul>
 
-          </section>
-          <section id="slide-org19221da">
-            <h4 id="org19221da">Adapter</h4>
-            <ul>
-              <li>IWXImgLoaderAdapter</li>
-              <li>IWXHttpAdapter</li>
-              <li>IWXUserTrackAdapter</li>
-              <li>IActivityNavBarSetter</li>
-              <li>IWXStorageAdapter</li>
+</section>
+<section id="slide-org9c2ce9b">
+<h4 id="org9c2ce9b">Adapter</h4>
+<ul>
+<li>IWXImgLoaderAdapter</li>
+<li>IWXHttpAdapter</li>
+<li>IWXUserTrackAdapter</li>
+<li>IActivityNavBarSetter</li>
+<li>IWXStorageAdapter</li>
 
-            </ul>
+</ul>
 
-          </section>
-          <section >
-            <p>
-              以 IWXJSExceptionAdapter 图片加载适配器为例,使用方法如下:
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+以 IWXJSExceptionAdapter 图片加载适配器为例,使用方法如下:
+</p>
+<div class="org-src-container">
 
-              <pre><code class="java" >public class ImageAdapter implements IWXImgLoaderAdapter {
+<pre><code class="java" >public class ImageAdapter implements IWXImgLoaderAdapter {
 
     public ImageAdapter() {
     }
@@ -228,157 +228,157 @@
             },0);
     }
 }
-              </code></pre>
-            </div>
-          </section>
-          <section id="slide-org9ca7482">
-            <h3 id="org9ca7482">Lifecycle</h3>
-            <div class="outline-text-3" id="text-org9ca7482">
-            </div>
-          </section>
-          <section id="slide-org4bb6696">
-            <h4 id="org4bb6696">Weex 页面生命周期控制</h4>
-            <aside class="notes">
-              <p>
-                此处图片出处: <a href="https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG">WeexLiftcycle 的讨论</a>
-              </p>
+</code></pre>
+</div>
+</section>
+<section id="slide-orgca6a8bb">
+<h3 id="orgca6a8bb">Lifecycle</h3>
+<div class="outline-text-3" id="text-orgca6a8bb">
+</div>
+</section>
+<section id="slide-orgb351535">
+<h4 id="orgb351535">Weex 页面生命周期控制</h4>
+<aside class="notes">
+<p>
+此处图片出处: <a href="https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG">WeexLiftcycle 的讨论</a>
+</p>
 
-            </aside>
-          </section>
-          <section >
-            <ul class="org-ul">
-              <li><a id="orgcbf4bd0"></a>Create Instance<br />
-                <p>
-                  在调用 <code>WXSDKInstance =&gt; render()</code> 方法时，会进到 createInstance 的流程中，具体调用流程如图：
-                  <img src="./imgs/img_weex_lifecycle_create_instance.jpeg" alt="img_weex_lifecycle_create_instance.jpeg" />
-                </p>
+</aside>
+</section>
+<section >
+<ul class="org-ul">
+<li><a id="orga99a5ab"></a>Create Instance<br />
+<p>
+在调用 <code>WXSDKInstance =&gt; render()</code> 方法时，会进到 createInstance 的流程中，具体调用流程如图：
+<img src="./imgs/img_weex_lifecycle_create_instance.jpeg" alt="img_weex_lifecycle_create_instance.jpeg" />
+</p>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org837448d"></a>Refresh Instance<br />
-                <p>
-                  在调用 <code>WXSDKInstance =&gt; reloadPage()</code> 方法时，会进到 refreshInstance 流程中，具体调用流程如图：
-                  <img src="./imgs/img_weex_lifecycle_refresh_instance.jpeg" alt="img_weex_lifecycle_refresh_instance.jpeg" />
-                </p>
+</section>
+<section >
+</li>
+<li><a id="orgbf0e8e3"></a>Refresh Instance<br />
+<p>
+在调用 <code>WXSDKInstance =&gt; reloadPage()</code> 方法时，会进到 refreshInstance 流程中，具体调用流程如图：
+<img src="./imgs/img_weex_lifecycle_refresh_instance.jpeg" alt="img_weex_lifecycle_refresh_instance.jpeg" />
+</p>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="orga53d0d7"></a>Fire Event/Callback<br />
-                <p>
-                  当点击 Weex 页面的按钮触发点击事件时，会进入 fireEvent 流程，具体调用流程如图：
-                  <img src="./imgs/img_weex_lifecycle_fire_event.jpeg" alt="img_weex_lifecycle_fire_event.jpeg" />
-                </p>
+</section>
+<section >
+</li>
+<li><a id="org84cb90b"></a>Fire Event/Callback<br />
+<p>
+当点击 Weex 页面的按钮触发点击事件时，会进入 fireEvent 流程，具体调用流程如图：
+<img src="./imgs/img_weex_lifecycle_fire_event.jpeg" alt="img_weex_lifecycle_fire_event.jpeg" />
+</p>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org1a74b1d"></a>Destroy Instance<br />
-                <p>
-                  <code>WXSDKInstance =&gt; onActivityDestroy()</code> 当 Weex 页面伴随着所在 Activity 的生命周期方法结束时，会进入 destoryInstance 的流程，具体调用流程如图：
-                  <img src="./imgs/img_weex_lifecycle_destroy_instance.jpeg" alt="img_weex_lifecycle_destroy_instance.jpeg" />
-                </p>
+</section>
+<section >
+</li>
+<li><a id="org45135d6"></a>Destroy Instance<br />
+<p>
+<code>WXSDKInstance =&gt; onActivityDestroy()</code> 当 Weex 页面伴随着所在 Activity 的生命周期方法结束时，会进入 destoryInstance 的流程，具体调用流程如图：
+<img src="./imgs/img_weex_lifecycle_destroy_instance.jpeg" alt="img_weex_lifecycle_destroy_instance.jpeg" />
+</p>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org6dc872a"></a>Navigate<br />
-                <div class="figure">
-                  <p><img src="./imgs/img_weex_lifecycle_navigate.jpeg" alt="img_weex_lifecycle_navigate.jpeg" />
-                  </p>
-                </div>
-              </li>
-            </ul>
+</section>
+<section >
+</li>
+<li><a id="org078867b"></a>Navigate<br />
+<div class="figure">
+<p><img src="./imgs/img_weex_lifecycle_navigate.jpeg" alt="img_weex_lifecycle_navigate.jpeg" />
+</p>
+</div>
+</li>
+</ul>
 
-          </section>
-          <section id="slide-org4d16f1e">
-            <h4 id="org4d16f1e">组件生命周期解析</h4>
-          </section>
-          <section >
-            <ul class="org-ul">
-              <li><a id="orgd85264d"></a>生命周期图解<br />
-                <div class="org-src-container">
+</section>
+<section id="slide-orgc3f3d61">
+<h4 id="orgc3f3d61">组件生命周期解析</h4>
+</section>
+<section >
+<ul class="org-ul">
+<li><a id="org48d4aa9"></a>生命周期图解<br />
+<div class="org-src-container">
 
-                  <pre><code class="org" > ------      --------      -------             -----------
+<pre><code class="org" > ------      --------      -------             -----------
 | init | -> | create | -> | ready |           | destroyed |
  ------      --------      -------             -----------
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-                <p>
-                  生命周期用法
-                </p>
-                <div class="org-src-container">
+<p>
+生命周期用法
+</p>
+<div class="org-src-container">
 
-                  <pre><code class="javascript" ><script>
-                                                  module.exports = {
-                                                    data: {},
-                                                    methods: {},
+<pre><code class="javascript" ><script>
+  module.exports = {
+    data: {},
+    methods: {},
 
-                                                    init: function () {
-                                                      console.log('在初始化内部变量，并且添加了事件功能后被触发');
-                                                    },
-                                                    created: function () {
-                                                      console.log('完成数据绑定之后，模板编译之前被触发');
-                                                    },
-                                                    ready: function () {
-                                                      console.log('模板已经编译并且生成了 Virtual DOM 之后被触发');
-                                                    },
-                                                    destroyed: function () {
-                                                      console.log('在页面被销毁时调用');
-                                                    }
-                                                  }
-                  </script>
-                  </code></pre>
-                </div>
+    init: function () {
+      console.log('在初始化内部变量，并且添加了事件功能后被触发');
+    },
+    created: function () {
+      console.log('完成数据绑定之后，模板编译之前被触发');
+    },
+    ready: function () {
+      console.log('模板已经编译并且生成了 Virtual DOM 之后被触发');
+    },
+    destroyed: function () {
+      console.log('在页面被销毁时调用');
+    }
+  }
+</script>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org29f052c"></a>init<br />
-                <ul>
-                  <li>初始化内部变量,添加事件功能</li>
-                  <li>没有执行数据绑定,没有创建 Virtual-DOM,所以不能通过 this 获取到 data 中的数据,不能调用到 methods 中定义的方法,也不能获取到 Virtual-DOM 的节点</li>
-                  <li>可以在方法内初始化一些内部变量,绑定一些自定义事件</li>
+</section>
+<section >
+</li>
+<li><a id="orgefeab1a"></a>init<br />
+<ul>
+<li>初始化内部变量,添加事件功能</li>
+<li>没有执行数据绑定,没有创建 Virtual-DOM,所以不能通过 this 获取到 data 中的数据,不能调用到 methods 中定义的方法,也不能获取到 Virtual-DOM 的节点</li>
+<li>可以在方法内初始化一些内部变量,绑定一些自定义事件</li>
 
-                </ul>
-          </section>
-          <section >
-              </li>
-              <li><a id="org7977e1a"></a>created:<br />
-                <ul>
-                  <li>刚完成数据绑定,还没开始编译模板</li>
-                  <li>可以通过 this 操作 data 中的数据,可以调用 methods 中的方法,但是不能获取到 Virtual-DOM 的节点</li>
-                  <li>可以在方法中修改 data 中数据,不会触发额外的渲染</li>
+</ul>
+</section>
+<section >
+</li>
+<li><a id="orgc6ba1bf"></a>created:<br />
+<ul>
+<li>刚完成数据绑定,还没开始编译模板</li>
+<li>可以通过 this 操作 data 中的数据,可以调用 methods 中的方法,但是不能获取到 Virtual-DOM 的节点</li>
+<li>可以在方法中修改 data 中数据,不会触发额外的渲染</li>
 
-                </ul>
+</ul>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org6aa2c5e"></a>ready<br />
-                <ul>
-                  <li>表示组件已经渲染完成</li>
-                  <li>首先执行子组件的 ready 方法</li>
-                  <li>可以获得 Virtual-DOM 的节点,也可以获取子组件的 Virtual-DOM 实例</li>
-                  <li>小心操作 data,避免频繁赋值</li>
-                  <li>建议去除需要频繁改动的值,等操作执行结束之后再赋值</li>
+</section>
+<section >
+</li>
+<li><a id="orgff0b188"></a>ready<br />
+<ul>
+<li>表示组件已经渲染完成</li>
+<li>首先执行子组件的 ready 方法</li>
+<li>可以获得 Virtual-DOM 的节点,也可以获取子组件的 Virtual-DOM 实例</li>
+<li>小心操作 data,避免频繁赋值</li>
+<li>建议去除需要频繁改动的值,等操作执行结束之后再赋值</li>
 
-                </ul>
+</ul>
 
 
-                <div class="figure">
-                  <p><img src="./imgs/img_weex_lifecycle_parent_son.png" alt="img_weex_lifecycle_parent_son.png" />
-                  </p>
-                </div>
+<div class="figure">
+<p><img src="./imgs/img_weex_lifecycle_parent_son.png" alt="img_weex_lifecycle_parent_son.png" />
+</p>
+</div>
 
-                <p>
-                  避免频繁赋值:
-                </p>
-                <div class="org-src-container">
+<p>
+避免频繁赋值:
+</p>
+<div class="org-src-container">
 
-                  <pre><code class="javascript" >// 在修改 this.count 前先获取它的值，在执行完操作后再赋值回去，如果在循环体中直接设置 this.count 的值，页面将触发 999 次局部刷新，很可能会导致页面卡顿
+<pre><code class="javascript" >// 在修改 this.count 前先获取它的值，在执行完操作后再赋值回去，如果在循环体中直接设置 this.count 的值，页面将触发 999 次局部刷新，很可能会导致页面卡顿
 module.exports = {
   data: {
     count: 0
@@ -391,39 +391,39 @@ module.exports = {
     this.count = count;
   }
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org37177db"></a>destroyed<br />
-                <ul>
-                  <li>组件销毁时被调用</li>
-                  <li>自底向上执行(先触发子组件的 destroyed 方法,再触发自身的)</li>
-                  <li>先执行开发者定义的 destroyed 方法,再清除内部属性</li>
-                  <li>添加的全局或者 this 的属性,建议在 destroyed 方法中手动清除,避免内存泄露</li>
+</section>
+<section >
+</li>
+<li><a id="org886b1e6"></a>destroyed<br />
+<ul>
+<li>组件销毁时被调用</li>
+<li>自底向上执行(先触发子组件的 destroyed 方法,再触发自身的)</li>
+<li>先执行开发者定义的 destroyed 方法,再清除内部属性</li>
+<li>添加的全局或者 this 的属性,建议在 destroyed 方法中手动清除,避免内存泄露</li>
 
-                </ul>
-              </li>
-            </ul>
+</ul>
+</li>
+</ul>
 
-          </section>
-        </section>
-        <section>
-          <section id="slide-org186c4cc">
-            <h2 id="org186c4cc">架构分析</h2>
-            <div class="outline-text-2" id="text-org186c4cc">
-            </div>
-          </section>
-          <section id="slide-org6e524a3">
-            <h3 id="org6e524a3">项目目录结构</h3>
-            <p>
-              选择性列了一些比较重要的目录:
-            </p>
-            <div class="org-src-container">
+</section>
+</section>
+<section>
+<section id="slide-org42bc1f8">
+<h2 id="org42bc1f8">架构分析</h2>
+<div class="outline-text-2" id="text-org42bc1f8">
+</div>
+</section>
+<section id="slide-org5cc73a5">
+<h3 id="org5cc73a5">项目目录结构</h3>
+<p>
+选择性列了一些比较重要的目录:
+</p>
+<div class="org-src-container">
 
-              <pre><code class="org" > ./incubator-weex                        # 根目录
+<pre><code class="org" > ./incubator-weex                        # 根目录
 -----------------------------------------------------------------------------------------
     - android/                          # Android SDK 相关目录
         - commons/                      #
@@ -460,70 +460,70 @@ module.exports = {
         - third_party/                  #
         - wson/                         # wson 支持
         - CMakeLists.txt                # CMake 打包脚本
-              </code></pre>
-            </div>
+</code></pre>
+</div>
 
-          </section>
-          <section id="slide-org8a1ec98">
-            <h3 id="org8a1ec98">框架结构图</h3>
-            <aside class="notes">
-              <p>
-                图片出处: <a href="https://zhuanlan.zhihu.com/p/25326775">https://zhuanlan.zhihu.com/p/25326775</a>
-              </p>
+</section>
+<section id="slide-orgb20a985">
+<h3 id="orgb20a985">框架结构图</h3>
+<aside class="notes">
+<p>
+图片出处: <a href="https://zhuanlan.zhihu.com/p/25326775">https://zhuanlan.zhihu.com/p/25326775</a>
+</p>
 
-            </aside>
+</aside>
 
-            <div class="figure">
-              <p><img src="./imgs/img_weex_framework_classes.jpeg" alt="img_weex_framework_classes.jpeg" />
-              </p>
-            </div>
-          </section>
-          <section id="slide-org88ee358">
-            <h3 id="org88ee358">调用流程图</h3>
+<div class="figure">
+<p><img src="./imgs/img_weex_framework_classes.jpeg" alt="img_weex_framework_classes.jpeg" />
+</p>
+</div>
+</section>
+<section id="slide-orgab0272c">
+<h3 id="orgab0272c">调用流程图</h3>
 
-            <div class="figure">
-              <p><img src="./imgs/img_weex_arch_flow.png" alt="img_weex_arch_flow.png" />
-              </p>
-            </div>
-          </section>
-          <section id="slide-orge03546c">
-            <h3 id="orge03546c">进程模型</h3>
+<div class="figure">
+<p><img src="./imgs/img_weex_arch_flow.png" alt="img_weex_arch_flow.png" />
+</p>
+</div>
+</section>
+<section id="slide-org53255a0">
+<h3 id="org53255a0">进程模型</h3>
 
-            <div class="figure">
-              <p><img src="./imgs/img_weex_process.jpg" alt="img_weex_process.jpg" />
-              </p>
-            </div>
-          </section>
-        </section>
-        <section>
-          <section id="slide-orgbe40ef1">
-            <h2 id="orgbe40ef1">Android SDK</h2>
-            <div class="outline-text-2" id="text-orgbe40ef1">
-            </div>
-          </section>
-          <section id="slide-org3e439b1">
-            <h3 id="org3e439b1">初始化流程分析</h3>
-            <p>
-              整个初始化的流程,简单来说就是:
-            </p>
-            <ol>
-              <li>获取 Application 对象</li>
-              <li>读取初始化的 Config 参数</li>
-              <li>配置 so 的加载方式，然后加载 weexcore.so 库</li>
-              <li>加载打包在本地的 JSFramework 组件，调用 native 的方法初始化 JS 环境</li>
-              <li>注册所有内置的 Weex Component 组件和 Module 组件</li>
+<div class="figure">
+<p><img src="./imgs/img_weex_process.jpg" alt="img_weex_process.jpg" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org226fc23">
+<h2 id="org226fc23">Android SDK</h2>
+<div class="outline-text-2" id="text-org226fc23">
+</div>
+</section>
+<section id="slide-orgd9dd777">
+<h3 id="orgd9dd777">初始化流程分析</h3>
+<p>
+整个初始化的流程,简单来说就是:
+</p>
+<ol>
+<li>获取 Application 对象</li>
+<li>读取初始化的 Config 参数</li>
+<li>配置 so 的加载方式，然后加载 weexcore.so 库</li>
+<li>加载打包在本地的 JSFramework 组件，调用 native 的方法初始化 JS 环境</li>
+<li>注册所有内置的 Weex Component 组件和 Module 组件</li>
 
-            </ol>
+</ol>
 
-          </section>
-          <section id="slide-orgcb0f453">
-            <h4 id="orgcb0f453">WXSDKEngine -&gt; initialize()</h4>
-            <p>
-              Weex 官方文档中的初始化方法：
-            </p>
-            <div class="org-src-container">
+</section>
+<section id="slide-org4db5f0e">
+<h4 id="org4db5f0e">WXSDKEngine -&gt; initialize()</h4>
+<p>
+Weex 官方文档中的初始化方法：
+</p>
+<div class="org-src-container">
 
-              <pre><code class="java" >public class WXApplication extends Application {
+<pre><code class="java" >public class WXApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
@@ -531,15 +531,15 @@ module.exports = {
         WXSDKEngine.initialize(this,config);
     }
 }
-              </code></pre>
-            </div>
+</code></pre>
+</div>
 
-            <p>
-              此处调用了 WXSDKEngine 方法，那么这个方法里面做了什么事情呢，我们来看下：
-            </p>
-            <div class="org-src-container">
+<p>
+此处调用了 WXSDKEngine 方法，那么这个方法里面做了什么事情呢，我们来看下：
+</p>
+<div class="org-src-container">
 
-              <pre id="WXSDKEngine.java"><code class="java" >// com.taobao.weex.WXSDKEngine
+<pre id="WXSDKEngine.java"><code class="java" >// com.taobao.weex.WXSDKEngine
 public static void initialize(Application application,InitConfig config){
     synchronized (mLock) {
         if (mIsInit) {
@@ -551,20 +551,20 @@ public static void initialize(Application application,InitConfig config){
         mIsInit = true;
     }
 }
-              </code></pre>
-            </div>
-            <p>
-              这里需要重点关注的就是 doInitInternal 和 registerApplicationOptions 这两个方法。
-            </p>
-          </section>
-          <section id="slide-orgc011096">
-            <h4 id="orgc011096">WXSDKEngine -&gt; doInitInternal()</h4>
-            <p>
-              其实主要初始化的工作都是由 doInitInternal 这个方法完成的，我们来看下它的代码：
-            </p>
-            <div class="org-src-container">
+</code></pre>
+</div>
+<p>
+这里需要重点关注的就是 doInitInternal 和 registerApplicationOptions 这两个方法。
+</p>
+</section>
+<section id="slide-org0ab0cf9">
+<h4 id="org0ab0cf9">WXSDKEngine -&gt; doInitInternal()</h4>
+<p>
+其实主要初始化的工作都是由 doInitInternal 这个方法完成的，我们来看下它的代码：
+</p>
+<div class="org-src-container">
 
-              <pre id="WXSDKEngine.java"><code class="java" >private static void doInitInternal(final Application application,final InitConfig config){
+<pre id="WXSDKEngine.java"><code class="java" >private static void doInitInternal(final Application application,final InitConfig config){
     // 获取 Application 对象
     WXEnvironment.sApplication = application;
     // 如果 Application 对象为空，传递异常给到 JS
@@ -610,60 +610,60 @@ public static void initialize(Application application,InitConfig config){
     // 注册了一堆默认的 Component
     register();
 }
-              </code></pre>
-            </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              可以看到其中几步重要的操作通过 <code>Wxbridgemanager.Getinstance().post()</code> 在线程中完成:
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+可以看到其中几步重要的操作通过 <code>Wxbridgemanager.Getinstance().post()</code> 在线程中完成:
+</p>
+<div class="org-src-container">
 
-              <pre id="WXSDKEngine.java"><code class="java" >WXBridgeManager.getInstance().post(new Runnable() {
+<pre id="WXSDKEngine.java"><code class="java" >WXBridgeManager.getInstance().post(new Runnable() {
           @Override
           public void run() {
               // do something
           }
       };
-              </code></pre>
-            </div>
-            <p>
-              其中有两个重要的方法,继续往下追 <code>initFramework</code> 方法和 <code>register</code> 方法,分两小节来介绍.
-            </p>
-          </section>
-          <section id="slide-orgb1f5e1d">
-            <h4 id="orgb1f5e1d">WXSoInstallMgrSdk =&gt; initSo()</h4>
-            <p>
-              加载打包在 APK 内的所有 so 文件
-            </p>
-            <ul>
-              <li>libJavaScriptCore.so</li>
-              <li>libweexcore.so</li>
-              <li>libweexjsb.so</li>
-              <li>libweexjss.so</li>
-              <li>libweexjst.so</li>
+</code></pre>
+</div>
+<p>
+其中有两个重要的方法,继续往下追 <code>initFramework</code> 方法和 <code>register</code> 方法,分两小节来介绍.
+</p>
+</section>
+<section id="slide-org6b18d9c">
+<h4 id="org6b18d9c">WXSoInstallMgrSdk =&gt; initSo()</h4>
+<p>
+加载打包在 APK 内的所有 so 文件
+</p>
+<ul>
+<li>libJavaScriptCore.so</li>
+<li>libweexcore.so</li>
+<li>libweexjsb.so</li>
+<li>libweexjss.so</li>
+<li>libweexjst.so</li>
 
-            </ul>
+</ul>
 
-          </section>
-          <section >
-            <p>
-              <code>WXSDKEngine =&gt; doInitInternal()</code> 方法中调用了 <code>WXSoInstallMgrSdk =&gt; initSo()</code> 方法:
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+<code>WXSDKEngine =&gt; doInitInternal()</code> 方法中调用了 <code>WXSoInstallMgrSdk =&gt; initSo()</code> 方法:
+</p>
+<div class="org-src-container">
 
-              <pre id="WXSDKEngine.java"><code class="java" >// V8_SO_NAME = "weexcore.so"
+<pre id="WXSDKEngine.java"><code class="java" >// V8_SO_NAME = "weexcore.so"
 WXSoInstallMgrSdk.initSo(V8_SO_NAME, 1, config!=null?config.getUtAdapter():null);
-              </code></pre>
-            </div>
+</code></pre>
+</div>
 
-            <p>
-              <code>WXSoInstallMgrSdk =&gt; initSo()</code> 方法内部实现:
-            </p>
-            <div class="org-src-container">
+<p>
+<code>WXSoInstallMgrSdk =&gt; initSo()</code> 方法内部实现:
+</p>
+<div class="org-src-container">
 
-              <pre><code class="java" >/**
+<pre><code class="java" >/**
  * Load so library.
  *
  * If a library loader adapter exists, use this adapter to load library,
@@ -688,19 +688,19 @@ public static boolean initSo(String libName, int version, IWXUserTrackAdapter ut
     }
     // other code...
 }
-              </code></pre>
-            </div>
+</code></pre>
+</div>
 
-          </section>
-          <section id="slide-org3cc8465">
-            <h4 id="org3cc8465">WXSDKEngine =&gt; regiser()</h4>
-            <p>
-              初始化 Framework 层之后， <code>WXSDKEngine</code> 调用了 <code>register()</code> 方法注册了一系列内置的 Component 和 Module
-              内嵌的 Component 组件
-            </p>
-            <div class="org-src-container">
+</section>
+<section id="slide-org9cf3304">
+<h4 id="org9cf3304">WXSDKEngine =&gt; regiser()</h4>
+<p>
+初始化 Framework 层之后， <code>WXSDKEngine</code> 调用了 <code>register()</code> 方法注册了一系列内置的 Component 和 Module
+内嵌的 Component 组件
+</p>
+<div class="org-src-container">
 
-              <pre><code class="org" >| Component         | Class                         |
+<pre><code class="org" >| Component         | Class                         |
 |-------------------+-------------------------------|
 | text              | WXText.class                  |
 | image             | WXImage.class                 |
@@ -734,17 +734,17 @@ public static boolean initSo(String libName, int version, IWXUserTrackAdapter ut
 | loading           | WXLoading.class               |
 | loading-indicator | WXLoadingIndicator.class      |
 | header            | WXHeader.class                |
-              </code></pre>
-            </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              内嵌的 Module 组件
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+内嵌的 Module 组件
+</p>
+<div class="org-src-container">
 
-              <pre><code class="org" >| Module       | Class                     |
+<pre><code class="org" >| Module       | Class                     |
 |--------------+---------------------------|
 | modal        | WXModalUIModule.class     |
 | instanceWrap | WXInstanceWrap.class      |
@@ -760,44 +760,44 @@ public static boolean initSo(String libName, int version, IWXUserTrackAdapter ut
 | meta         | WXMetaModule.class        |
 | webSocket    | WebSocketModule.class     |
 | locale       | WXLocaleModule.class      |
-              </code></pre>
-            </div>
+</code></pre>
+</div>
 
-          </section>
-          <section id="slide-orge140663">
-            <h4 id="orge140663">WXSDKEngine -&gt; registerApplicationOptions()</h4>
-            <p>
-              可以认为是获取了 App 的一些环境配置
-            </p>
-            <div class="org-src-container">
+</section>
+<section id="slide-orgec0820b">
+<h4 id="orgec0820b">WXSDKEngine -&gt; registerApplicationOptions()</h4>
+<p>
+可以认为是获取了 App 的一些环境配置
+</p>
+<div class="org-src-container">
 
-              <pre><code class="org" >| key                  | value                                      |
+<pre><code class="org" >| key                  | value                                      |
 |----------------------+--------------------------------------------|
 | screen_width_pixels  | resources.getDisplayMetricx().widthPixels  |
 | screen_height_pixels | resources.getDisplayMetricx().heightPixels |
 | status_bar_height    | get status bar height                      |
-              </code></pre>
-            </div>
+</code></pre>
+</div>
 
-            <p>
-              获取 status<sub>bar</sub><sub>height</sub> 的方式：
-            </p>
-            <div class="org-src-container">
+<p>
+获取 status<sub>bar</sub><sub>height</sub> 的方式：
+</p>
+<div class="org-src-container">
 
-              <pre id="WXSDKEngine.java"><code class="java" >// com.taobao.weex.WXSDKEngine
+<pre id="WXSDKEngine.java"><code class="java" >// com.taobao.weex.WXSDKEngine
 int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
 if (resourceId > 0) {
     int statusBarHeight = resources.getDimensionPixelSize(resourceId);
     registerCoreEnv("status_bar_height", String.valueOf(statusBarHeight));
 }
-              </code></pre>
-            </div>
-          </section>
-          <section id="slide-org2b86252">
-            <h3 id="org2b86252">Weex 页面渲染流程分析</h3>
-            <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section id="slide-orgc72ee55">
+<h3 id="orgc72ee55">Weex 页面渲染流程分析</h3>
+<div class="org-src-container">
 
-              <pre id="Weex 加载页面的调用"><code class="java" >public class MainActivity extends AppCompatActivity implements IWXRenderListener {
+<pre id="Weex 加载页面的调用"><code class="java" >public class MainActivity extends AppCompatActivity implements IWXRenderListener {
 
     WXSDKInstance mWXSDKInstance;
 
@@ -821,21 +821,21 @@ if (resourceId > 0) {
 
     /* other methods */
 }
-              </code></pre>
-            </div>
-            <p>
-              来分析下 WXSDKInstance -&gt; render() 方法的内部实现, 除了参数检查之外,它其实调用的是内部的 rednerInternal 方法.
-            </p>
+</code></pre>
+</div>
+<p>
+来分析下 WXSDKInstance -&gt; render() 方法的内部实现, 除了参数检查之外,它其实调用的是内部的 rednerInternal 方法.
+</p>
 
-          </section>
-          <section id="slide-org1ab95b7">
-            <h4 id="org1ab95b7">WXSDKInstance =&gt; renderInternal()</h4>
-            <p>
-              redner 方法内部调用了内部的 renderInternal 方法来进行 Weex 页面的渲染，来看下代码：
-            </p>
-            <div class="org-src-container">
+</section>
+<section id="slide-orgcdac59e">
+<h4 id="orgcdac59e">WXSDKInstance =&gt; renderInternal()</h4>
+<p>
+redner 方法内部调用了内部的 renderInternal 方法来进行 Weex 页面的渲染，来看下代码：
+</p>
+<div class="org-src-container">
 
-              <pre id="WXSDKInstance.class"><code class="java" >/**
+<pre id="WXSDKInstance.class"><code class="java" >/**
  * Render template asynchronously
  *
  * @param pageName, used for performance log.
@@ -857,310 +857,310 @@ if (resourceId > 0) {
 private void renderInternal(String pageName,
                             String template,
                             Map<String, Object> options,
-                String jsonInitData,
-                WXRenderStrategy flag){
-                // 此处省略各种参数检查
-                // 此处省略数据埋点
+                            String jsonInitData,
+                            WXRenderStrategy flag){
+    // 此处省略各种参数检查
+    // 此处省略数据埋点
 
-                // 检查 RenderContainer 是否为空，为空的话创建一个
-                ensureRenderArchor();
+    // 检查 RenderContainer 是否为空，为空的话创建一个
+    ensureRenderArchor();
 
-                Map<String, Object> renderOptions = options;
-                if (renderOptions == null) {
-                renderOptions = new HashMap<>();
-                }
-                if (WXEnvironment.sDynamicMode && !TextUtils.isEmpty(WXEnvironment.sDynamicUrl) && renderOptions.get("dynamicMode") == null) {
-                renderOptions.put("dynamicMode", "true");
-                // 根据 URL 渲染，最终还是调用到 renderInternal 方法，最终还是会调用 WXSDKManager -> createInstance 方法
-                renderByUrl(pageName, WXEnvironment.sDynamicUrl, renderOptions, jsonInitData, flag);
-                return;
-                }
-                WXSDKManager.getInstance().setCrashInfo(WXEnvironment.WEEX_CURRENT_KEY,pageName);
-                // 渲染页面，会调用 WXBridgeManager -> createInstance 方法
-                WXSDKManager.getInstance().createInstance(this, template, renderOptions, jsonInitData);
-                mRendered = true;
-                }
-              </code></pre>
-            </div>
+    Map<String, Object> renderOptions = options;
+    if (renderOptions == null) {
+        renderOptions = new HashMap<>();
+    }
+    if (WXEnvironment.sDynamicMode && !TextUtils.isEmpty(WXEnvironment.sDynamicUrl) && renderOptions.get("dynamicMode") == null) {
+        renderOptions.put("dynamicMode", "true");
+        // 根据 URL 渲染，最终还是调用到 renderInternal 方法，最终还是会调用 WXSDKManager -> createInstance 方法
+        renderByUrl(pageName, WXEnvironment.sDynamicUrl, renderOptions, jsonInitData, flag);
+        return;
+    }
+    WXSDKManager.getInstance().setCrashInfo(WXEnvironment.WEEX_CURRENT_KEY,pageName);
+    // 渲染页面，会调用 WXBridgeManager -> createInstance 方法
+    WXSDKManager.getInstance().createInstance(this, template, renderOptions, jsonInitData);
+    mRendered = true;
+}
+</code></pre>
+</div>
 
-          </section>
-          <section id="slide-org979110c">
-            <h4 id="org979110c">WXBridgeManager =&gt; createInstance()</h4>
-            <p>
-              render 方法调用最终会调用到这个方法中
-            </p>
-            <div class="org-src-container">
+</section>
+<section id="slide-org66044f2">
+<h4 id="org66044f2">WXBridgeManager =&gt; createInstance()</h4>
+<p>
+render 方法调用最终会调用到这个方法中
+</p>
+<div class="org-src-container">
 
-              <pre id="WXBridgeManager.java"><code class="java" >public void createInstance(final String instanceId, final String template,
+<pre id="WXBridgeManager.java"><code class="java" >public void createInstance(final String instanceId, final String template,
                            final Map<String, Object> options, final String data) {
-                final WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(instanceId);
-                // 此处省略  WXSDKInstance 为空检查
+    final WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(instanceId);
+    // 此处省略  WXSDKInstance 为空检查
 
-                if (!isJSFrameworkInit() && reInitCount == 1 && !WXEnvironment.sDebugServerConnectable) {
-                //  错误日志
-                post(new Runnable() {
+    if (!isJSFrameworkInit() && reInitCount == 1 && !WXEnvironment.sDebugServerConnectable) {
+        //  错误日志
+        post(new Runnable() {
                 @Override
                 public void run() {
-                // 再次初始化 JSFramework 环境
-                initFramework("");
+                    // 再次初始化 JSFramework 环境
+                    initFramework("");
                 }
-                }, instanceId);
-                return;
-                }
+            }, instanceId);
+        return;
+    }
 
-                WXModuleManager.createDomModule(instance);
-                post(new Runnable() {
-                @Override
-                public void run() {
+    WXModuleManager.createDomModule(instance);
+    post(new Runnable() {
+            @Override
+            public void run() {
                 // 省略一堆性能日志代码
                 invokeCreateInstance(instance, template, options, data);
-                }
-                }, instanceId);
-                }
-              </code></pre>
-            </div>
-          </section>
-          <section id="slide-org7bea0d9">
-            <h4 id="org7bea0d9">WXBridgeManager =&gt; invokeCreateInstance()</h4>
-            <p>
-              来看下 createInstance 方法最后调用到的 invokeCreateInstance 方法
-            </p>
-            <div class="org-src-container">
+            }
+        }, instanceId);
+}
+</code></pre>
+</div>
+</section>
+<section id="slide-org8a9deed">
+<h4 id="org8a9deed">WXBridgeManager =&gt; invokeCreateInstance()</h4>
+<p>
+来看下 createInstance 方法最后调用到的 invokeCreateInstance 方法
+</p>
+<div class="org-src-container">
 
-              <pre id="WXBridgeManager.java"><code class="java" >private void invokeCreateInstance(@NonNull WXSDKInstance instance, String template, Map<String, Object> options, String data) {
-                // add for sandbox, will delete on sandbox ok
-                initFramework("");
-                if (mMock) {
-                mock(instance.getInstanceId());
-                } else {
-                //省略 JSFramework 环境检查
-                WXModuleManager.registerWhenCreateInstance();
-                try {
-                BundType type = BundType.Others;
-                // 创建 WXJSObject 对象
-                // When render strategy is data_render, put it into options. Others keep null.
-                WXJSObject renderStrategy = null;
-                if (instance.getRenderStrategy() == WXRenderStrategy.DATA_RENDER) {
+<pre id="WXBridgeManager.java"><code class="java" >private void invokeCreateInstance(@NonNull WXSDKInstance instance, String template, Map<String, Object> options, String data) {
+    // add for sandbox, will delete on sandbox ok
+    initFramework("");
+    if (mMock) {
+        mock(instance.getInstanceId());
+    } else {
+        //省略 JSFramework 环境检查
+        WXModuleManager.registerWhenCreateInstance();
+        try {
+            BundType type = BundType.Others;
+            // 创建 WXJSObject 对象
+            // When render strategy is data_render, put it into options. Others keep null.
+            WXJSObject renderStrategy = null;
+            if (instance.getRenderStrategy() == WXRenderStrategy.DATA_RENDER) {
                 renderStrategy = new WXJSObject(WXJSObject.String, WXRenderStrategy.DATA_RENDER.getFlag());
-                }
-                WXJSObject[] args = {instanceIdObj, instanceObj, optionsObj, dataObj, apiObj, renderStrategy};
-                instance.setTemplate(template);
-                instance.getApmForInstance().onStage(WXInstanceApm.KEY_PAGE_STAGES_LOAD_BUNDLE_END);
+            }
+            WXJSObject[] args = {instanceIdObj, instanceObj, optionsObj, dataObj, apiObj, renderStrategy};
+            instance.setTemplate(template);
+            instance.getApmForInstance().onStage(WXInstanceApm.KEY_PAGE_STAGES_LOAD_BUNDLE_END);
 
-                if (!isSandBoxContext) {
+            if (!isSandBoxContext) {
                 invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
                 return;
-                }
-                if (type == BundType.Vue || type == BundType.Rax || instance.getRenderStrategy() == WXRenderStrategy.DATA_RENDER) {
+            }
+            if (type == BundType.Vue || type == BundType.Rax || instance.getRenderStrategy() == WXRenderStrategy.DATA_RENDER) {
                 invokeCreateInstanceContext(instance.getInstanceId(), null, "createInstanceContext", args, false);
                 return;
-                } else {
+            } else {
                 invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
                 return;
-                }
-                } catch (Throwable e) {
-                // 处理异常
-                }
-                }
-                }
-              </code></pre>
-            </div>
-            <p>
-              后续的渲染工作就交给 native 层来完成
-            </p>
-          </section>
-          <section id="slide-org1a3ee79">
-            <h4 id="org1a3ee79">WXBridgeManager =&gt; callCreateBody()</h4>
-            <div class="org-src-container">
+            }
+        } catch (Throwable e) {
+            // 处理异常
+        }
+    }
+}
+</code></pre>
+</div>
+<p>
+后续的渲染工作就交给 native 层来完成
+</p>
+</section>
+<section id="slide-org2b415a1">
+<h4 id="org2b415a1">WXBridgeManager =&gt; callCreateBody()</h4>
+<div class="org-src-container">
 
-              <pre id="WXBridgeManager.java"><code class="java" >public int callCreateBody(String pageId, String componentType, String ref,
+<pre id="WXBridgeManager.java"><code class="java" >public int callCreateBody(String pageId, String componentType, String ref,
                           HashMap<String, String> styles, HashMap<String, String> attributes, HashSet<String> events,
-                float[] margins, float[] paddings, float[] borders) {
-                // 省略代码
-                try {
-                WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(pageId);
-                if (instance != null) {
-                final BasicGraphicAction action = new GraphicActionCreateBody(instance, ref, componentType,
-                styles, attributes, events, margins, paddings, borders);
-                WXSDKManager.getInstance().getWXRenderManager().postGraphicAction(action.getPageId(), action);
-                }
-                } catch (Exception e) {
-                //错误处理
-                }
-                return IWXBridge.INSTANCE_RENDERING;
-                }
-              </code></pre>
-            </div>
+                          float[] margins, float[] paddings, float[] borders) {
+    // 省略代码
+    try {
+        WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(pageId);
+        if (instance != null) {
+            final BasicGraphicAction action = new GraphicActionCreateBody(instance, ref, componentType,
+                                                                          styles, attributes, events, margins, paddings, borders);
+            WXSDKManager.getInstance().getWXRenderManager().postGraphicAction(action.getPageId(), action);
+        }
+    } catch (Exception e) {
+        //错误处理
+    }
+    return IWXBridge.INSTANCE_RENDERING;
+}
+</code></pre>
+</div>
 
-          </section>
-          <section id="slide-orgc5329b0">
-            <h4 id="orgc5329b0">WXBridgeManager =&gt; callAddElement()</h4>
-            <div class="org-src-container">
+</section>
+<section id="slide-orgcefdb66">
+<h4 id="orgcefdb66">WXBridgeManager =&gt; callAddElement()</h4>
+<div class="org-src-container">
 
-              <pre id="WXBridgeManager.java"><code class="java" >public int callAddElement(String pageId, String componentType, String ref, int index, String parentRef,
+<pre id="WXBridgeManager.java"><code class="java" >public int callAddElement(String pageId, String componentType, String ref, int index, String parentRef,
                           HashMap<String, String> styles, HashMap<String, String> attributes, HashSet<String> events,
-                float[] margins, float[] paddings, float[] borders,boolean willLayout) {
-                // 省略代码
-                try {
-                WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(pageId);
-                if (instance != null) {
-                final GraphicActionAddElement action = new GraphicActionAddElement(instance, ref, componentType, parentRef, index,
-                styles, attributes, events, margins, paddings, borders);
-                if(willLayout) {
+                          float[] margins, float[] paddings, float[] borders,boolean willLayout) {
+    // 省略代码
+    try {
+        WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(pageId);
+        if (instance != null) {
+            final GraphicActionAddElement action = new GraphicActionAddElement(instance, ref, componentType, parentRef, index,
+                                                                               styles, attributes, events, margins, paddings, borders);
+            if(willLayout) {
                 instance.addInActiveAddElementAction(ref, action);
-                }else{
+            }else{
                 WXSDKManager.getInstance().getWXRenderManager().postGraphicAction(pageId, action);
-                }
-                }
-                } catch (Exception e) {
-                // 错误处理
-                }
+            }
+        }
+    } catch (Exception e) {
+        // 错误处理
+    }
 
-                return IWXBridge.INSTANCE_RENDERING;
-                }
-              </code></pre>
-            </div>
-          </section>
-          <section id="slide-org763ee88">
-            <h3 id="org763ee88">JS Bridge</h3>
-            <p>
-              来看下 Android 的 SDK 中用来和 JS Engine（JavaScriptCore）进行双向通信的代码,主要的类有 WXBridgeManager.java 和 WXBridge.java.
-              与 native 的 JS 方法的调用都运行在 JsBridge 线程中。
-            </p>
-          </section>
-          <section id="slide-orgad6e9ec">
-            <h4 id="orgad6e9ec">WXBridgeManager.java</h4>
-            <p>
-              负责通过 WXBridge.java 提供的一系列 native 接口,来完成 Java 环境和 JS 之间的交互.
-            </p>
+    return IWXBridge.INSTANCE_RENDERING;
+}
+</code></pre>
+</div>
+</section>
+<section id="slide-org608db9c">
+<h3 id="org608db9c">JS Bridge</h3>
+<p>
+来看下 Android 的 SDK 中用来和 JS Engine（JavaScriptCore）进行双向通信的代码,主要的类有 WXBridgeManager.java 和 WXBridge.java.
+与 native 的 JS 方法的调用都运行在 JsBridge 线程中。
+</p>
+</section>
+<section id="slide-org4461a81">
+<h4 id="org4461a81">WXBridgeManager.java</h4>
+<p>
+负责通过 WXBridge.java 提供的一系列 native 接口,来完成 Java 环境和 JS 之间的交互.
+</p>
 
-          </section>
-          <section id="slide-orgce6af0d">
-            <h4 id="orgce6af0d">WXBridge.java</h4>
-            <p>
-              封装了一层 Java 层和 JNI 层关于 JS 调用的接口,内部实现了一堆 native 调用方法.
-            </p>
-          </section>
-          <section id="slide-orgf513cb5">
-            <h4 id="orgf513cb5">注册 Component</h4>
-            <p>
-              来看下如何手动注册一个 Component 组件:
-            </p>
-            <div class="org-src-container">
+</section>
+<section id="slide-orge736416">
+<h4 id="orge736416">WXBridge.java</h4>
+<p>
+封装了一层 Java 层和 JNI 层关于 JS 调用的接口,内部实现了一堆 native 调用方法.
+</p>
+</section>
+<section id="slide-org0a5250a">
+<h4 id="org0a5250a">注册 Component</h4>
+<p>
+来看下如何手动注册一个 Component 组件:
+</p>
+<div class="org-src-container">
 
-              <pre id="WXSDKEngine.java"><code class="java" >// 调用 SDK 提供的 API 注册一个 Component 实现
+<pre id="WXSDKEngine.java"><code class="java" >// 调用 SDK 提供的 API 注册一个 Component 实现
 WXSDKEngine.registerComponent("richText", RichText.class);
 
 // 实际调用的注册方法
 public static boolean registerComponent(Map<String, Object> componentInfo, Class<? extends WXComponent> clazz) throws WXException {
-                if(componentInfo == null){
-                return false;
-                }
-                String type = (String)componentInfo.get("type");
-                if(TextUtils.isEmpty(type)){
-                return false;
-                }
-                return WXComponentRegistry.registerComponent(type,new SimpleComponentHolder(clazz), componentInfo);
-                }
-              </code></pre>
-            </div>
+    if(componentInfo == null){
+        return false;
+    }
+    String type = (String)componentInfo.get("type");
+    if(TextUtils.isEmpty(type)){
+        return false;
+    }
+    return WXComponentRegistry.registerComponent(type,new SimpleComponentHolder(clazz), componentInfo);
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              WXComponentRegistry -&gt; registerComponent()
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+WXComponentRegistry -&gt; registerComponent()
+</p>
+<div class="org-src-container">
 
-              <pre id="WXComponentRegistry.java"><code class="java" >public static synchronized boolean registerComponent(final String type, final IFComponentHolder holder, final Map<String, Object> componentInfo) throws WXException {
-                if (holder == null || TextUtils.isEmpty(type)) {
-                return false;
-                }
+<pre id="WXComponentRegistry.java"><code class="java" >public static synchronized boolean registerComponent(final String type, final IFComponentHolder holder, final Map<String, Object> componentInfo) throws WXException {
+    if (holder == null || TextUtils.isEmpty(type)) {
+        return false;
+    }
 
-                //register component
-                AutoScanConfigRegister.preLoad(holder);
+    //register component
+    AutoScanConfigRegister.preLoad(holder);
 
-                //execute task in js thread to make sure register order is same as the order invoke register method.
-                WXBridgeManager.getInstance()
-                .post(new Runnable() {
+    //execute task in js thread to make sure register order is same as the order invoke register method.
+    WXBridgeManager.getInstance()
+        .post(new Runnable() {
                 @Override
                 public void run() {
-                try {
-                Map<String, Object> registerInfo = componentInfo;
-                if (registerInfo == null){
-                registerInfo = new HashMap<>();
-                }
+                    try {
+                        Map<String, Object> registerInfo = componentInfo;
+                        if (registerInfo == null){
+                            registerInfo = new HashMap<>();
+                        }
 
-                registerInfo.put("type",type);
-                registerInfo.put("methods",holder.getMethods());
-                // 注册 Component 到本地的一个静态变量 ConcurrentHashMap -> sTypeComponentMap 中
-                registerNativeComponent(type, holder);
-                // 调用 WXBridgeManager -> invokeRegisterComponents 方法
-                registerJSComponent(registerInfo);
-                sComponentInfos.add(registerInfo);
-                } catch (WXException e) {
-                WXLogUtils.e("register component error:", e);
-                }
+                        registerInfo.put("type",type);
+                        registerInfo.put("methods",holder.getMethods());
+                        // 注册 Component 到本地的一个静态变量 ConcurrentHashMap -> sTypeComponentMap 中
+                        registerNativeComponent(type, holder);
+                        // 调用 WXBridgeManager -> invokeRegisterComponents 方法
+                        registerJSComponent(registerInfo);
+                        sComponentInfos.add(registerInfo);
+                    } catch (WXException e) {
+                        WXLogUtils.e("register component error:", e);
+                    }
 
                 }
-                }
-              </code></pre>
-            </div>
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              WXBridgeManager -&gt; invokeRegisterComponents
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+WXBridgeManager -&gt; invokeRegisterComponents
+</p>
+<div class="org-src-container">
 
-              <pre id="WXBridgeManager.java"><code class="java" >
+<pre id="WXBridgeManager.java"><code class="java" >
 private void invokeRegisterComponents(List<Map<String, Object>> components, List<Map<String, Object>> failReceiver) {
-                if (components == failReceiver) {
-                throw new RuntimeException("Fail receiver should not use source.");
-                }
-                if (!isJSFrameworkInit()) {
-                // JSFramework 还没初始化成功,丢到 failReceiver 列表中,等 JSFramework 初始化成功之后重新注册
-                for (Map<String, Object> comp : components) {
-                failReceiver.add(comp);
-                }
-                return;
-                }
-                if (components == null) {
-                return;
-                }
-                WXJSObject[] args = {WXWsonJSONSwitch.toWsonOrJsonWXJSObject(components)};
-                try {
-                // 调用 WXBridge.java 提供的 JNI 方法,注册到 JS 环境中
-                if(0 == mWXBridge.execJS("", null, METHOD_REGISTER_COMPONENTS, args)) {
-                errorMsg = "execJS error";
-                }
-                } catch (Throwable e) {
-                // 省略异常日志输出
-                }
-                // 省略异常日志输出
-                }
-              </code></pre>
-            </div>
+    if (components == failReceiver) {
+        throw new RuntimeException("Fail receiver should not use source.");
+    }
+    if (!isJSFrameworkInit()) {
+        // JSFramework 还没初始化成功,丢到 failReceiver 列表中,等 JSFramework 初始化成功之后重新注册
+        for (Map<String, Object> comp : components) {
+            failReceiver.add(comp);
+        }
+        return;
+    }
+    if (components == null) {
+        return;
+    }
+    WXJSObject[] args = {WXWsonJSONSwitch.toWsonOrJsonWXJSObject(components)};
+    try {
+        // 调用 WXBridge.java 提供的 JNI 方法,注册到 JS 环境中
+        if(0 == mWXBridge.execJS("", null, METHOD_REGISTER_COMPONENTS, args)) {
+            errorMsg = "execJS error";
+        }
+    } catch (Throwable e) {
+        // 省略异常日志输出
+    }
+    // 省略异常日志输出
+}
+</code></pre>
+</div>
 
-          </section>
-          <section id="slide-org2770a17">
-            <h4 id="org2770a17">注册 Module</h4>
-            <p>
-              来看下 Android 应用中注册 Module 的方式:
-            </p>
-            <div class="org-src-container">
+</section>
+<section id="slide-orgaa9b796">
+<h4 id="orgaa9b796">注册 Module</h4>
+<p>
+来看下 Android 应用中注册 Module 的方式:
+</p>
+<div class="org-src-container">
 
-              <pre><code class="java" >WXSDKEngine.registerModule("MyModule", MyModule.class);
-              </code></pre>
-            </div>
+<pre><code class="java" >WXSDKEngine.registerModule("MyModule", MyModule.class);
+</code></pre>
+</div>
 
-            <p>
-              WXSDKEngine =&gt; registerModule()
-            </p>
-            <div class="org-src-container">
+<p>
+WXSDKEngine =&gt; registerModule()
+</p>
+<div class="org-src-container">
 
-              <pre id="WXSDKEngine.java"><code class="java" >/**
+<pre id="WXSDKEngine.java"><code class="java" >/**
  * Register module. This is a wrapper method for
  * {@link #registerModule(String, Class, boolean)}. The module register here only need to
  * be singleton in {@link WXSDKInstance} level.
@@ -1170,23 +1170,23 @@ private void invokeRegisterComponents(List<Map<String, Object>> components, List
  * {@link WXModuleManager#registerModule(String, ModuleFactory, boolean)}
  */
 public static <T extends WXModule> boolean registerModule(String moduleName, Class<T> moduleClass,boolean global) throws WXException {
-                return moduleClass != null && registerModule(moduleName, new TypeModuleFactory<>(moduleClass), global);
-                }
+    return moduleClass != null && registerModule(moduleName, new TypeModuleFactory<>(moduleClass), global);
+}
 
-                public static <T extends WXModule> boolean registerModule(String moduleName, ModuleFactory factory, boolean global) throws WXException {
-                return WXModuleManager.registerModule(moduleName, factory,global);
-                }
-              </code></pre>
-            </div>
+public static <T extends WXModule> boolean registerModule(String moduleName, ModuleFactory factory, boolean global) throws WXException {
+    return WXModuleManager.registerModule(moduleName, factory,global);
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              WXModuleManager -&gt; regiserModule()
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+WXModuleManager -&gt; regiserModule()
+</p>
+<div class="org-src-container">
 
-              <pre id="WXModuleManager.java"><code class="java" >public static boolean registerModule(final String moduleName, final ModuleFactory factory, final boolean global) throws WXException {
+<pre id="WXModuleManager.java"><code class="java" >public static boolean registerModule(final String moduleName, final ModuleFactory factory, final boolean global) throws WXException {
     // 省略一系列的参数检查
 
     //execute task in js thread to make sure register order is same as the order invoke register method.
@@ -1210,103 +1210,103 @@ public static <T extends WXModule> boolean registerModule(String moduleName, Cla
 
 static boolean registerJSModule(String moduleName, ModuleFactory factory) {
     Map<String, Object> modules = new HashMap<>();
-                modules.put(moduleName, factory.getMethods());
-                // WXSDKManager 中调用了 WXBridgeManager -> registerModules 方法
-                WXSDKManager.getInstance().registerModules(modules);
-                return true;
-                }
-              </code></pre>
-            </div>
+    modules.put(moduleName, factory.getMethods());
+    // WXSDKManager 中调用了 WXBridgeManager -> registerModules 方法
+    WXSDKManager.getInstance().registerModules(modules);
+    return true;
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              WXBridgeManager =&gt; registerModules()
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+WXBridgeManager =&gt; registerModules()
+</p>
+<div class="org-src-container">
 
-              <pre id="WXBridgeManager.java"><code class="java" >public void registerModules(final Map<String, Object> modules) {
-                if (modules != null && modules.size() != 0) {
-                // 确保是在 JSThread 中完成注册
-                if (isJSThread()) {
-                invokeRegisterModules(modules, mRegisterModuleFailList);
-                } else {
-                post(new Runnable() {
-                @Override
-                public void run() {
-                invokeRegisterModules(modules, mRegisterModuleFailList);
-                }
+<pre id="WXBridgeManager.java"><code class="java" >public void registerModules(final Map<String, Object> modules) {
+    if (modules != null && modules.size() != 0) {
+        // 确保是在 JSThread 中完成注册
+        if (isJSThread()) {
+            invokeRegisterModules(modules, mRegisterModuleFailList);
+        } else {
+            post(new Runnable() {
+                    @Override
+                    public void run() {
+                        invokeRegisterModules(modules, mRegisterModuleFailList);
+                    }
                 }, null);
-                }
-                }
-                }
-              </code></pre>
-            </div>
+        }
+    }
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              WXBridgeManager =&gt; invokeRegisterModules()
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+WXBridgeManager =&gt; invokeRegisterModules()
+</p>
+<div class="org-src-container">
 
-              <pre id="WXBridgeManager.java"><code class="java" >private void invokeRegisterModules(Map<String, Object> modules, List<Map<String, Object>> failReceiver) {
-                if (modules == null || !isJSFrameworkInit()) {
-                // JSFramework 没有初始化的情况下放到 failReceiver 列表中,下次 initFramework 的时候再次注册
-                failReceiver.add(modules);
-                return;
-                }
+<pre id="WXBridgeManager.java"><code class="java" >private void invokeRegisterModules(Map<String, Object> modules, List<Map<String, Object>> failReceiver) {
+    if (modules == null || !isJSFrameworkInit()) {
+        // JSFramework 没有初始化的情况下放到 failReceiver 列表中,下次 initFramework 的时候再次注册
+        failReceiver.add(modules);
+        return;
+    }
 
-                WXJSObject[] args = {WXWsonJSONSwitch.toWsonOrJsonWXJSObject(modules)};
-                try {
-                // 通过 WXBridge.java 的 JNI 方法调用,完成 Module 注册到 JS 环境中
-                if(0 == mWXBridge.execJS("", null, METHOD_REGISTER_MODULES, args)) {
-                errorMsg = "execJS error";
-                }
-                // 注册成功之后调用 WXModuleManager.resetModuleState(module, true); 方法更新 module 状态
-                } catch (Throwable e) {
-                }
-                //忽略错误信息打印
-                }
-              </code></pre>
-            </div>
-          </section>
-        </section>
-        <section>
-          <section id="slide-org02c1b2c">
-            <h2 id="org02c1b2c">Weex Core</h2>
-            <div class="outline-text-2" id="text-org02c1b2c">
-            </div>
-          </section>
-          <section id="slide-org513c279">
-            <h3 id="org513c279">Android &amp; JS 调用流程分析</h3>
-            <p>
-              Android SDK 代码分析中, <code>WXBridgeManager.java</code> 提供的很多方法都是通过 <code>WXBridge.java</code> 中定义的 JNI 接口,
-              来调用 weexcore.so 中的方法, 再去调用 JSFramework 中的一些方法,来完成 Android Java 环境和 JS 环境的相互调用的.
-            </p>
+    WXJSObject[] args = {WXWsonJSONSwitch.toWsonOrJsonWXJSObject(modules)};
+    try {
+        // 通过 WXBridge.java 的 JNI 方法调用,完成 Module 注册到 JS 环境中
+        if(0 == mWXBridge.execJS("", null, METHOD_REGISTER_MODULES, args)) {
+            errorMsg = "execJS error";
+        }
+        // 注册成功之后调用 WXModuleManager.resetModuleState(module, true); 方法更新 module 状态
+    } catch (Throwable e) {
+    }
+    //忽略错误信息打印
+}
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgb7c5242">
+<h2 id="orgb7c5242">Weex Core</h2>
+<div class="outline-text-2" id="text-orgb7c5242">
+</div>
+</section>
+<section id="slide-org152de93">
+<h3 id="org152de93">Android &amp; JS 调用流程分析</h3>
+<p>
+Android SDK 代码分析中, <code>WXBridgeManager.java</code> 提供的很多方法都是通过 <code>WXBridge.java</code> 中定义的 JNI 接口,
+来调用 weexcore.so 中的方法, 再去调用 JSFramework 中的一些方法,来完成 Android Java 环境和 JS 环境的相互调用的.
+</p>
 
-          </section>
-          <section id="slide-org031bf49">
-            <h4 id="org031bf49">WXBridge =&gt; execJS 的 JNI 接口和实现</h4>
-            <div class="outline-text-4" id="text-org031bf49">
-            </div>
-            <ul class="org-ul">
-              <li><a id="orge3b34d2"></a>JNI 接口定义和声明<br />
-                <p>
-                  WXBridge 中对 execJS 方法的 JNI 接口 <code>nativeExecJS()</code> 的定义:
-                </p>
-                <div class="org-src-container">
+</section>
+<section id="slide-orgbccebe7">
+<h4 id="orgbccebe7">WXBridge =&gt; execJS 的 JNI 接口和实现</h4>
+<div class="outline-text-4" id="text-orgbccebe7">
+</div>
+<ul class="org-ul">
+<li><a id="orgbbe0afd"></a>JNI 接口定义和声明<br />
+<p>
+WXBridge 中对 execJS 方法的 JNI 接口 <code>nativeExecJS()</code> 的定义:
+</p>
+<div class="org-src-container">
 
-                  <pre id="WXBridge.java"><code class="java" >private native int nativeExecJS(String instanceId, String name, String function, WXJSObject[] args);
-                  </code></pre>
-                </div>
+<pre id="WXBridge.java"><code class="java" >private native int nativeExecJS(String instanceId, String name, String function, WXJSObject[] args);
+</code></pre>
+</div>
 
-                <p>
-                  JNI <code>nativeExecJS()</code> 接口在 Native 层的声明, 实际调用的是 <code>ExecJS</code> 方法：
-                </p>
-                <div class="org-src-container">
+<p>
+JNI <code>nativeExecJS()</code> 接口在 Native 层的声明, 实际调用的是 <code>ExecJS</code> 方法：
+</p>
+<div class="org-src-container">
 
-                  <pre id="WXBridge_jni.h"><code class="c" >// RegisterNatives.
+<pre id="WXBridge_jni.h"><code class="c" >// RegisterNatives.
 static const JNINativeMethod kMethodsWXBridge[] =
   {
    // 省略其他 Native 方法声明
@@ -1318,22 +1318,22 @@ static const JNINativeMethod kMethodsWXBridge[] =
      "[Lcom/taobao/weex/bridge/WXJSObject;"
      ")"
      "I", reinterpret_cast<void*>(ExecJS)
-                    }
-                    // 省略其他 Native 方法声明
-                    }
-                  </code></pre>
-                </div>
+   }
+   // 省略其他 Native 方法声明
+  }
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org118237c"></a>JNI 接口的实现<br />
-                <p>
-                  <code>ExecJS()</code> 方法的实现, 关键的步骤就是 WeexCoreManager =&gt; PlatformBridge =&gt; CoreSide =&gt; ExecJS() ：
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="org03b371f"></a>JNI 接口的实现<br />
+<p>
+<code>ExecJS()</code> 方法的实现, 关键的步骤就是 WeexCoreManager =&gt; PlatformBridge =&gt; CoreSide =&gt; ExecJS() ：
+</p>
+<div class="org-src-container">
 
-                  <pre id="wx_bridge.cpp"><code class="c++" >#include "android/jniprebuild/jniheader/WXBridge_jni.h"
+<pre id="wx_bridge.cpp"><code class="c++" >#include "android/jniprebuild/jniheader/WXBridge_jni.h"
 /**
  * Called to execute JavaScript such as . createInstance(),destroyInstance ext.
  *
@@ -1343,46 +1343,46 @@ static jint ExecJS(JNIEnv* env, jobject jthis, jstring jinstanceid,
   //省略参数检查什么的
   std::vector<VALUE_WITH_TYPE*> params;
 
-                    for (int i = 0; i < length; i++) {
-                    VALUE_WITH_TYPE* param = nullptr;
+  for (int i = 0; i < length; i++) {
+    VALUE_WITH_TYPE* param = nullptr;
 
-                    param = WeexCore::getValueWithTypePtr();
-                    auto jni_object = base::android::ScopedLocalJavaRef<jobject>(
-                    env, env->GetObjectArrayElement(jargs, i));
-                    auto wx_js_object =
-                    std::unique_ptr<WXJSObject>(new WXJSObject(env, jni_object.Get()));
-                    addParamsFromJArgs(params, param, env, wx_js_object);
-                    }
-                    // 实际就是调了这一坨代码去调用 JSFramework 中的方法
-                    auto result =
-                    WeexCoreManager::Instance()->getPlatformBridge()->core_side()->ExecJS(instance_id.getChars(), name_space.getChars(), function.getChars(), params);
-                    freeParams(params);
-                    return result;
-                    }
-                  </code></pre>
-                </div>
-              </li>
-            </ul>
+    param = WeexCore::getValueWithTypePtr();
+    auto jni_object = base::android::ScopedLocalJavaRef<jobject>(
+                                                                 env, env->GetObjectArrayElement(jargs, i));
+    auto wx_js_object =
+      std::unique_ptr<WXJSObject>(new WXJSObject(env, jni_object.Get()));
+    addParamsFromJArgs(params, param, env, wx_js_object);
+  }
+  // 实际就是调了这一坨代码去调用 JSFramework 中的方法
+  auto result =
+      WeexCoreManager::Instance()->getPlatformBridge()->core_side()->ExecJS(instance_id.getChars(), name_space.getChars(), function.getChars(), params);
+  freeParams(params);
+  return result;
+}
+</code></pre>
+</div>
+</li>
+</ul>
 
-          </section>
-          <section id="slide-orgfac7ae4">
-            <h4 id="orgfac7ae4">ExecJS 方法的调用流程</h4>
-            <p>
-              先来看下这一长串的调用,这步调用完成了调用 V8 Engine 提供的 API, 调用到了 JSFramework 的方法:
-            </p>
-            <div class="org-src-container">
+</section>
+<section id="slide-org89f31aa">
+<h4 id="org89f31aa">ExecJS 方法的调用流程</h4>
+<p>
+先来看下这一长串的调用,这步调用完成了调用 V8 Engine 提供的 API, 调用到了 JSFramework 的方法:
+</p>
+<div class="org-src-container">
 
-              <pre id="wx_bridge.cpp"><code class="c++" >// JNI 实现方法中的调用
+<pre id="wx_bridge.cpp"><code class="c++" >// JNI 实现方法中的调用
 WeexCoreManager::Instance()->getPlatformBridge()->core_side()->ExecJS(instance_id.getChars(), name_space.getChars(), function.getChars(), params);
 // ExecJS 方法调用
 WeexCoreManager::Instance()->script_bridge()->script_side()->ExecJS(instanceId, nameSpace, func, params);
-              </code></pre>
-            </div>
+</code></pre>
+</div>
 
-            <p>
-              整个 <code>ExecJS</code> 默认的调用链可以表示为：
-            </p>
-            <pre class="example" id="execJS 调用顺序">
+<p>
+整个 <code>ExecJS</code> 默认的调用链可以表示为：
+</p>
+<pre class="example" id="execJS 调用顺序">
 WeexCoreManager =&gt; getPlatformBridge()       #file: wx_bridge.cpp
 -&gt; AndroidBridgeInSimple =&gt; core_side()      #file: android_bridge.cpp
 -&gt; CoreSideInPlatform =&gt; ExecJS()            #file: core_side_in_platform.cpp
@@ -1390,14 +1390,14 @@ WeexCoreManager =&gt; getPlatformBridge()       #file: wx_bridge.cpp
 -&gt; ScriptBridgeInMultiProcess =&gt;             #file: script_bridge_in_multi_process.cpp
 -&gt; ScriptSideInMultiProcess =&gt; ExecJS()      #file: script_side_in_multi_process.cpp
 -&gt; IPCSender =&gt; send()                       #file: IPCSender.cpp
-            </pre>
-          </section>
-          <section >
-            <ul class="org-ul">
-              <li><a id="org5d5f223"></a>WeexCoreManager =&gt; getPlatformBridge()<br />
-                <div class="org-src-container">
+</pre>
+</section>
+<section >
+<ul class="org-ul">
+<li><a id="org701c75c"></a>WeexCoreManager =&gt; getPlatformBridge()<br />
+<div class="org-src-container">
 
-                  <pre id="weex_core_manager.h"><code class="c" >class WeexCoreManager {
+<pre id="weex_core_manager.h"><code class="c" >class WeexCoreManager {
   // 省略一些方法
   inline void set_platform_bridge(PlatformBridge *bridge) {
     platform_bridge_ = bridge;
@@ -1409,15 +1409,15 @@ WeexCoreManager =&gt; getPlatformBridge()       #file: wx_bridge.cpp
   PlatformBridge *platform_bridge_;
   // 省略一些属性
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-                <p>
-                  Android 中，InitFramework 方法中会调用 set<sub>platform</sub><sub>bridge</sub> 方法：
-                </p>
-                <div class="org-src-container">
+<p>
+Android 中，InitFramework 方法中会调用 set<sub>platform</sub><sub>bridge</sub> 方法：
+</p>
+<div class="org-src-container">
 
-                  <pre id="wx_bridge.cpp"><code class="c++" >static jint InitFramework(JNIEnv* env, jobject object, jstring script,
+<pre id="wx_bridge.cpp"><code class="c++" >static jint InitFramework(JNIEnv* env, jobject object, jstring script,
                           jobject params) {
   // other code...
   // Init platform bridge
@@ -1425,227 +1425,227 @@ WeexCoreManager =&gt; getPlatformBridge()       #file: wx_bridge.cpp
   WeexCoreManager::Instance()->set_platform_bridge(bridge);
   // other code...
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="orgcc7be90"></a>-&gt; core<sub>side</sub>()<br />
-                <p>
-                  <code>AndroidBridgeInSimple</code> 的构造方法中会设置 CoreSide 为 <code>CoreSideInPlatform</code>
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="org1ad1ff5"></a>-&gt; core<sub>side</sub>()<br />
+<p>
+<code>AndroidBridgeInSimple</code> 的构造方法中会设置 CoreSide 为 <code>CoreSideInPlatform</code>
+</p>
+<div class="org-src-container">
 
-                  <pre id="android_bridge.cpp"><code class="c++" >// AndroidBridgeInSimple 继承自 PlatformBridge
+<pre id="android_bridge.cpp"><code class="c++" >// AndroidBridgeInSimple 继承自 PlatformBridge
 AndroidBridgeInSimple::AndroidBridgeInSimple() {
   // 调用了 PlatformBridge -> set_core_side(CoreSide* core_side) 方法
   set_core_side(new CoreSideInPlatform);
   // 调用了 PlatformBridge -> set_platform_side(PlatformSide* platform_side) 方法
   set_platform_side(new AndroidSide);
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="orgd68bd13"></a>-&gt; CoreSideInPlatform =&gt; ExecJS()<br />
-                <p>
-                  CoreSideInPlatform 的 ExecJS 方法:
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="org75fbef2"></a>-&gt; CoreSideInPlatform =&gt; ExecJS()<br />
+<p>
+CoreSideInPlatform 的 ExecJS 方法:
+</p>
+<div class="org-src-container">
 
-                  <pre id="core_side_in_platform.cpp"><code class="c++" >int CoreSideInPlatform::ExecJS(const char *instanceId, const char *nameSpace,
+<pre id="core_side_in_platform.cpp"><code class="c++" >int CoreSideInPlatform::ExecJS(const char *instanceId, const char *nameSpace,
                                const char *func,
                                std::vector<VALUE_WITH_TYPE *> &params) {
-                    return WeexCoreManager::Instance()->script_bridge()->script_side()->ExecJS(instanceId, nameSpace, func, params);
-                    }
-                  </code></pre>
-                </div>
+  return WeexCoreManager::Instance()->script_bridge()->script_side()->ExecJS(instanceId, nameSpace, func, params);
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="orgfbc9bbf"></a>-&gt; WeexCoreManager =&gt; script<sub>bridge</sub>()<br />
-                <p>
-                  WeexCoreManager 中，通过两个方法来操作 <code>script_bridge_</code> :
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="org8192653"></a>-&gt; WeexCoreManager =&gt; script<sub>bridge</sub>()<br />
+<p>
+WeexCoreManager 中，通过两个方法来操作 <code>script_bridge_</code> :
+</p>
+<div class="org-src-container">
 
-                  <pre id="weex_core_manager.h"><code class="c" >inline ScriptBridge *script_bridge() { return script_bridge_; }
+<pre id="weex_core_manager.h"><code class="c" >inline ScriptBridge *script_bridge() { return script_bridge_; }
 
 inline void set_script_bridge(ScriptBridge *script_bridge) {
   script_bridge_ = script_bridge;
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              Android 环境中，在 InitFramework 方法中进行设置：
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+Android 环境中，在 InitFramework 方法中进行设置：
+</p>
+<div class="org-src-container">
 
-              <pre id="wx_bridge.cpp"><code class="c++" >static jint InitFramework(JNIEnv* env, jobject object, jstring script,
+<pre id="wx_bridge.cpp"><code class="c++" >static jint InitFramework(JNIEnv* env, jobject object, jstring script,
                           jobject params) {
   // Init params
   // initFromParam 关系到后面的 isSingleProcess()
   std::vector<INIT_FRAMEWORK_PARAMS*> params_vector =
-                initFromParam(env, params, [](const char* status_code, const char* error_msg) {
-                WeexCoreManager::Instance()
-                ->getPlatformBridge()
-                ->platform_side()
-                ->ReportNativeInitStatus(status_code, error_msg);
-                });
-                // Set project mode
-                if (isSingleProcess()) {
-                WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_SO);
-                } else {
-                WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_PROCESS);
-                }
-                // Init script bridge
-                if (WeexCoreManager::Instance()->project_mode() == WeexCoreManager::ProjectMode::MULTI_PROCESS) {
-                WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
-                } else {
-                WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiSo);
-                }
-                }
-              </code></pre>
-            </div>
+    initFromParam(env, params, [](const char* status_code, const char* error_msg) {
+                                 WeexCoreManager::Instance()
+                                   ->getPlatformBridge()
+                                   ->platform_side()
+                                   ->ReportNativeInitStatus(status_code, error_msg);
+                               });
+  // Set project mode
+  if (isSingleProcess()) {
+    WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_SO);
+  } else {
+    WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_PROCESS);
+  }
+  // Init script bridge
+  if (WeexCoreManager::Instance()->project_mode() == WeexCoreManager::ProjectMode::MULTI_PROCESS) {
+    WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
+  } else {
+    WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiSo);
+  }
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              <code>isSingleProcess()</code> 的值(设置的话需要在初始化之前,默认值为 false)：
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+<code>isSingleProcess()</code> 的值(设置的话需要在初始化之前,默认值为 false)：
+</p>
+<div class="org-src-container">
 
-              <pre id="params_utils.cpp"><code class="c++" >bool g_is_single_process = false;
+<pre id="params_utils.cpp"><code class="c++" >bool g_is_single_process = false;
 bool isSingleProcess() { return g_is_single_process; }
 
 std::vector<INIT_FRAMEWORK_PARAMS*> initFromParam(JNIEnv* env,
-                jobject params,
-                const std::function<void(const char*, const char*)>&ReportNativeInitStatus) {
-                // other code...
+                                                  jobject params,
+                                                  const std::function<void(const char*, const char*)>&ReportNativeInitStatus) {
+  // other code...
 
-                jmethodID m_use_single_process = env->GetMethodID(c_params, "getUseSingleProcess", "()Ljava/lang/String;");
-                if (m_use_single_process == nullptr) {
-                LOGE("getUseSingleProcess method is missing");
-                } else {
-                jobject j_use_single_process =
-                env->CallObjectMethod(params, m_use_single_process);
-                const char* use_single_process =
-                env->GetStringUTFChars((jstring)(j_use_single_process), nullptr);
-                LOGE("g_use_single_process is %s ", use_single_process);
-                if (use_single_process == nullptr) {
-                g_is_single_process = false;
-                } else {
-                g_is_single_process = strstr(use_single_process, "true") != nullptr;
-                env->DeleteLocalRef(j_use_single_process);
-                }
-                }
+  jmethodID m_use_single_process = env->GetMethodID(c_params, "getUseSingleProcess", "()Ljava/lang/String;");
+  if (m_use_single_process == nullptr) {
+    LOGE("getUseSingleProcess method is missing");
+  } else {
+    jobject j_use_single_process =
+      env->CallObjectMethod(params, m_use_single_process);
+    const char* use_single_process =
+      env->GetStringUTFChars((jstring)(j_use_single_process), nullptr);
+    LOGE("g_use_single_process is %s ", use_single_process);
+    if (use_single_process == nullptr) {
+      g_is_single_process = false;
+    } else {
+      g_is_single_process = strstr(use_single_process, "true") != nullptr;
+      env->DeleteLocalRef(j_use_single_process);
+    }
+  }
 
-                // other code...
-                }
-              </code></pre>
-            </div>
-            <p>
-              这里的 <code>g_is_single_process</code> 是通过调用 JNI 接口 <code>WXParams =&gt; getUseSingleProcess()</code> 的返回值来进行配置的
-            </p>
+  // other code...
+}
+</code></pre>
+</div>
+<p>
+这里的 <code>g_is_single_process</code> 是通过调用 JNI 接口 <code>WXParams =&gt; getUseSingleProcess()</code> 的返回值来进行配置的
+</p>
 
-            <div class="org-src-container">
+<div class="org-src-container">
 
-              <pre id="WXBridgeManager => setUseSingleProcess()"><code class="java" >WXBridgeManager.getInstance().setUseSingleProcess(false); // ture or false
-              </code></pre>
-            </div>
+<pre id="WXBridgeManager => setUseSingleProcess()"><code class="java" >WXBridgeManager.getInstance().setUseSingleProcess(false); // ture or false
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org4b66f37"></a>-&gt; script<sub>side</sub>()<br />
-                <p>
-                  来看下默认的实现吧,默认的 <code>script_bridge_</code> 是 <code>ScriptBridgeInMultiProcess</code>
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="orgc25fd32"></a>-&gt; script<sub>side</sub>()<br />
+<p>
+来看下默认的实现吧,默认的 <code>script_bridge_</code> 是 <code>ScriptBridgeInMultiProcess</code>
+</p>
+<div class="org-src-container">
 
-                  <pre id="script_bridge_in_multi_process.cpp"><code class="c++" >ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
+<pre id="script_bridge_in_multi_process.cpp"><code class="c++" >ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
   set_script_side(new bridge::script::ScriptSideInMultiProcess);
   set_core_side(new CoreSideInScript);
 
   //other code...
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="orgbc21e66"></a>-&gt; ExecJS() -&gt; IPCSender =&gt; send()<br />
-                <p>
-                  方法最终调用了 <code>IPCSender =&gt; send()</code> 方法，以 IPC 的方式与 JS 进行交互:
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="orga90bd47"></a>-&gt; ExecJS() -&gt; IPCSender =&gt; send()<br />
+<p>
+方法最终调用了 <code>IPCSender =&gt; send()</code> 方法，以 IPC 的方式与 JS 进行交互:
+</p>
+<div class="org-src-container">
 
-                  <pre id="script_side_in_multi_process.cpp"><code class="c++" >int ScriptSideInMultiProcess::ExecJS(const char *instanceId,
+<pre id="script_side_in_multi_process.cpp"><code class="c++" >int ScriptSideInMultiProcess::ExecJS(const char *instanceId,
                                      const char *nameSpace, const char *func,
                                      std::vector<VALUE_WITH_TYPE *> &params) {
-                    try {
-                    if(sender_ == nullptr) {
-                    LOGE("ExecJS sender is null");
-                    return false;
-                    }
-                    std::unique_ptr<IPCSerializer> serializer(createIPCSerializer());
-                    serializer->setMsg(static_cast<uint32_t>(IPCJSMsg::EXECJS));
-                    serializer->add(instanceId, strlen(instanceId));
-                    if (nameSpace)
-                    serializer->add(nameSpace, strlen(nameSpace));
-                    else {
-                    uint16_t tmp = 0;
-                    serializer->add(&tmp, 0);
-                    }
-                    serializer->add(func, strlen(func));
+  try {
+    if(sender_ == nullptr) {
+      LOGE("ExecJS sender is null");
+      return false;
+    }
+    std::unique_ptr<IPCSerializer> serializer(createIPCSerializer());
+    serializer->setMsg(static_cast<uint32_t>(IPCJSMsg::EXECJS));
+    serializer->add(instanceId, strlen(instanceId));
+    if (nameSpace)
+      serializer->add(nameSpace, strlen(nameSpace));
+    else {
+      uint16_t tmp = 0;
+      serializer->add(&tmp, 0);
+    }
+    serializer->add(func, strlen(func));
 
-                    for (int i = 0; i < params.size(); i++) {
-                    VALUE_WITH_TYPE *param = params[i];
-                    addParamsToIPCSerializer(serializer.get(), param);
-                    }
+    for (int i = 0; i < params.size(); i++) {
+      VALUE_WITH_TYPE *param = params[i];
+      addParamsToIPCSerializer(serializer.get(), param);
+    }
 
-                    std::unique_ptr<IPCBuffer> buffer = serializer->finish();
+    std::unique_ptr<IPCBuffer> buffer = serializer->finish();
 
-                    // 在这里通过 IPC 的方式被发送走了,有 IPC 的地方,就有进程间通讯 emmmmm.... 继续往下跟吧
-                    std::unique_ptr<IPCResult> result = sender_->send(buffer.get());
-                    if (result->getType() != IPCType::INT32) {
-                    LOGE("execJS Unexpected result type");
-                    return false;
-                    }
+    // 在这里通过 IPC 的方式被发送走了,有 IPC 的地方,就有进程间通讯 emmmmm.... 继续往下跟吧
+    std::unique_ptr<IPCResult> result = sender_->send(buffer.get());
+    if (result->getType() != IPCType::INT32) {
+      LOGE("execJS Unexpected result type");
+      return false;
+    }
 
-                    return result->get<jint>();
+    return result->get<jint>();
 
-                    } catch (IPCException &e) {
-                    LOGE("%s", e.msg());
-                    // report crash here
-                    WeexCoreManager::Instance()
-                    ->getPlatformBridge()
-                    ->platform_side()
-                    ->ReportServerCrash(instanceId);
-                    return false;
-                    }
-                    }
-                  </code></pre>
-                </div>
+  } catch (IPCException &e) {
+    LOGE("%s", e.msg());
+    // report crash here
+    WeexCoreManager::Instance()
+      ->getPlatformBridge()
+      ->platform_side()
+      ->ReportServerCrash(instanceId);
+    return false;
+  }
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org194b341"></a>-&gt; weex<sub>js</sub><sub>engine</sub> =&gt; exexJS()&#xa0;&#xa0;&#xa0;<span class="tag"><span class="confirm">confirm</span></span><br />
-                <p>
-                  在项目里中的代码中没有找到接收 <code>IPCJSMsg::EXECJS</code>, 在 weex 内核的代码中找到了关于执行 JS 的一段方法：
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="orgd38b501"></a>-&gt; weex<sub>js</sub><sub>engine</sub> =&gt; exexJS()&#xa0;&#xa0;&#xa0;<span class="tag"><span class="confirm">confirm</span></span><br />
+<p>
+在项目里中的代码中没有找到接收 <code>IPCJSMsg::EXECJS</code>, 在 weex 内核的代码中找到了关于执行 JS 的一段方法：
+</p>
+<div class="org-src-container">
 
-                  <pre id="com_taobao_weex_bridge_WXBridge.cpp"><code class="c++" >/**
+<pre id="com_taobao_weex_bridge_WXBridge.cpp"><code class="c++" >/**
  * Called to execute JavaScript such as . createInstance(),destroyInstance ext.
  *
  */
@@ -1659,132 +1659,132 @@ jint Java_com_taobao_weex_bridge_WXBridge_execJS(JNIEnv *env, jobject this1, jst
   int length = env->GetArrayLength(jargs);
   v8::Handle<v8::Value> obj[length];
 
-                    // 省略将 jargs 转换为 obj[] 的代码
+  // 省略将 jargs 转换为 obj[] 的代码
 
-                    const char *func = env->GetStringUTFChars(jfunction, 0);
-                    v8::Handle<v8::Object> global = V8context->Global();
-                    v8::Handle<v8::Function> function;
-                    v8::Handle<v8::Value> result;
-                    // 根据 jnamespace 和 jfunction 找到需要运行的函数，并获得返回值
-                    if (jnamespace == NULL) {
-                    function = v8::Handle<v8::Function>::Cast(global->Get(v8::String::New(func)));
-                    result = function->Call(global, length, obj);
-                    }
-                    else {
-                    v8::Handle<v8::Object> master = v8::Handle<v8::Object>::Cast(global->Get(jString2V8String(env, jnamespace)));
-                    function = v8::Handle<v8::Function>::Cast(master->Get(jString2V8String(env, jfunction)));
-                    result = function->Call(master, length, obj);
-                    }
+  const char *func = env->GetStringUTFChars(jfunction, 0);
+  v8::Handle<v8::Object> global = V8context->Global();
+  v8::Handle<v8::Function> function;
+  v8::Handle<v8::Value> result;
+  // 根据 jnamespace 和 jfunction 找到需要运行的函数，并获得返回值
+  if (jnamespace == NULL) {
+    function = v8::Handle<v8::Function>::Cast(global->Get(v8::String::New(func)));
+    result = function->Call(global, length, obj);
+  }
+  else {
+    v8::Handle<v8::Object> master = v8::Handle<v8::Object>::Cast(global->Get(jString2V8String(env, jnamespace)));
+    function = v8::Handle<v8::Function>::Cast(master->Get(jString2V8String(env, jfunction)));
+    result = function->Call(master, length, obj);
+  }
 
-                    if (result.IsEmpty()) {
-                    assert(try_catch.HasCaught());
-                    ReportException(globalIsolate, &try_catch, jinstanceid, func);
-                    env->ReleaseStringUTFChars(jfunction, func);
-                    return false;
-                    }
-                    env->ReleaseStringUTFChars(jfunction, func);
-                    return true;
-                    }
-                  </code></pre>
-                </div>
-              </li>
-            </ul>
+  if (result.IsEmpty()) {
+    assert(try_catch.HasCaught());
+    ReportException(globalIsolate, &try_catch, jinstanceid, func);
+    env->ReleaseStringUTFChars(jfunction, func);
+    return false;
+  }
+  env->ReleaseStringUTFChars(jfunction, func);
+  return true;
+}
+</code></pre>
+</div>
+</li>
+</ul>
 
-          </section>
-          <section id="slide-orgc266336">
-            <h4 id="orgc266336">WeexJSConnection 创建并启动 IPC 服务</h4>
-            <p>
-              IPC 服务其实实在 WeexSDK 初始化的时候创建的, 通过 JNI 调用 weexcore.so 中的方法创建并启动.
-            </p>
-          </section>
-          <section >
-            <ul class="org-ul">
-              <li><a id="org30e0b6e"></a>WXBridge 初始化<br />
-                <p>
-                  <code>WXBridge =&gt; initFramework()</code> 调用 JNI <code>InitFramework()</code> 的时候会设置 <code>ScriptBridge</code> 对象(<code>ScriptBridgeInMultiProcess</code>):
-                </p>
-                <div class="org-src-container">
+</section>
+<section id="slide-org2f9e464">
+<h4 id="org2f9e464">WeexJSConnection 创建并启动 IPC 服务</h4>
+<p>
+IPC 服务其实实在 WeexSDK 初始化的时候创建的, 通过 JNI 调用 weexcore.so 中的方法创建并启动.
+</p>
+</section>
+<section >
+<ul class="org-ul">
+<li><a id="org9c8b211"></a>WXBridge 初始化<br />
+<p>
+<code>WXBridge =&gt; initFramework()</code> 调用 JNI <code>InitFramework()</code> 的时候会设置 <code>ScriptBridge</code> 对象(<code>ScriptBridgeInMultiProcess</code>):
+</p>
+<div class="org-src-container">
 
-                  <pre id="wx_bridge.cpp"><code class="c++" >static jint InitFramework(JNIEnv* env, jobject object, jstring script, jobject params) {
+<pre id="wx_bridge.cpp"><code class="c++" >static jint InitFramework(JNIEnv* env, jobject object, jstring script, jobject params) {
   // other code...
   WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
   // other code...
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              <code>ScriptBridgeInMultiProcess</code> 对象的初始化方法中会创建 <code>MultiProcessAndSoInitializer</code> 对象:
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+<code>ScriptBridgeInMultiProcess</code> 对象的初始化方法中会创建 <code>MultiProcessAndSoInitializer</code> 对象:
+</p>
+<div class="org-src-container">
 
-              <pre id="script_bridge_in_multi_process.cpp"><code class="c++" >ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
+<pre id="script_bridge_in_multi_process.cpp"><code class="c++" >ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
   // 之前的 script_side 配置
   set_script_side(new bridge::script::ScriptSideInMultiProcess);
   set_core_side(new CoreSideInScript);
 
   // 多进程通信初始化,里面包含了对 IPC 监听的启动过程
   std::unique_ptr<MultiProcessAndSoInitializer> initializer(new MultiProcessAndSoInitializer);
-                }
-              </code></pre>
-            </div>
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              <code>MultiProcessAndSoInitializer</code> 对象初始化的时候调用 <code>WeexJSConnection</code> 的 <code>start()</code> 方法启动 IPC 服务:
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+<code>MultiProcessAndSoInitializer</code> 对象初始化的时候调用 <code>WeexJSConnection</code> 的 <code>start()</code> 方法启动 IPC 服务:
+</p>
+<div class="org-src-container">
 
-              <pre id="multi_process_and_so_initializer.cpp"><code class="c++" >bool MultiProcessAndSoInitializer::Init(const std::function<void(IPCHandler*)>& OnHandlerCreated,
-                const std::function<bool(std::unique_ptr<WeexJSConnection>, std::unique_ptr<IPCHandler>, std::unique_ptr<IPCHandler>)>& OnInitFinished,
-                const std::function<void(const char*, const char*, const char*)>& ReportException){
-                // other code...
-                startInitFrameWork:
-                try {
-                auto handler = std::move(createIPCHandler());
-                auto server_handler = std::move(createIPCHandler());
-                OnHandlerCreated(server_handler.get());
-                std::unique_ptr<WeexJSConnection> connection(new WeexJSConnection());
-                // 启动 IPC 服务,开启 listen()
-                auto sender = connection->start(handler.get(), server_handler.get(), reinit);
-                // other code...
-                } catch (IPCException& e) {
-                // other code...
-                }
-                return true;
-                }
-              </code></pre>
-            </div>
+<pre id="multi_process_and_so_initializer.cpp"><code class="c++" >bool MultiProcessAndSoInitializer::Init(const std::function<void(IPCHandler*)>& OnHandlerCreated,
+                                        const std::function<bool(std::unique_ptr<WeexJSConnection>, std::unique_ptr<IPCHandler>, std::unique_ptr<IPCHandler>)>& OnInitFinished,
+                                        const std::function<void(const char*, const char*, const char*)>& ReportException){
+  // other code...
+ startInitFrameWork:
+  try {
+    auto handler = std::move(createIPCHandler());
+    auto server_handler = std::move(createIPCHandler());
+    OnHandlerCreated(server_handler.get());
+    std::unique_ptr<WeexJSConnection> connection(new WeexJSConnection());
+    // 启动 IPC 服务,开启 listen()
+    auto sender = connection->start(handler.get(), server_handler.get(), reinit);
+    // other code...
+  } catch (IPCException& e) {
+    // other code...
+  }
+  return true;
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="orgd7e7a1b"></a>WeexJSConnection 启动 IPC 服务线程<br />
-                <p>
-                  要创建线程，先来看下 <code>pthread_create</code> 方法:
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="orge48ffe4"></a>WeexJSConnection 启动 IPC 服务线程<br />
+<p>
+要创建线程，先来看下 <code>pthread_create</code> 方法:
+</p>
+<div class="org-src-container">
 
-                  <pre><code class="c++" >#include <pthread.h>
-                    /*
-                    * pthread_t: 指向线程标识符的指针
-                    * pthread_attr_t: 设置线程属性
-                    * start_routine: 线程运行函数的起始地址
-                    * arg: 最后一个参数是运行函数的参数
-                    */
-                    int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg);
-                  </code></pre>
-                </div>
+<pre><code class="c++" >#include <pthread.h>
+/*
+ * pthread_t: 指向线程标识符的指针
+ * pthread_attr_t: 设置线程属性
+ * start_routine: 线程运行函数的起始地址
+ * arg: 最后一个参数是运行函数的参数
+ */
+int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg);
+</code></pre>
+</div>
 
-                <p>
-                  在 <code>WeexJSConnection</code> 的 <code>start</code> 方法中调用了 <code>pthread_create()</code> 来创建 IPC 服务线程:
-                </p>
-                <div class="org-src-container">
+<p>
+在 <code>WeexJSConnection</code> 的 <code>start</code> 方法中调用了 <code>pthread_create()</code> 来创建 IPC 服务线程:
+</p>
+<div class="org-src-container">
 
-                  <pre id="WeexJSConnection.cpp"><code class="c++" >IPCSender *WeexJSConnection::start(IPCHandler *handler, IPCHandler *serverHandler, bool reinit) {
+<pre id="WeexJSConnection.cpp"><code class="c++" >IPCSender *WeexJSConnection::start(IPCHandler *handler, IPCHandler *serverHandler, bool reinit) {
   // other code...
   int i = pthread_create(&ipcServerThread, &threadAttr, newIPCServer, &td);
   while (newThreadStatus == UNFINISH) {
@@ -1796,280 +1796,280 @@ jint Java_com_taobao_weex_bridge_WXBridge_execJS(JNIEnv *env, jobject this1, jst
   }
   // other code...
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-                <p>
-                  <code>pthread_create()</code> 方法中传入的函数参数 <code>newIPCServer()</code> 的定义,在这个方法中开启了监听 <code>IPCListener =&gt; listen()</code> :
-                  <a id="org4dc6828"></a>
-                </p>
-                <div class="org-src-container">
+<p>
+<code>pthread_create()</code> 方法中传入的函数参数 <code>newIPCServer()</code> 的定义,在这个方法中开启了监听 <code>IPCListener =&gt; listen()</code> :
+<a id="orged94567"></a>
+</p>
+<div class="org-src-container">
 
-                  <pre id="WeexJSConnection.cpp"><code class="c++" >static void *newIPCServer(void *_td) {
+<pre id="WeexJSConnection.cpp"><code class="c++" >static void *newIPCServer(void *_td) {
   // other code...
   // 初始化 IPCHandler 来处理消息
   const std::unique_ptr<IPCHandler> &testHandler = createIPCHandler();
-                    // 初始化 IPCSender 来发送消息
-                    std::unique_ptr<IPCSender> sender(createIPCSender(futexPageQueue.get(), handler));
-                    // 创建了 IPCListener 来接收消息
-                    std::unique_ptr<IPCListener> listener =std::move(createIPCListener(futexPageQueue.get(), handler)) ;
-                    newThreadStatus = SUCCESS;
+  // 初始化 IPCSender 来发送消息
+  std::unique_ptr<IPCSender> sender(createIPCSender(futexPageQueue.get(), handler));
+  // 创建了 IPCListener 来接收消息
+  std::unique_ptr<IPCListener> listener =std::move(createIPCListener(futexPageQueue.get(), handler)) ;
+  newThreadStatus = SUCCESS;
 
-                    try {
-                    futexPageQueue->spinWaitPeer();
-                    // 启动 IPC 消息监听 looper
-                    listener->listen();
-                    } catch (IPCException &e) {
-                    LOGE("server died");
-                    close(td->ipcServerFd);
-                    base::android::DetachFromVM();
-                    pthread_exit(NULL);
-                    }
-                    }
-                  </code></pre>
-                </div>
+  try {
+    futexPageQueue->spinWaitPeer();
+    // 启动 IPC 消息监听 looper
+    listener->listen();
+  } catch (IPCException &e) {
+    LOGE("server died");
+    close(td->ipcServerFd);
+    base::android::DetachFromVM();
+    pthread_exit(NULL);
+  }
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org2e30027"></a>IPCSender/IPCListener/IPCHandler 的创建<br />
-                <p>
-                  <code>newIPCServer()</code> 方法中完成了 IPC 流程中三个重要角色的创建：
-                </p>
+</section>
+<section >
+</li>
+<li><a id="org897d1c5"></a>IPCSender/IPCListener/IPCHandler 的创建<br />
+<p>
+<code>newIPCServer()</code> 方法中完成了 IPC 流程中三个重要角色的创建：
+</p>
 
-                <div class="org-src-container">
+<div class="org-src-container">
 
-                  <pre id="WeexJSConnection.cpp"><code class="c++" >// 初始化 IPCHandler 来处理消息
+<pre id="WeexJSConnection.cpp"><code class="c++" >// 初始化 IPCHandler 来处理消息
 const std::unique_ptr<IPCHandler> &testHandler = createIPCHandler();
-                    // 初始化 IPCSender 来发送消息
-                    std::unique_ptr<IPCSender> sender(createIPCSender(futexPageQueue.get(), handler));
-                    // 创建了 IPCListener 来接收消息
-                    std::unique_ptr<IPCListener> listener =std::move(createIPCListener(futexPageQueue.get(), handler)) ;
-                  </code></pre>
-                </div>
-              </li>
-            </ul>
-          </section>
-          <section id="slide-org40489cd">
-            <h4 id="org40489cd">Android IPCSender</h4>
-            <p>
-              WXBridge 的 execJS 方法实际是调用了 CoreSideInMultiProcess 中的 IPCSender 的 send() 方法发送 IPC 消息的.
-            </p>
+// 初始化 IPCSender 来发送消息
+std::unique_ptr<IPCSender> sender(createIPCSender(futexPageQueue.get(), handler));
+// 创建了 IPCListener 来接收消息
+std::unique_ptr<IPCListener> listener =std::move(createIPCListener(futexPageQueue.get(), handler)) ;
+</code></pre>
+</div>
+</li>
+</ul>
+</section>
+<section id="slide-orgb00d68e">
+<h4 id="orgb00d68e">Android IPCSender</h4>
+<p>
+WXBridge 的 execJS 方法实际是调用了 CoreSideInMultiProcess 中的 IPCSender 的 send() 方法发送 IPC 消息的.
+</p>
 
-          </section>
-          <section >
-            <ul class="org-ul">
-              <li><a id="org7c79f1d"></a>CoreSideInMultiProcess -&gt; WeexJSConnection =&gt; sender()<br />
-                <p>
-                  先来看下这个 <code>sender_</code> 对象, <code>ScriptBridgeInMultiProcess</code> 的 <code>sender_</code> 是在 <code>ScriptSideInMultiProcess</code> 中被赋值的:
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+<ul class="org-ul">
+<li><a id="org84b6778"></a>CoreSideInMultiProcess -&gt; WeexJSConnection =&gt; sender()<br />
+<p>
+先来看下这个 <code>sender_</code> 对象, <code>ScriptBridgeInMultiProcess</code> 的 <code>sender_</code> 是在 <code>ScriptSideInMultiProcess</code> 中被赋值的:
+</p>
+<div class="org-src-container">
 
-                  <pre id="script_bridge_in_multi_process.cpp"><code class="c++" >ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
+<pre id="script_bridge_in_multi_process.cpp"><code class="c++" >ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
   // other code...
   bool passable = initializer->Init
     (
      [this](IPCHandler *handler) { RegisterIPCCallback(handler); },
      [this](std::unique_ptr<WeexJSConnection> connection,
 
-                    std::unique_ptr<IPCHandler> handler,
-                    std::unique_ptr<IPCHandler> server_handler) {
-                    // 将 ScriptSideInMultiProcess 中的 sender 赋值为 WeexJSConnection -> sender()
-                    static_cast<bridge::script::ScriptSideInMultiProcess *>(script_side())->set_sender(connection->sender());
-                    connection_ = std::move(connection);
-                    handler_ = std::move(handler);
-                    server_handler_ = std::move(server_handler);
-                    LOGE("ScriptBridgeInMultiProcess finish %x %x", server_handler_.get(),
-                    server_handler.get());
-                    return true;
-                    },
-                    [this](const char *page_id, const char *func,
-                    const char *exception_string) {
-                    WeexCoreManager::Instance()
-                    ->getPlatformBridge()
-                    ->platform_side()
-                    ->ReportException(page_id, func, exception_string);
-                    });
-                    // other code...
-                    }
-                  </code></pre>
-                </div>
+     std::unique_ptr<IPCHandler> handler,
+            std::unique_ptr<IPCHandler> server_handler) {
+       // 将 ScriptSideInMultiProcess 中的 sender 赋值为 WeexJSConnection -> sender()
+       static_cast<bridge::script::ScriptSideInMultiProcess *>(script_side())->set_sender(connection->sender());
+       connection_ = std::move(connection);
+       handler_ = std::move(handler);
+       server_handler_ = std::move(server_handler);
+       LOGE("ScriptBridgeInMultiProcess finish %x %x", server_handler_.get(),
+            server_handler.get());
+       return true;
+     },
+     [this](const char *page_id, const char *func,
+            const char *exception_string) {
+       WeexCoreManager::Instance()
+         ->getPlatformBridge()
+         ->platform_side()
+         ->ReportException(page_id, func, exception_string);
+     });
+  // other code...
+}
+</code></pre>
+</div>
 
-                <p>
-                  WeexJSConnection =&gt; sender()
-                </p>
-                <div class="org-src-container">
+<p>
+WeexJSConnection =&gt; sender()
+</p>
+<div class="org-src-container">
 
-                  <pre id="WeexJSConnection.cpp"><code class="c++" >// m_impl: new WeexJSConnectionImpl
+<pre id="WeexJSConnection.cpp"><code class="c++" >// m_impl: new WeexJSConnectionImpl
 IPCSender* WeexJSConnection::sender() {
   return m_impl->serverSender.get();
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="orgf2fb660"></a>-&gt; WeexJSConnection =&gt; sender()<br />
-                <p>
-                  这里的实际发送消息的 IPCSender 对象，实际是在 <a href="#/slide-org4dc6828">IPC 服务创建</a> 的时候进行初始化的.
-                </p>
+</section>
+<section >
+</li>
+<li><a id="org9bd3012"></a>-&gt; WeexJSConnection =&gt; sender()<br />
+<p>
+这里的实际发送消息的 IPCSender 对象，实际是在 <a href="#/slide-orged94567">IPC 服务创建</a> 的时候进行初始化的.
+</p>
 
-                <p>
-                  初始化的时候调用的设置 IPCSender 代码：
-                </p>
-                <div class="org-src-container">
+<p>
+初始化的时候调用的设置 IPCSender 代码：
+</p>
+<div class="org-src-container">
 
-                  <pre><code class="c++" >std::unique_ptr<IPCSender> sender(createIPCSender(futexPageQueue.get(), handler));
-                  </code></pre>
-                </div>
+<pre><code class="c++" >std::unique_ptr<IPCSender> sender(createIPCSender(futexPageQueue.get(), handler));
+</code></pre>
+</div>
 
-                <p>
-                  IPCSender 中的 <code>createIPCSender()</code> 方法, 实际上就是创建了一个 <code>IPCSenderImpl</code>  实例：
-                </p>
-                <div class="org-src-container">
+<p>
+IPCSender 中的 <code>createIPCSender()</code> 方法, 实际上就是创建了一个 <code>IPCSenderImpl</code>  实例：
+</p>
+<div class="org-src-container">
 
-                  <pre id="IPCSender.cpp"><code class="c++" >std::unique_ptr<IPCSender> createIPCSender(IPCFutexPageQueue* futexPageQueue, IPCHandler* handler)
-                    {
-                    return std::unique_ptr<IPCSender>(new IPCSenderImpl(futexPageQueue, handler));
-                    }
-                  </code></pre>
-                </div>
+<pre id="IPCSender.cpp"><code class="c++" >std::unique_ptr<IPCSender> createIPCSender(IPCFutexPageQueue* futexPageQueue, IPCHandler* handler)
+{
+  return std::unique_ptr<IPCSender>(new IPCSenderImpl(futexPageQueue, handler));
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="orgbd99370"></a>-&gt; IPCSenderImpl =&gt; send()<br />
-                <p>
-                  实际调用了 <code>IPCCommunicator =&gt; doSendBufferOnly()</code> 来发送 IPC 消息：
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="orgefd4743"></a>-&gt; IPCSenderImpl =&gt; send()<br />
+<p>
+实际调用了 <code>IPCCommunicator =&gt; doSendBufferOnly()</code> 来发送 IPC 消息：
+</p>
+<div class="org-src-container">
 
-                  <pre id="IPCSender.cpp"><code class="c++" >std::unique_ptr<IPCResult> IPCSenderImpl::send(IPCBuffer* buffer)
-                    {
-                    doSendBufferOnly(buffer);
-                    if (checkBufferAsync(buffer))
-                    return createVoidResult();
+<pre id="IPCSender.cpp"><code class="c++" >std::unique_ptr<IPCResult> IPCSenderImpl::send(IPCBuffer* buffer)
+{
+  doSendBufferOnly(buffer);
+  if (checkBufferAsync(buffer))
+    return createVoidResult();
 
-                    while (true) {
-                    uint32_t msg = doReadPackage();
-                    bool isAsync = !!(msg & MSG_FLAG_ASYNC);
-                    msg &= MSG_MASK;
-                    // 通过抛异常方式结束消息发送循环
-                    if (msg == MSG_END) {
-                    std::unique_ptr<IPCResult> result = assembleResult();
-                    releaseBlob();
-                    return result;
-                    } else if (msg == MSG_TERMINATE) {
-                    releaseBlob();
-                    throw IPCException("peer terminates");
-                    }
-                    std::unique_ptr<IPCArguments> arguments = assembleArguments();
-                    releaseBlob();
-                    std::unique_ptr<IPCResult> sendBack = m_handler->handle(msg, arguments.get());
-                    if (!isAsync) {
-                    std::unique_ptr<IPCBuffer> resultBuffer = generateResultBuffer(sendBack.get());
-                    doSendBufferOnly(resultBuffer.get());
-                    }
-                    }
-                    }
-                  </code></pre>
-                </div>
+  while (true) {
+    uint32_t msg = doReadPackage();
+    bool isAsync = !!(msg & MSG_FLAG_ASYNC);
+    msg &= MSG_MASK;
+    // 通过抛异常方式结束消息发送循环
+    if (msg == MSG_END) {
+      std::unique_ptr<IPCResult> result = assembleResult();
+      releaseBlob();
+      return result;
+    } else if (msg == MSG_TERMINATE) {
+      releaseBlob();
+      throw IPCException("peer terminates");
+    }
+    std::unique_ptr<IPCArguments> arguments = assembleArguments();
+    releaseBlob();
+    std::unique_ptr<IPCResult> sendBack = m_handler->handle(msg, arguments.get());
+    if (!isAsync) {
+      std::unique_ptr<IPCBuffer> resultBuffer = generateResultBuffer(sendBack.get());
+      doSendBufferOnly(resultBuffer.get());
+    }
+  }
+}
+</code></pre>
+</div>
 
-                <p>
-                  Weex 底层提供的 IPC 交互方式是通过 <code>memcpy()</code> 方法创建共享内存的方式来实现的：
-                </p>
-                <div class="org-src-container">
+<p>
+Weex 底层提供的 IPC 交互方式是通过 <code>memcpy()</code> 方法创建共享内存的方式来实现的：
+</p>
+<div class="org-src-container">
 
-                  <pre id="IPCCommunicator.cpp"><code class="c++" >void IPCCommunicator::doSendBufferOnly(const void* _data, size_t length)
+<pre id="IPCCommunicator.cpp"><code class="c++" >void IPCCommunicator::doSendBufferOnly(const void* _data, size_t length)
 {
   const char* data = static_cast<const char*>(_data);
-                    size_t pageSize = m_futexPageQueue->getPageSize();
-                    ssize_t byteTransfered;
-                    uint32_t* dstLength = static_cast<uint32_t*>(m_futexPageQueue->getCurrentWritePage());
-                    // special handle the first part, which need a size
-                    // as header.
-                    dstLength[0] = length;
+  size_t pageSize = m_futexPageQueue->getPageSize();
+  ssize_t byteTransfered;
+  uint32_t* dstLength = static_cast<uint32_t*>(m_futexPageQueue->getCurrentWritePage());
+  // special handle the first part, which need a size
+  // as header.
+  dstLength[0] = length;
 
-                    IPC_LOGD("send bytes: length: %zu", length);
-                    byteTransfered = std::min(length, pageSize - sizeof(uint32_t));
-                    // 将发送的消息，写到共享内存中
-                    memcpy(dstLength + 1, data, byteTransfered);
-                    m_futexPageQueue->stepWrite();
-                    // multiple page package
-                    if (length > byteTransfered) {
-                    data += byteTransfered;
-                    length -= byteTransfered;
-                    IPC_LOGD("sent bytes: remaining length: %zu, transfered: %zu", length, byteTransfered);
+  IPC_LOGD("send bytes: length: %zu", length);
+  byteTransfered = std::min(length, pageSize - sizeof(uint32_t));
+  // 将发送的消息，写到共享内存中
+  memcpy(dstLength + 1, data, byteTransfered);
+  m_futexPageQueue->stepWrite();
+  // multiple page package
+  if (length > byteTransfered) {
+    data += byteTransfered;
+    length -= byteTransfered;
+    IPC_LOGD("sent bytes: remaining length: %zu, transfered: %zu", length, byteTransfered);
 
-                    while (length > 0) {
-                    byteTransfered = doSendBufferPage(data, length, pageSize);
-                    data += byteTransfered;
-                    length -= byteTransfered;
-                    IPC_LOGD("sent bytes: remaining length: %zu, transfered: %zu", length, byteTransfered);
-                    }
-                    }
-                    }
-                  </code></pre>
-                </div>
-              </li>
-            </ul>
+    while (length > 0) {
+      byteTransfered = doSendBufferPage(data, length, pageSize);
+      data += byteTransfered;
+      length -= byteTransfered;
+      IPC_LOGD("sent bytes: remaining length: %zu, transfered: %zu", length, byteTransfered);
+    }
+  }
+}
+</code></pre>
+</div>
+</li>
+</ul>
 
-          </section>
-          <section id="slide-org5691999">
-            <h4 id="org5691999">Android IPCListener</h4>
-            <p>
-              IPCListener 用来监听 IPC 消息，并传递给 IPCHandler
-            </p>
-          </section>
-          <section >
-            <ul class="org-ul">
-              <li><a id="org5df59d5"></a>WeexJSConnection =&gt; newIPCServer() -&gt; listener<br />
-                <p>
-                  在创建 IPC 服务的时候创建了 IPCListener 的实例,并开启了消息监听:
-                </p>
-                <div class="org-src-container">
+</section>
+<section id="slide-org189f36d">
+<h4 id="org189f36d">Android IPCListener</h4>
+<p>
+IPCListener 用来监听 IPC 消息，并传递给 IPCHandler
+</p>
+</section>
+<section >
+<ul class="org-ul">
+<li><a id="org01464ce"></a>WeexJSConnection =&gt; newIPCServer() -&gt; listener<br />
+<p>
+在创建 IPC 服务的时候创建了 IPCListener 的实例,并开启了消息监听:
+</p>
+<div class="org-src-container">
 
-                  <pre id="WeexJSConnection.cpp"><code class="c++" >static void *newIPCServer(void *_td) {
+<pre id="WeexJSConnection.cpp"><code class="c++" >static void *newIPCServer(void *_td) {
   // other code...
   // 创建了 IPCListener 来接收消息
   std::unique_ptr<IPCListener> listener =std::move(createIPCListener(futexPageQueue.get(), handler)) ;
-                    try {
-                    // 启动 IPC 消息监听 looper
-                    listener->listen();
-                    } catch (IPCException &e) {
-                    // other code...
-                    }
-                    }
+  try {
+    // 启动 IPC 消息监听 looper
+    listener->listen();
+  } catch (IPCException &e) {
+    // other code...
+  }
+}
 
-                  </code></pre>
-                </div>
-          </section>
-          <section >
-              </li>
-              <li><a id="orge0f1c5d"></a>-&gt; IPCListener =&gt; createIPCListener()<br />
-                <p>
-                  创建一个 <code>IPCListener</code>, 实际创建的是 <code>IPCListenerImpl</code> 的一个实例,它内部实现了 <code>listen()</code> 方法:
-                </p>
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="org7cc258d"></a>-&gt; IPCListener =&gt; createIPCListener()<br />
+<p>
+创建一个 <code>IPCListener</code>, 实际创建的是 <code>IPCListenerImpl</code> 的一个实例,它内部实现了 <code>listen()</code> 方法:
+</p>
 
-                <div class="org-src-container">
+<div class="org-src-container">
 
-                  <pre id="IPCListener.cpp"><code class="c++" >std::unique_ptr<IPCListener> createIPCListener(IPCFutexPageQueue* futexPageQueue, IPCHandler* handler) {
-                    return std::unique_ptr<IPCListener>(new IPCListenerImpl(futexPageQueue, handler));
-                    }
-                  </code></pre>
-                </div>
+<pre id="IPCListener.cpp"><code class="c++" >std::unique_ptr<IPCListener> createIPCListener(IPCFutexPageQueue* futexPageQueue, IPCHandler* handler) {
+  return std::unique_ptr<IPCListener>(new IPCListenerImpl(futexPageQueue, handler));
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org5de3199"></a>-&gt; Ipclistenerimpl =&gt; listen()<br />
-                <p>
-                  <code>IPCListenerImpl</code> 内部实现的 <code>listen()</code> 方法, 在线程中开启消息队列, 从共享内存中读取 <code>IPCSender</code> 写入的消息, 并交给 <code>IPCHandler</code> 来处理:
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="org23c390f"></a>-&gt; Ipclistenerimpl =&gt; listen()<br />
+<p>
+<code>IPCListenerImpl</code> 内部实现的 <code>listen()</code> 方法, 在线程中开启消息队列, 从共享内存中读取 <code>IPCSender</code> 写入的消息, 并交给 <code>IPCHandler</code> 来处理:
+</p>
+<div class="org-src-container">
 
-                  <pre id="IPCListener.cpp"><code class="c++" >void IPCListenerImpl::listen() {
+<pre id="IPCListener.cpp"><code class="c++" >void IPCListenerImpl::listen() {
   // 开启一个消息循环
   while (true) {
     uint32_t msg = doReadPackage();
@@ -2083,114 +2083,114 @@ IPCSender* WeexJSConnection::sender() {
       throw IPCException("peer terminates");
     }
     std::unique_ptr<IPCArguments> arguments = assembleArguments();
-                    releaseBlob();
-                    IPCArguments*  pArguments = arguments.get();
-                    // IPCHandler 来处理收到的消息和参数
-                    std::unique_ptr<IPCResult> sendBack = m_handler->handle(msg, pArguments);
-                    if (!isAsync) {
-                    std::unique_ptr<IPCBuffer> resultBuffer = generateResultBuffer(sendBack.get());
-                    doSendBufferOnly(resultBuffer.get());
-                    }
-                    }
-                    }
-                  </code></pre>
-                </div>
-              </li>
-            </ul>
+    releaseBlob();
+    IPCArguments*  pArguments = arguments.get();
+    // IPCHandler 来处理收到的消息和参数
+    std::unique_ptr<IPCResult> sendBack = m_handler->handle(msg, pArguments);
+    if (!isAsync) {
+      std::unique_ptr<IPCBuffer> resultBuffer = generateResultBuffer(sendBack.get());
+      doSendBufferOnly(resultBuffer.get());
+    }
+  }
+}
+</code></pre>
+</div>
+</li>
+</ul>
 
-          </section>
-          <section id="slide-orgae2a51a">
-            <h4 id="orgae2a51a">Android IPCHandler</h4>
-            <p>
-              IPCHandler 用来处理接收到的 IPC 消息
-            </p>
-          </section>
-          <section >
-            <ul class="org-ul">
-              <li><a id="orgbb4939b"></a>WeexJSConnection =&gt; newIPCServer() -&gt; handler<br />
-                <div class="org-src-container">
+</section>
+<section id="slide-orgbee797c">
+<h4 id="orgbee797c">Android IPCHandler</h4>
+<p>
+IPCHandler 用来处理接收到的 IPC 消息
+</p>
+</section>
+<section >
+<ul class="org-ul">
+<li><a id="org1c3f096"></a>WeexJSConnection =&gt; newIPCServer() -&gt; handler<br />
+<div class="org-src-container">
 
-                  <pre id="WeexJSConnection.cpp"><code class="c++" >static void *newIPCServer(void *_td) {
+<pre id="WeexJSConnection.cpp"><code class="c++" >static void *newIPCServer(void *_td) {
   // other code...
   // 初始化 IPCHandler 来处理消息
   const std::unique_ptr<IPCHandler> &testHandler = createIPCHandler();
-                    // other code...
-                    }
-                  </code></pre>
-                </div>
-          </section>
-          <section >
-              </li>
-              <li><a id="org49c4d8a"></a>-&gt; IPCHandler =&gt; createIPCHandler()<br />
-                <p>
-                  <code>createIPCHandler()</code> 实际上创建了一个 <code>IPCHandlerImpl</code> 的实例，它内部实现了 <code>handle()</code> 方法:
-                </p>
-                <div class="org-src-container">
+  // other code...
+}
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="org276dc46"></a>-&gt; IPCHandler =&gt; createIPCHandler()<br />
+<p>
+<code>createIPCHandler()</code> 实际上创建了一个 <code>IPCHandlerImpl</code> 的实例，它内部实现了 <code>handle()</code> 方法:
+</p>
+<div class="org-src-container">
 
-                  <pre><code class="c++" >std::unique_ptr<IPCHandler> createIPCHandler()
-                    {
-                    return std::unique_ptr<IPCHandler>(new IPCHandlerImpl);
-                    }
-                  </code></pre>
-                </div>
-          </section>
-          <section >
-              </li>
-              <li><a id="org0bd5891"></a>-&gt; IPCHandlerImpl =&gt; handler()<br />
-                <div class="org-src-container">
+<pre><code class="c++" >std::unique_ptr<IPCHandler> createIPCHandler()
+{
+  return std::unique_ptr<IPCHandler>(new IPCHandlerImpl);
+}
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="orgf2b1eb8"></a>-&gt; IPCHandlerImpl =&gt; handler()<br />
+<div class="org-src-container">
 
-                  <pre><code class="c++" >std::unique_ptr<IPCResult> IPCHandlerImpl::handle(uint32_t msg, IPCArguments* arguments)
-                    {
-                    auto it = m_map.find(msg);
-                    if (it == m_map.end()) {
-                    IPC_LOGE("unable to find msg: %d", msg);
-                    return createVoidResult();
-                    }
-                    return it->second(arguments);
-                    }
-                  </code></pre>
-                </div>
-          </section>
-          <section >
-              </li>
-              <li><a id="orgb9ab2ba"></a>注册 IPCHandler<br />
-                <p>
-                  IPCHandlerImpl 中用一个 Map 数据结构来存储各种 IPC 消息的回调方法:
-                </p>
-                <div class="org-src-container">
+<pre><code class="c++" >std::unique_ptr<IPCResult> IPCHandlerImpl::handle(uint32_t msg, IPCArguments* arguments)
+{
+  auto it = m_map.find(msg);
+  if (it == m_map.end()) {
+    IPC_LOGE("unable to find msg: %d", msg);
+    return createVoidResult();
+  }
+  return it->second(arguments);
+}
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="orgd4a5559"></a>注册 IPCHandler<br />
+<p>
+IPCHandlerImpl 中用一个 Map 数据结构来存储各种 IPC 消息的回调方法:
+</p>
+<div class="org-src-container">
 
-                  <pre id="IPCHandler.cpp"><code class="c++" >class IPCHandlerImpl : public IPCHandler {
+<pre id="IPCHandler.cpp"><code class="c++" >class IPCHandlerImpl : public IPCHandler {
   // other code...
 private:
   typedef std::unordered_map<int, std::function<std::unique_ptr<IPCResult>(IPCArguments*)>> MapType;
-                    // IPCHandlerImpl 中持有一个消息回调方法的 map
-                    MapType m_map;
-                    };
-                  </code></pre>
-                </div>
+  // IPCHandlerImpl 中持有一个消息回调方法的 map
+  MapType m_map;
+};
+</code></pre>
+</div>
 
-                <p>
-                  注册消息回调的方法, 比较简单，就是将一个 int 值作为 key，将一个回调方法作为 value 插入到声明好的一个 Map 中:
-                </p>
-                <div class="org-src-container">
+<p>
+注册消息回调的方法, 比较简单，就是将一个 int 值作为 key，将一个回调方法作为 value 插入到声明好的一个 Map 中:
+</p>
+<div class="org-src-container">
 
-                  <pre id="IPCHandler.cpp"><code class="c++" >void IPCHandlerImpl::registerHandler(int msg, const std::function<std::unique_ptr<IPCResult>(IPCArguments*)>& handler)
-                    {
-                    m_map.insert(MapType::value_type(msg, handler));
-                    }
-                  </code></pre>
-                </div>
-          </section>
-          <section >
-              </li>
-              <li><a id="org57bc20e"></a>内部的 IPCHandler 注册时机<br />
-                <p>
-                  是的,还是这个熟悉的方法 <code>WXBridge=&gt;nativeInitFramework()</code> -&gt; <code>wx_bridge =&gt; InitFramework()</code>.
-                  由于 IPC 的方式只存在于开启多进程的情况下，所以内置的 <code>IPCHandler</code> 也只在多进程模式下被注册：
-                </p>
-                <div class="org-src-container">
+<pre id="IPCHandler.cpp"><code class="c++" >void IPCHandlerImpl::registerHandler(int msg, const std::function<std::unique_ptr<IPCResult>(IPCArguments*)>& handler)
+{
+  m_map.insert(MapType::value_type(msg, handler));
+}
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="org4a1aeb6"></a>内部的 IPCHandler 注册时机<br />
+<p>
+是的,还是这个熟悉的方法 <code>WXBridge=&gt;nativeInitFramework()</code> -&gt; <code>wx_bridge =&gt; InitFramework()</code>.
+由于 IPC 的方式只存在于开启多进程的情况下，所以内置的 <code>IPCHandler</code> 也只在多进程模式下被注册：
+</p>
+<div class="org-src-container">
 
-                  <pre id="wx_bridge.cpp"><code class="c++" >static jint InitFramework(JNIEnv* env, jobject object, jstring script, jobject params) {
+<pre id="wx_bridge.cpp"><code class="c++" >static jint InitFramework(JNIEnv* env, jobject object, jstring script, jobject params) {
   // other code
   // Android SDK 中默认的 ProjectMode = MULTI_PROCESS，所以会初始化 ScriptBridgeInMultiProcess.
   if (WeexCoreManager::Instance()->project_mode() == WeexCoreManager::ProjectMode::MULTI_PROCESS) {
@@ -2198,297 +2198,297 @@ private:
   }
   // other code
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-                <p>
-                  <code>ScriptBridgeInMultiProcess</code> 的构造方法中，会调用内部的 IPCCallback 注册：
-                </p>
-                <div class="org-src-container">
+<p>
+<code>ScriptBridgeInMultiProcess</code> 的构造方法中，会调用内部的 IPCCallback 注册：
+</p>
+<div class="org-src-container">
 
-                  <pre id="script_bridge_in_multi_process.cpp"><code class="c++" >ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
+<pre id="script_bridge_in_multi_process.cpp"><code class="c++" >ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
   // other code...
   [this](IPCHandler *handler) { RegisterIPCCallback(handler); }
     // other code...
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="orgf983cf5"></a>默认注册的 IPCHandler<br />
-                <p>
-                  <code>ScriptBridgeInMultiProcess =&gt; RegisterIPCCallback()</code> 方法中，注册了很多内置的 IPC 回调方法:
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="orge060050"></a>默认注册的 IPCHandler<br />
+<p>
+<code>ScriptBridgeInMultiProcess =&gt; RegisterIPCCallback()</code> 方法中，注册了很多内置的 IPC 回调方法:
+</p>
+<div class="org-src-container">
 
-                  <pre id="script_bridge_in_multi_process.cpp"><code class="c++" >void ScriptBridgeInMultiProcess::RegisterIPCCallback(IPCHandler *handler) {
+<pre id="script_bridge_in_multi_process.cpp"><code class="c++" >void ScriptBridgeInMultiProcess::RegisterIPCCallback(IPCHandler *handler) {
   LOGE("RegisterIPCCallback is running");
   handler->registerHandler(static_cast<uint32_t>(IPCProxyMsg::SETJSFVERSION),
-                    HandleSetJSVersion);
-                    //省略了一系列 registerHandler 方法
-                    }
-                  </code></pre>
-                </div>
+                           HandleSetJSVersion);
+  //省略了一系列 registerHandler 方法
+}
+</code></pre>
+</div>
 
-                <p>
-                  <code>RegisterIPCCallback()</code> 方法中注册的所有的 <code>IPCHandler</code> 回调：
-                </p>
-                <table id="org785a80a" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<p>
+<code>RegisterIPCCallback()</code> 方法中注册的所有的 <code>IPCHandler</code> 回调：
+</p>
+<table id="orge2d0e00" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
-                  <colgroup>
-                    <col  class="org-left" />
+<colgroup>
+<col  class="org-left" />
 
-                    <col  class="org-left" />
+<col  class="org-left" />
 
-                    <col  class="org-left" />
+<col  class="org-left" />
 
-                    <col  class="org-left" />
-                  </colgroup>
-                  <thead>
-                    <tr>
-                      <th scope="col" class="org-left">Key(enum IPCProxyMsg)</th>
-                      <th scope="col" class="org-left">Handler Value</th>
-                      <th scope="col" class="org-left">Function(Ignore arguments)</th>
-                      <th scope="col" class="org-left">Source File</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="org-left">SETJSFVERSION</td>
-                      <td class="org-left">HandleSetJSVersion</td>
-                      <td class="org-left">public void setJSFrmVersion()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Key(enum IPCProxyMsg)</th>
+<th scope="col" class="org-left">Handler Value</th>
+<th scope="col" class="org-left">Function(Ignore arguments)</th>
+<th scope="col" class="org-left">Source File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">SETJSFVERSION</td>
+<td class="org-left">HandleSetJSVersion</td>
+<td class="org-left">public void setJSFrmVersion()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">REPORTEXCEPTION</td>
-                      <td class="org-left">HandleReportException</td>
-                      <td class="org-left">public void reportJSException()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">REPORTEXCEPTION</td>
+<td class="org-left">HandleReportException</td>
+<td class="org-left">public void reportJSException()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLNATIVE</td>
-                      <td class="org-left">HandleCallNative</td>
-                      <td class="org-left">public int callNative()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLNATIVE</td>
+<td class="org-left">HandleCallNative</td>
+<td class="org-left">public int callNative()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLNATIVEMODULE</td>
-                      <td class="org-left">HandleCallNativeModule</td>
-                      <td class="org-left">public Object callNativeModule()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLNATIVEMODULE</td>
+<td class="org-left">HandleCallNativeModule</td>
+<td class="org-left">public Object callNativeModule()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLNATIVECOMPONENT</td>
-                      <td class="org-left">HandleCallNativeComponent</td>
-                      <td class="org-left">public void callNativeComponent()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLNATIVECOMPONENT</td>
+<td class="org-left">HandleCallNativeComponent</td>
+<td class="org-left">public void callNativeComponent()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLADDELEMENT</td>
-                      <td class="org-left">HandleCallAddElement</td>
-                      <td class="org-left">public int callAddElement()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLADDELEMENT</td>
+<td class="org-left">HandleCallAddElement</td>
+<td class="org-left">public int callAddElement()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">SETTIMEOUT</td>
-                      <td class="org-left">HandleSetTimeout</td>
-                      <td class="org-left">public void setTimeoutNative()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">SETTIMEOUT</td>
+<td class="org-left">HandleSetTimeout</td>
+<td class="org-left">public void setTimeoutNative()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">NATIVELOG</td>
-                      <td class="org-left">HandleCallNativeLog</td>
-                      <td class="org-left">public void d(String msg)</td>
-                      <td class="org-left">WXLogUtils.java</td>
-                    </tr>
+<tr>
+<td class="org-left">NATIVELOG</td>
+<td class="org-left">HandleCallNativeLog</td>
+<td class="org-left">public void d(String msg)</td>
+<td class="org-left">WXLogUtils.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLCREATEBODY</td>
-                      <td class="org-left">FunctionCallCreateBody</td>
-                      <td class="org-left">public int callCreateBody()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLCREATEBODY</td>
+<td class="org-left">FunctionCallCreateBody</td>
+<td class="org-left">public int callCreateBody()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLUPDATEFINISH</td>
-                      <td class="org-left">FunctionCallUpdateFinish</td>
-                      <td class="org-left">public int callUpdateFinish()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLUPDATEFINISH</td>
+<td class="org-left">FunctionCallUpdateFinish</td>
+<td class="org-left">public int callUpdateFinish()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLCREATEFINISH</td>
-                      <td class="org-left">FunctionCallCreateFinish</td>
-                      <td class="org-left">public int callCreateFinish()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLCREATEFINISH</td>
+<td class="org-left">FunctionCallCreateFinish</td>
+<td class="org-left">public int callCreateFinish()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLREFRESHFINISH</td>
-                      <td class="org-left">FunctionCallRefreshFinish</td>
-                      <td class="org-left">public int callRefreshFinish()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLREFRESHFINISH</td>
+<td class="org-left">FunctionCallRefreshFinish</td>
+<td class="org-left">public int callRefreshFinish()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLUPDATEATTRS</td>
-                      <td class="org-left">FunctionCallUpdateAttrs</td>
-                      <td class="org-left">public int callUpdateAttrs()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLUPDATEATTRS</td>
+<td class="org-left">FunctionCallUpdateAttrs</td>
+<td class="org-left">public int callUpdateAttrs()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLUPDATESTYLE</td>
-                      <td class="org-left">FunctionCallUpdateStyle</td>
-                      <td class="org-left">public int callUpdateStyle()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLUPDATESTYLE</td>
+<td class="org-left">FunctionCallUpdateStyle</td>
+<td class="org-left">public int callUpdateStyle()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLREMOVEELEMENT</td>
-                      <td class="org-left">FunctionCallRemoveElement</td>
-                      <td class="org-left">public int callRemoveElement()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLREMOVEELEMENT</td>
+<td class="org-left">FunctionCallRemoveElement</td>
+<td class="org-left">public int callRemoveElement()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLMOVEELEMENT</td>
-                      <td class="org-left">FunctionCallMoveElement</td>
-                      <td class="org-left">public int callMoveElement()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLMOVEELEMENT</td>
+<td class="org-left">FunctionCallMoveElement</td>
+<td class="org-left">public int callMoveElement()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLADDEVENT</td>
-                      <td class="org-left">FunctionCallAddEvent</td>
-                      <td class="org-left">public int callAddEvent()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLADDEVENT</td>
+<td class="org-left">FunctionCallAddEvent</td>
+<td class="org-left">public int callAddEvent()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLREMOVEEVENT</td>
-                      <td class="org-left">FunctionCallRemoveEvent</td>
-                      <td class="org-left">public int callRemoveElement()</td>
-                      <td class="org-left">WXBridge.java</td>
-                    </tr>
-                  </tbody>
-                  <tbody>
-                    <tr>
-                      <td class="org-left">CALLGCANVASLINK</td>
-                      <td class="org-left">HandleCallGCanvasLinkNative</td>
-                      <td class="org-left">const char *CallGCanvasFun()</td>
-                      <td class="org-left">ExtendJSApi.cpp</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLREMOVEEVENT</td>
+<td class="org-left">FunctionCallRemoveEvent</td>
+<td class="org-left">public int callRemoveElement()</td>
+<td class="org-left">WXBridge.java</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">CALLGCANVASLINK</td>
+<td class="org-left">HandleCallGCanvasLinkNative</td>
+<td class="org-left">const char *CallGCanvasFun()</td>
+<td class="org-left">ExtendJSApi.cpp</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CALLT3DLINK</td>
-                      <td class="org-left">HandleT3DLinkNative</td>
-                      <td class="org-left">const char* CallT3dFunc()</td>
-                      <td class="org-left">ExtendJSApi.cpp</td>
-                    </tr>
+<tr>
+<td class="org-left">CALLT3DLINK</td>
+<td class="org-left">HandleT3DLinkNative</td>
+<td class="org-left">const char* CallT3dFunc()</td>
+<td class="org-left">ExtendJSApi.cpp</td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">SETINTERVAL</td>
-                      <td class="org-left">HandleSetInterval</td>
-                      <td class="org-left">int CoreSideInScript::SetInterval()</td>
-                      <td class="org-left">code<sub>side</sub><sub>in</sub><sub>script.cpp</sub></td>
-                    </tr>
+<tr>
+<td class="org-left">SETINTERVAL</td>
+<td class="org-left">HandleSetInterval</td>
+<td class="org-left">int CoreSideInScript::SetInterval()</td>
+<td class="org-left">code<sub>side</sub><sub>in</sub><sub>script.cpp</sub></td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">CLEARINTERVAL</td>
-                      <td class="org-left">HandleClearInterval</td>
-                      <td class="org-left">int CoreSideInScript::ClearInterval()</td>
-                      <td class="org-left">code<sub>side</sub><sub>in</sub><sub>script.cpp</sub></td>
-                    </tr>
+<tr>
+<td class="org-left">CLEARINTERVAL</td>
+<td class="org-left">HandleClearInterval</td>
+<td class="org-left">int CoreSideInScript::ClearInterval()</td>
+<td class="org-left">code<sub>side</sub><sub>in</sub><sub>script.cpp</sub></td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">POSTMESSAGE</td>
-                      <td class="org-left">HandlePostMessage</td>
-                      <td class="org-left">static void Java<sub>WMLBridge</sub><sub>postMessage</sub>()</td>
-                      <td class="org-left">wml<sub>bridge.cpp</sub></td>
-                    </tr>
+<tr>
+<td class="org-left">POSTMESSAGE</td>
+<td class="org-left">HandlePostMessage</td>
+<td class="org-left">static void Java<sub>WMLBridge</sub><sub>postMessage</sub>()</td>
+<td class="org-left">wml<sub>bridge.cpp</sub></td>
+</tr>
 
-                    <tr>
-                      <td class="org-left">DISPATCHMESSAGE</td>
-                      <td class="org-left">HandleDispatchMessage</td>
-                      <td class="org-left">static void Java<sub>WMLBridge</sub><sub>dispatchMessage</sub>()</td>
-                      <td class="org-left">wml<sub>bridge.cpp</sub></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </li>
-            </ul>
+<tr>
+<td class="org-left">DISPATCHMESSAGE</td>
+<td class="org-left">HandleDispatchMessage</td>
+<td class="org-left">static void Java<sub>WMLBridge</sub><sub>dispatchMessage</sub>()</td>
+<td class="org-left">wml<sub>bridge.cpp</sub></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
 
-          </section>
-          <section id="slide-org48aaabd">
-            <h3 id="org48aaabd">Native 渲染流程分析</h3>
-            <p>
-              <code>WXBridgeManager =&gt; invokeExecJS()</code> 之后通过 <code>WXBridge =&gt; execJS()</code> 调用到了底层的方法：
-            </p>
-            <div class="org-src-container">
+</section>
+<section id="slide-org5364d61">
+<h3 id="org5364d61">Native 渲染流程分析</h3>
+<p>
+<code>WXBridgeManager =&gt; invokeExecJS()</code> 之后通过 <code>WXBridge =&gt; execJS()</code> 调用到了底层的方法：
+</p>
+<div class="org-src-container">
 
-              <pre id="WXBridgeManager.java"><code class="java" >// METHOD_CREATE_INSTANCE = "createInstance"
+<pre id="WXBridgeManager.java"><code class="java" >// METHOD_CREATE_INSTANCE = "createInstance"
 invokeExecJS(instance.getInstanceId(), null, METHOD_CREATE_INSTANCE, args, false);
-              </code></pre>
-            </div>
+</code></pre>
+</div>
 
-            <p>
-              之后的流程就是通过 IPC 以消息的方式通知到 JSFramework 环境调用响应的方法。
-            </p>
+<p>
+之后的流程就是通过 IPC 以消息的方式通知到 JSFramework 环境调用响应的方法。
+</p>
 
-          </section>
-        </section>
-        <section>
-          <section id="slide-org8da878b">
-            <h2 id="org8da878b">JSFramework</h2>
-            <div class="outline-text-2" id="text-org8da878b">
-            </div>
-          </section>
-          <section id="slide-org643a26c">
-            <h3 id="org643a26c">JSFramework</h3>
-            <p>
-              Weex 通过调用 JS Framework 提供的接口来调用原生功能并且渲染真实 UI.代码层面其实就是 weex 提供的一个 js 库,用来完成 js 调用原生功能的一个组件.
-            </p>
-          </section>
-          <section id="slide-org0b5e61c">
-            <h4 id="org0b5e61c">配置 framework</h4>
-            <p>
-              在 weex 初始化时,通过设置 InitConfig 的 framework 参数,来配置 framework:
-            </p>
-            <div class="org-src-container">
+</section>
+</section>
+<section>
+<section id="slide-org962aebf">
+<h2 id="org962aebf">JSFramework</h2>
+<div class="outline-text-2" id="text-org962aebf">
+</div>
+</section>
+<section id="slide-org06d8b90">
+<h3 id="org06d8b90">JSFramework</h3>
+<p>
+Weex 通过调用 JS Framework 提供的接口来调用原生功能并且渲染真实 UI.代码层面其实就是 weex 提供的一个 js 库,用来完成 js 调用原生功能的一个组件.
+</p>
+</section>
+<section id="slide-orgbe06b3b">
+<h4 id="orgbe06b3b">配置 framework</h4>
+<p>
+在 weex 初始化时,通过设置 InitConfig 的 framework 参数,来配置 framework:
+</p>
+<div class="org-src-container">
 
-              <pre id="InitConfig.java"><code class="java" >// 如果不设置,默认为打包在 Android SDK 中的 main.js
+<pre id="InitConfig.java"><code class="java" >// 如果不设置,默认为打包在 Android SDK 中的 main.js
 InitConfig config=new InitConfig.Builder().setFramework("your framework").build();
-              </code></pre>
-            </div>
-          </section>
-          <section id="slide-org7031a7c">
-            <h3 id="org7031a7c">JSFramework 初始化</h3>
-            <div class="outline-text-3" id="text-org7031a7c">
-            </div>
-          </section>
-          <section id="slide-orge63e6ec">
-            <h4 id="orge63e6ec">Android SDK 中的初始化流程</h4>
-            <div class="outline-text-4" id="text-orge63e6ec">
-            </div>
-            <ul class="org-ul">
-              <li><a id="org0fce789"></a>WXSDKEngine =&gt; doInitInternal()<br />
-                <p>
-                  WeexSDK 初始化的时候会在 <code>WXSDKEngine.java</code> 的 ~doInitInternal()~方法中进行 JSFramework 的初始化:
-                </p>
-                <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section id="slide-orgce6b1aa">
+<h3 id="orgce6b1aa">JSFramework 初始化</h3>
+<div class="outline-text-3" id="text-orgce6b1aa">
+</div>
+</section>
+<section id="slide-org3d2c9c6">
+<h4 id="org3d2c9c6">Android SDK 中的初始化流程</h4>
+<div class="outline-text-4" id="text-org3d2c9c6">
+</div>
+<ul class="org-ul">
+<li><a id="org81db4a1"></a>WXSDKEngine =&gt; doInitInternal()<br />
+<p>
+WeexSDK 初始化的时候会在 <code>WXSDKEngine.java</code> 的 ~doInitInternal()~方法中进行 JSFramework 的初始化:
+</p>
+<div class="org-src-container">
 
-                  <pre id="WXSDKEngine.java"><code class="java" >private static void doInitInternal(final Application application,final InitConfig config){
+<pre id="WXSDKEngine.java"><code class="java" >private static void doInitInternal(final Application application,final InitConfig config){
     WXBridgeManager.getInstance().post(new Runnable() {
             @Override
             public void run() {
@@ -2499,46 +2499,46 @@ InitConfig config=new InitConfig.Builder().setFramework("your framework").build(
             }
         });
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org9d56236"></a>-&gt; WXSDKManager =&gt; initScriptsFramework()<br />
-                <p>
-                  WXSDKManager 的 <code>initScriptsFramework()</code> 方法调用了 <code>WXBridgeManager</code> 的 ~initScriptsFramework()~方法.
-                </p>
+</section>
+<section >
+</li>
+<li><a id="org21b167b"></a>-&gt; WXSDKManager =&gt; initScriptsFramework()<br />
+<p>
+WXSDKManager 的 <code>initScriptsFramework()</code> 方法调用了 <code>WXBridgeManager</code> 的 ~initScriptsFramework()~方法.
+</p>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org0415f66"></a>-&gt; WXBridgeManager =&gt; initScriptsFramework()<br />
-                <p>
-                  将初始化 JSFramework 的工作交给 JSHandler 来处理, 调用了 <code>WXBridgeManager =&gt; invokeInitFramework(Message)</code> 方法:
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="orge1dd373"></a>-&gt; WXBridgeManager =&gt; initScriptsFramework()<br />
+<p>
+将初始化 JSFramework 的工作交给 JSHandler 来处理, 调用了 <code>WXBridgeManager =&gt; invokeInitFramework(Message)</code> 方法:
+</p>
+<div class="org-src-container">
 
-                  <pre id="WXBridgeManager.java"><code class="java" >public synchronized void initScriptsFramework(String framework) {
+<pre id="WXBridgeManager.java"><code class="java" >public synchronized void initScriptsFramework(String framework) {
     Message msg = mJSHandler.obtainMessage();
     msg.obj = framework;
     msg.what = WXJSBridgeMsgType.INIT_FRAMEWORK;
     msg.setTarget(mJSHandler);
     msg.sendToTarget();
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org1982a41"></a>-&gt; WXBridgeManager =&gt; invokeInitFramework()<br />
-                <p>
-                  简单检查了下参数和内存情况, 内存允许(可用内容大于 120MB)的情况下, 去初始化 JSFramework, 否则是在渲染页面的时候再去初始化 JSFramework
-                </p>
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="org624567e"></a>-&gt; WXBridgeManager =&gt; invokeInitFramework()<br />
+<p>
+简单检查了下参数和内存情况, 内存允许(可用内容大于 120MB)的情况下, 去初始化 JSFramework, 否则是在渲染页面的时候再去初始化 JSFramework
+</p>
+<div class="org-src-container">
 
-                  <pre><code class="java" >private void invokeInitFramework(Message msg) {
+<pre><code class="java" >private void invokeInitFramework(Message msg) {
     String framework = "";
     if (msg.obj != null) {
         framework = (String) msg.obj;
@@ -2549,15 +2549,15 @@ InitConfig config=new InitConfig.Builder().setFramework("your framework").build(
         initFramework(framework);
     }
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-                <p>
-                  顺便围观下怎么取可用内存:
-                </p>
-                <div class="org-src-container">
+<p>
+顺便围观下怎么取可用内存:
+</p>
+<div class="org-src-container">
 
-                  <pre id="WXUtils.java"><code class="java" >public static long getAvailMemory(Context context){
+<pre id="WXUtils.java"><code class="java" >public static long getAvailMemory(Context context){
     ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
     ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
     am.getMemoryInfo(mi);
@@ -2566,16 +2566,16 @@ InitConfig config=new InitConfig.Builder().setFramework("your framework").build(
     WXLogUtils.w("app AvailMemory ---->>>"+mi.availMem/(1024*1024));
     return mi.availMem/(1024*1024);
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="orgb542c15"></a>-&gt; WXBridgeManager =&gt; initFramework()<br />
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="org48f6c0b"></a>-&gt; WXBridgeManager =&gt; initFramework()<br />
+<div class="org-src-container">
 
-                  <pre id="WXBridgeManager.java"><code class="java" >private void initFramework(String framework) {
+<pre id="WXBridgeManager.java"><code class="java" >private void initFramework(String framework) {
     if (WXSDKEngine.isSoInitialized() && !isJSFrameworkInit()) {
         // other code
         if (TextUtils.isEmpty(framework)) {
@@ -2617,24 +2617,24 @@ InitConfig config=new InitConfig.Builder().setFramework("your framework").build(
 
     }
 }
-                  </code></pre>
-                </div>
-              </li>
-            </ul>
-          </section>
-          <section id="slide-orgace996f">
-            <h4 id="orgace996f">Android WeexCore 中的处理</h4>
-            <div class="outline-text-4" id="text-orgace996f">
-            </div>
-            <ul class="org-ul">
-              <li><a id="org6fead9d"></a>JNI =&gt; initFrameworkEnv<br />
-                <p>
-                  <code>mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport)</code> 实际调用的是 native 层的代码.
-                  先来看下它对应的 JNI 的接口声明：
-                </p>
-                <div class="org-src-container">
+</code></pre>
+</div>
+</li>
+</ul>
+</section>
+<section id="slide-org77b4f47">
+<h4 id="org77b4f47">Android WeexCore 中的处理</h4>
+<div class="outline-text-4" id="text-org77b4f47">
+</div>
+<ul class="org-ul">
+<li><a id="org75ddc64"></a>JNI =&gt; initFrameworkEnv<br />
+<p>
+<code>mWXBridge.initFrameworkEnv(framework, assembleDefaultOptions(), crashFile, pieSupport)</code> 实际调用的是 native 层的代码.
+先来看下它对应的 JNI 的接口声明：
+</p>
+<div class="org-src-container">
 
-                  <pre id="WXBridge_jni.h"><code class="c++" >static const JNINativeMethod kMethodsWXBridge[] =
+<pre id="WXBridge_jni.h"><code class="c++" >static const JNINativeMethod kMethodsWXBridge[] =
   {
   // 对应 private native int nativeInitFrameworkEnv(String framework, WXParams params, String cacheDir, boolean pieSupport);
   // Z 对应 Java 中的 boolean
@@ -2646,20 +2646,20 @@ InitConfig config=new InitConfig.Builder().setFramework("your framework").build(
      "Z"
      ")"
      "I", reinterpret_cast<void*>(InitFrameworkEnv) }
-                    // other native methods...
-                    }
-                  </code></pre>
-                </div>
+   // other native methods...
+  }
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              跟直接用包名声明的方式不用, 这里使用了 <code>JNIEnv =&gt; RegisterNatives()</code> 方式来绑定调用关系.
-              <code>reinterpret_cast&lt;void*&gt;(InitFrameworkEnv)</code> 指定了 Native 实现的方法名: InitFrameworkEnv
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+跟直接用包名声明的方式不用, 这里使用了 <code>JNIEnv =&gt; RegisterNatives()</code> 方式来绑定调用关系.
+<code>reinterpret_cast&lt;void*&gt;(InitFrameworkEnv)</code> 指定了 Native 实现的方法名: InitFrameworkEnv
+</p>
+<div class="org-src-container">
 
-              <pre id="wx_bridge.cpp"><code class="c++" >// framework
+<pre id="wx_bridge.cpp"><code class="c++" >// framework
 // cacheDir 为 App 的 CacheDir
 // pirSupport 默认为 true (SDK < JELLY_BEAN)
 static jint InitFrameworkEnv(JNIEnv* env, jobject jcaller, jstring framework,
@@ -2668,23 +2668,23 @@ static jint InitFrameworkEnv(JNIEnv* env, jobject jcaller, jstring framework,
   const char* cache = env->GetStringUTFChars(cacheDir, nullptr);
   if (strlen(cache) > 0) {
     SoUtils::set_cache_dir(const_cast<char*>(cache));
-                }
-                SoUtils::set_pie_support(pieSupport);
-                jint ret = InitFramework(env, jcaller, framework, params);
-                env->ReleaseStringUTFChars(cacheDir, cache);
-                return ret;
-                }
-              </code></pre>
-            </div>
+  }
+  SoUtils::set_pie_support(pieSupport);
+  jint ret = InitFramework(env, jcaller, framework, params);
+  env->ReleaseStringUTFChars(cacheDir, cache);
+  return ret;
+}
+</code></pre>
+</div>
 
-          </section>
-          <section >
-            <p>
-              <code>InitFramework()</code> 方法:
-            </p>
-            <div class="org-src-container">
+</section>
+<section >
+<p>
+<code>InitFramework()</code> 方法:
+</p>
+<div class="org-src-container">
 
-              <pre id="wx_bridge.cpp"><code class="c++" >static jint InitFramework(JNIEnv* env, jobject object, jstring script, jobject params) {
+<pre id="wx_bridge.cpp"><code class="c++" >static jint InitFramework(JNIEnv* env, jobject object, jstring script, jobject params) {
   WXBridge::Instance()->Reset(env, object);
   // Init platform thread --- ScriptThread
   WeexCoreManager::Instance()->InitScriptThread();
@@ -2701,111 +2701,111 @@ static jint InitFrameworkEnv(JNIEnv* env, jobject jcaller, jstring framework,
   WeexCoreManager::Instance()->set_platform_bridge(bridge);
   // Init params
   std::vector<INIT_FRAMEWORK_PARAMS*> params_vector =
-                initFromParam(env, params, [](const char* status_code, const char* error_msg)
-                {
-                WeexCoreManager::Instance()
-                ->getPlatformBridge()
-                ->platform_side()
-                ->ReportNativeInitStatus(status_code, error_msg);
-                });
-                // If parse init params error, return false
-                if (params_vector.empty()) return false;
-                // Set project mode
+    initFromParam(env, params, [](const char* status_code, const char* error_msg)
+                               {
+                                 WeexCoreManager::Instance()
+                                   ->getPlatformBridge()
+                                   ->platform_side()
+                                   ->ReportNativeInitStatus(status_code, error_msg);
+                               });
+  // If parse init params error, return false
+  if (params_vector.empty()) return false;
+  // Set project mode
 
-                WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_PROCESS);
-                WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
+  WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_PROCESS);
+  WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiProcess);
 
-                // It means initialization failed when any bridge is not passable
-                if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
-                !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
+  // It means initialization failed when any bridge is not passable
+  if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
+      !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
 
-                if(isSingleProcess()) {
-                WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_SO);
-                WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiSo);
+    if(isSingleProcess()) {
+      WeexCoreManager::Instance()->set_project_mode(WeexCoreManager::ProjectMode::MULTI_SO);
+      WeexCoreManager::Instance()->set_script_bridge(new ScriptBridgeInMultiSo);
 
-                if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
-                !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
-                return false;
-                }
-                }
-                }
+      if (!WeexCoreManager::Instance()->getPlatformBridge()->is_passable() ||
+          !WeexCoreManager::Instance()->script_bridge()->is_passable()) {
+        return false;
+      }
+    }
+  }
 
-                // for environment
-                bridge->core_side()->SetPlatform(WXCoreEnvironment::getInstance()->platform());
-                bridge->core_side()->SetDeviceWidthAndHeight(WXCoreEnvironment::getInstance()->DeviceWidth(), WXCoreEnvironment::getInstance()->DeviceHeight());
-                auto options = WXCoreEnvironment::getInstance()->options();
-                auto it = options.begin();
-                for (; it != options.end(); it++) {
-                bridge->core_side()->AddOption(it->first, it->second);
-                }
-                // Set measure function
-                WeexCoreManager::Instance()->set_measure_function_adapter(new MeasureFunctionAdapterImplAndroid());
-                bridge->core_side()->SetMeasureFunctionAdapter();
-                ScopedJStringUTF8 c_script(env, script);
-                // Call InitFramework
-                auto result =
-                bridge->core_side()->InitFramework(c_script.getChars(), params_vector);
-                freeParams(params_vector);
-                return result;
-                }
-              </code></pre>
-            </div>
-          </section>
-          <section >
-              </li>
-              <li><a id="org6e7f6ee"></a>-&gt; CoreSideInPlatform =&gt; InitFramework()<br />
-                <div class="org-src-container">
+  // for environment
+  bridge->core_side()->SetPlatform(WXCoreEnvironment::getInstance()->platform());
+  bridge->core_side()->SetDeviceWidthAndHeight(WXCoreEnvironment::getInstance()->DeviceWidth(), WXCoreEnvironment::getInstance()->DeviceHeight());
+  auto options = WXCoreEnvironment::getInstance()->options();
+  auto it = options.begin();
+  for (; it != options.end(); it++) {
+    bridge->core_side()->AddOption(it->first, it->second);
+  }
+  // Set measure function
+  WeexCoreManager::Instance()->set_measure_function_adapter(new MeasureFunctionAdapterImplAndroid());
+  bridge->core_side()->SetMeasureFunctionAdapter();
+  ScopedJStringUTF8 c_script(env, script);
+  // Call InitFramework
+  auto result =
+    bridge->core_side()->InitFramework(c_script.getChars(), params_vector);
+  freeParams(params_vector);
+  return result;
+}
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="org7f8fbfa"></a>-&gt; CoreSideInPlatform =&gt; InitFramework()<br />
+<div class="org-src-container">
 
-                  <pre id="core_side_in_platform.cpp"><code class="c++" >int CoreSideInPlatform::InitFramework(const char *script, std::vector<INIT_FRAMEWORK_PARAMS *> &params) {
-                    return WeexCoreManager::Instance()
-                    ->script_bridge()
-                    ->script_side()
-                    ->InitFramework(script, params);
-                    }
-                  </code></pre>
-                </div>
-          </section>
-          <section >
-              </li>
-              <li><a id="orgbcddb63"></a>-&gt; ScriptSideInMultiProcess =&gt; InitFramework()<br />
-                <div class="org-src-container">
+<pre id="core_side_in_platform.cpp"><code class="c++" >int CoreSideInPlatform::InitFramework(const char *script, std::vector<INIT_FRAMEWORK_PARAMS *> &params) {
+  return WeexCoreManager::Instance()
+    ->script_bridge()
+    ->script_side()
+    ->InitFramework(script, params);
+}
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="orga011c3a"></a>-&gt; ScriptSideInMultiProcess =&gt; InitFramework()<br />
+<div class="org-src-container">
 
-                  <pre id="script_side_in_multi_process.cpp"><code class="c++" >
+<pre id="script_side_in_multi_process.cpp"><code class="c++" >
 int ScriptSideInMultiProcess::InitFramework(const char *script, std::vector<INIT_FRAMEWORK_PARAMS *> &params) {
-                    try {
-                    // check sender != null
-                    std::unique_ptr<IPCSerializer> serializer(createIPCSerializer());
-                    serializer->setMsg(static_cast<uint32_t>(IPCJSMsg::INITFRAMEWORK));
-                    serializer->add(script, strlen(script));
-                    for (auto it = params.begin(); it != params.end(); ++it) {
-                    serializer->add((*it)->type->content, (*it)->type->length);
-                    serializer->add((*it)->value->content, (*it)->value->length);
-                    }
-                    std::unique_ptr<IPCBuffer> buffer = serializer->finish();
-                    std::unique_ptr<IPCResult> result = sender_->send(buffer.get());
-                    if (result->getType() != IPCType::INT32) {
-                    LOGE("initFramework Unexpected result type");
-                    bridge()->core_side()->ReportException("", "initFramework", "error, initFramework Unexpected result type");
-                    return false;
-                    }
-                    } catch (IPCException &e) {
-                    LOGE("%s", e.msg());
-                    return false;
-                    }
-                    return true;
-                    }
-                  </code></pre>
-                </div>
-          </section>
-          <section >
-              </li>
-              <li><a id="orgef6b1dc"></a>-&gt; weex<sub>js</sub><sub>engine</sub> =&gt; initFramework()&#xa0;&#xa0;&#xa0;<span class="tag"><span class="confirm">confirm</span></span><br />
-                <p>
-                  IPC 接收 <code>IPCJSMsg::INITFRAMEWORK</code> 方法没有在项目中暴露出来，查看 weex<sub>js</sub><sub>engine</sub> 中有这么一个实现方法,　在这个方法中实际加载了 main.js 文件：
-                </p>
-                <div class="org-src-container">
+  try {
+    // check sender != null
+    std::unique_ptr<IPCSerializer> serializer(createIPCSerializer());
+    serializer->setMsg(static_cast<uint32_t>(IPCJSMsg::INITFRAMEWORK));
+    serializer->add(script, strlen(script));
+    for (auto it = params.begin(); it != params.end(); ++it) {
+      serializer->add((*it)->type->content, (*it)->type->length);
+      serializer->add((*it)->value->content, (*it)->value->length);
+    }
+    std::unique_ptr<IPCBuffer> buffer = serializer->finish();
+    std::unique_ptr<IPCResult> result = sender_->send(buffer.get());
+    if (result->getType() != IPCType::INT32) {
+      LOGE("initFramework Unexpected result type");
+      bridge()->core_side()->ReportException("", "initFramework", "error, initFramework Unexpected result type");
+      return false;
+    }
+  } catch (IPCException &e) {
+    LOGE("%s", e.msg());
+    return false;
+  }
+  return true;
+}
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="org5fc32f1"></a>-&gt; weex<sub>js</sub><sub>engine</sub> =&gt; initFramework()&#xa0;&#xa0;&#xa0;<span class="tag"><span class="confirm">confirm</span></span><br />
+<p>
+IPC 接收 <code>IPCJSMsg::INITFRAMEWORK</code> 方法没有在项目中暴露出来，查看 weex<sub>js</sub><sub>engine</sub> 中有这么一个实现方法,　在这个方法中实际加载了 main.js 文件：
+</p>
+<div class="org-src-container">
 
-                  <pre id="com_taobao_weex_bridge_WXBridge.cpp"><code class="c++" >jint Java_com_taobao_weex_bridge_WXBridge_initFramework(JNIEnv *env,
+<pre id="com_taobao_weex_bridge_WXBridge.cpp"><code class="c++" >jint Java_com_taobao_weex_bridge_WXBridge_initFramework(JNIEnv *env,
                                                         jobject object, jstring script,
                                                         jobject params) {
   // 配置 WXEnvironment
@@ -2822,23 +2822,23 @@ int ScriptSideInMultiProcess::InitFramework(const char *script, std::vector<INIT
   env->DeleteLocalRef(c_params);
   return true;
 }
-                  </code></pre>
-                </div>
-              </li>
-            </ul>
-          </section>
-          <section id="slide-orge261026">
-            <h3 id="orge261026">JSFramework 处理 Native 的调用</h3>
-            <div class="outline-text-3" id="text-orge261026">
-            </div>
-            <ul class="org-ul">
-              <li><a id="org6eec4c0"></a>Methods<br />
-                <p>
-                  列了下 <code>WXBridgeManager.java</code> 中声明的一些 call JS 的方法:
-                </p>
-                <div class="org-src-container">
+</code></pre>
+</div>
+</li>
+</ul>
+</section>
+<section id="slide-orgf89ea5a">
+<h3 id="orgf89ea5a">JSFramework 处理 Native 的调用</h3>
+<div class="outline-text-3" id="text-orgf89ea5a">
+</div>
+<ul class="org-ul">
+<li><a id="orga145f45"></a>Methods<br />
+<p>
+列了下 <code>WXBridgeManager.java</code> 中声明的一些 call JS 的方法:
+</p>
+<div class="org-src-container">
 
-                  <pre id="Native Call JS Function"><code class="org" >| Methods                   |
+<pre id="Native Call JS Function"><code class="org" >| Methods                   |
 |---------------------------|
 | createInstance            |
 | destroyInstance           |
@@ -2855,16 +2855,16 @@ int ScriptSideInMultiProcess::InitFramework(const char *script, std::vector<INIT
 | notifyTrimMemory          |
 | notifySerializeCodeCache  |
 | createInstanceContext     |
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org853d983"></a>注册 Component<br />
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="orgf9ee635"></a>注册 Component<br />
+<div class="org-src-container">
 
-                  <pre id="runtime/api/component.js"><code class="javascript" >/**
+<pre id="runtime/api/component.js"><code class="javascript" >/**
  * Register native components information.
  * @param {array} newComponents
  */
@@ -2884,16 +2884,16 @@ export function registerComponents (newComponents) {
     })
   }
 }
-                  </code></pre>
-                </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-              </li>
-              <li><a id="org2a119e4"></a>注册 Module<br />
-                <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="orgd87d64b"></a>注册 Module<br />
+<div class="org-src-container">
 
-                  <pre id="runtime/api/module.js"><code class="javascript" >/**
+<pre id="runtime/api/module.js"><code class="javascript" >/**
  * Register native modules information.
  * @param {object} newModules
  */
@@ -2912,20 +2912,20 @@ export function registerModules (newModules) {
     })
   }
 }
-                  </code></pre>
-                </div>
-          </section>
-          <section >
-              </li>
-              <li><a id="org4bef760"></a>Weex 页面渲染过程分析<br />
-                <ul class="org-ul">
-                  <li><a id="org1dd5ee8"></a>Native =&gt; render("weex<sub>page.js</sub>")<br />
-                    <p>
-                      <code>WXSDKInstance =&gt; render()</code> 来渲染一个 weex 页面:
-                    </p>
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="org24d779c"></a>Weex 页面渲染过程分析<br />
+<ul class="org-ul">
+<li><a id="org182d4a1"></a>Native =&gt; render("weex<sub>page.js</sub>")<br />
+<p>
+<code>WXSDKInstance =&gt; render()</code> 来渲染一个 weex 页面:
+</p>
+<div class="org-src-container">
 
-                      <pre id="Weex render demo"><code class="java" >/**
+<pre id="Weex render demo"><code class="java" >/**
  * WXSample 可以替换成自定义的字符串，针对埋点有效。
  * template 是.we transform 后的 js 文件。
  * option 可以为空，或者通过 option 传入 js 需要的参数。例如 bundle js 的地址等。
@@ -2934,19 +2934,19 @@ export function registerModules (newModules) {
  * height =-1 默认全屏，可以自己定制。
  */
 mWXSDKInstance.render("WXSample", WXFileUtils.loadFileContent("hello.js", this), null, null, -1, -1, WXRenderStrategy.APPEND_ASYNC);
-                      </code></pre>
-                    </div>
-                    <p>
-                      内部其实时把这个 render 调用转成了 IPC 消息的方式来调用到 JSFramework 中的 <code>createInstance()</code> 方法,这里的具体步骤文档中有提到,就不详细展开了.
-                    </p>
+</code></pre>
+</div>
+<p>
+内部其实时把这个 render 调用转成了 IPC 消息的方式来调用到 JSFramework 中的 <code>createInstance()</code> 方法,这里的具体步骤文档中有提到,就不详细展开了.
+</p>
 
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org6e9cea9"></a>-&gt; JSFramework =&gt; createInstance()<br />
-                    <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="org12ae0d8"></a>-&gt; JSFramework =&gt; createInstance()<br />
+<div class="org-src-container">
 
-                      <pre id="runtime/api/init.js"><code class="javascript" >function createInstance (id, code, config, data) {
+<pre id="runtime/api/init.js"><code class="javascript" >function createInstance (id, code, config, data) {
   // 忽略各种检查和配置参数的代码
   const instanceContext = createInstanceContext(id, config, data)
   if (typeof framework.createInstance === 'function') {
@@ -2965,16 +2965,16 @@ mWXSDKInstance.render("WXSample", WXFileUtils.loadFileContent("hello.js", this),
   // console.error(`[JS Framework] Can't find available "createInstance" method in ${bundleType}!`)
   runInContext(code, instanceContext)
 }
-                      </code></pre>
-                    </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org60c4353"></a>-&gt; JS =&gt; createInstanceContext()<br />
-                    <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="orgace635a"></a>-&gt; JS =&gt; createInstanceContext()<br />
+<div class="org-src-container">
 
-                      <pre id="runtime/api/init.js"><code class="javascript" >function createInstanceContext (id, options = {}, data) {
+<pre id="runtime/api/init.js"><code class="javascript" >function createInstanceContext (id, options = {}, data) {
   const weex = new WeexInstance(id, options)
   const bundleType = options.bundleType || 'Vue'
   instanceTypeMap[id] = bundleType
@@ -3013,16 +3013,16 @@ mWXSDKInstance.render("WXSample", WXFileUtils.loadFileContent("hello.js", this),
   Object.freeze(instanceContext)
   return instanceContext
 }
-                      </code></pre>
-                    </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-                  </li>
-                  <li><a id="orgf02582f"></a>-&gt; framework(legacy) =&gt; createInstance()<br />
-                    <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="org2208969"></a>-&gt; framework(legacy) =&gt; createInstance()<br />
+<div class="org-src-container">
 
-                      <pre id="runtime/api/frameworks/legacy/static/create.js"><code class="javascript" >/**
+<pre id="runtime/api/frameworks/legacy/static/create.js"><code class="javascript" >/**
  * Create a Weex instance.
  *
  * @param  {string} id
@@ -3050,15 +3050,15 @@ export function createInstance (id, code, options, data, info) {
   }
   return (result instanceof Error) ? result : instance
 }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org2b265e4"></a>-&gt; initApp()<br />
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="orge6e656d"></a>-&gt; initApp()<br />
+<div class="org-src-container">
 
-                      <pre id="runtime/frameworks/legacy/app/ctrl/init.js"><code class="javascript" >export function init (app, code, data, services) {
+<pre id="runtime/frameworks/legacy/app/ctrl/init.js"><code class="javascript" >export function init (app, code, data, services) {
   console.debug('[JS Framework] Intialize an instance with:\n', data)
   let result
 
@@ -3166,16 +3166,16 @@ export function createInstance (id, code, options, data, info) {
 
   return result
 }
-                      </code></pre>
-                    </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-                  </li>
-                  <li><a id="orgd976a74"></a>-&gt; runInContext()<br />
-                    <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="orgf1e7e33"></a>-&gt; runInContext()<br />
+<div class="org-src-container">
 
-                      <pre id="runtime/api/init.js"><code class="javascript" >/**
+<pre id="runtime/api/init.js"><code class="javascript" >/**
  * Run js code in a specific context.
  * @param {string} code
  * @param {object} context
@@ -3195,19 +3195,19 @@ function runInContext (code, context) {
   `
   return (new Function(...keys, bundle))(...args)
 }
-                      </code></pre>
-                    </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org8c5811a"></a>-&gt; 打包生成的 JS 文件<br />
-                    <p>
-                      根据 <code>runInContext()</code> 方法中的 JS 代码生成规则，最终生成的 JavaScript Function 对象如下：
-                    </p>
-                    <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="org21cf631"></a>-&gt; 打包生成的 JS 文件<br />
+<p>
+根据 <code>runInContext()</code> 方法中的 JS 代码生成规则，最终生成的 JavaScript Function 对象如下：
+</p>
+<div class="org-src-container">
 
-                      <pre><code class="javascript" >(function (global) {
+<pre><code class="javascript" >(function (global) {
   (function (modules) { // webpackBootstrap
     // 省略代码
     return __webpack_require__(__webpack_require__.s = 3);
@@ -3241,30 +3241,30 @@ function runInContext (code, context) {
     })
   ]);
 })(Object.create(this));
-                      </code></pre>
-                    </div>
+</code></pre>
+</div>
 
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org5ef088c"></a>-&gt; 加载实际页面<br />
-                    <p>
-                      开发中创建一个 text 标签：
-                    </p>
-                    <div class="org-src-container">
+</section>
+<section >
+</li>
+<li><a id="org1d9e0d2"></a>-&gt; 加载实际页面<br />
+<p>
+开发中创建一个 text 标签：
+</p>
+<div class="org-src-container">
 
-                      <pre id="weex page"><code class="javascript" ><template>
-                        <text class="message">Now, let's use Vue.js to build your Weex app.</text>
-                      </template>
-                      </code></pre>
-                    </div>
+<pre id="weex page"><code class="javascript" ><template>
+  <text class="message">Now, let's use Vue.js to build your Weex app.</text>
+</template>
+</code></pre>
+</div>
 
-                    <p>
-                      实际打包生产的代码，提前剧透，这里每次执行的 <code>_c()</code> 方法，其实就是 compile.js 中的 <code>compile (vm, target, dest, meta)</code> 方法，具体的可以继续往下看。
-                    </p>
-                    <div class="org-src-container">
+<p>
+实际打包生产的代码，提前剧透，这里每次执行的 <code>_c()</code> 方法，其实就是 compile.js 中的 <code>compile (vm, target, dest, meta)</code> 方法，具体的可以继续往下看。
+</p>
+<div class="org-src-container">
 
-                      <pre><code class="javascript" >
+<pre><code class="javascript" >
 /* 1 */
 (function(module, exports) {
   module.exports={render:function (){
@@ -3276,22 +3276,22 @@ function runInContext (code, context) {
   module.exports.render._withStripped = true
 
   /***/ })
-                      </code></pre>
-                    </div>
+</code></pre>
+</div>
 
-                    <p>
-                      那么问题来了，Weex 是如何加载打包之后的 JS 文件，并解析成 Weex 页面的呢？
-                    </p>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org78266d0"></a>-&gt; Vm 构造方法<br />
-                    <p>
-                      关键方法： <code>build(this);</code> 完成了对生成的 JS 对象的解析，这里的 <code>build()</code> 方法，对应了 compile.js 中的 <code>build()</code> 方法。
-                    </p>
-                    <div class="org-src-container">
+<p>
+那么问题来了，Weex 是如何加载打包之后的 JS 文件，并解析成 Weex 页面的呢？
+</p>
+</section>
+<section >
+</li>
+<li><a id="orgecc4c98"></a>-&gt; Vm 构造方法<br />
+<p>
+关键方法： <code>build(this);</code> 完成了对生成的 JS 对象的解析，这里的 <code>build()</code> 方法，对应了 compile.js 中的 <code>build()</code> 方法。
+</p>
+<div class="org-src-container">
 
-                      <pre id="runtime/frameworks/legacy/vm/index.js"><code class="javascript" >export default function Vm (
+<pre id="runtime/frameworks/legacy/vm/index.js"><code class="javascript" >export default function Vm (
   type,
   options,
   parentVm,
@@ -3354,18 +3354,18 @@ function runInContext (code, context) {
   this._parentEl = parentEl || this._app.doc.documentElement
   build(this)
 }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="orgcbe5abf"></a>-&gt; Compile =&gt; build()<br />
-                    <p>
-                      具体解析的 JS 文件的方法，关键的方法是 <code>compile()</code>
-                    </p>
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="org62679ac"></a>-&gt; Compile =&gt; build()<br />
+<p>
+具体解析的 JS 文件的方法，关键的方法是 <code>compile()</code> 
+</p>
+<div class="org-src-container">
 
-                      <pre id="runtime/frameworks/legacy/vm/compile.js"><code class="javascript" >/**
+<pre id="runtime/frameworks/legacy/vm/compile.js"><code class="javascript" >/**
  * build()
  *   compile(template, parentNode)
  *     if (type is content) create contentNode
@@ -3404,18 +3404,18 @@ export function build (vm) {
   vm.$emit('hook:ready')
   vm._ready = true
 }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org6af24f9"></a>-&gt; Compile =&gt; compile()<br />
-                    <p>
-                      <code>compile()</code> 方法中，对传入的参数进行解析，并调用渲染的环节:
-                    </p>
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="org2370e0c"></a>-&gt; Compile =&gt; compile()<br />
+<p>
+<code>compile()</code> 方法中，对传入的参数进行解析，并调用渲染的环节:
+</p>
+<div class="org-src-container">
 
-                      <pre id="runtime/frameworks/legacy/vm/compile.js"><code class="javascript" >/**
+<pre id="runtime/frameworks/legacy/vm/compile.js"><code class="javascript" >/**
  * Generate elements by child or children and append to parent elements.
  * Root element info would be merged if has. The first argument may be an array
  * if the root element with options.replace has not only one child.
@@ -3481,18 +3481,18 @@ function compile (vm, target, dest, meta) {
   console.debug('[JS Framework] compile native component by', target)
   compileNativeComponent(vm, target, dest, type)
 }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="orgb6a67cc"></a>-&gt; Compile =&gt; compileNativeComponent()<br />
-                    <p>
-                      对于 UI 组件的渲染，都会走到这个方法中，可以看到，在这个方法里面调用了 <code>createElement()</code> 方法，就是通过它来创建一个组件对象。创建完成之后，通过 <code>dom-helper =&gt; attachTarget()</code> 方法把生成的 Element 添加到页面上（）。
-                    </p>
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="org16b5140"></a>-&gt; Compile =&gt; compileNativeComponent()<br />
+<p>
+对于 UI 组件的渲染，都会走到这个方法中，可以看到，在这个方法里面调用了 <code>createElement()</code> 方法，就是通过它来创建一个组件对象。创建完成之后，通过 <code>dom-helper =&gt; attachTarget()</code> 方法把生成的 Element 添加到页面上（）。
+</p>
+<div class="org-src-container">
 
-                      <pre id="runtime/frameworks/legacy/vm/compile.js"><code class="javascript" >/**
+<pre id="runtime/frameworks/legacy/vm/compile.js"><code class="javascript" >/**
  * Generate element from template and attach to the dest if needed.
  * The time to attach depends on whether the mode status is node or tree.
  *
@@ -3556,15 +3556,15 @@ function compileNativeComponent (vm, template, dest, type) {
     app.lastSignal = attachTarget(vm, element, dest)
   }
 }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org264e677"></a>-&gt; DomHelper =&gt; createElement()<br />
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="org79920b9"></a>-&gt; DomHelper =&gt; createElement()<br />
+<div class="org-src-container">
 
-                      <pre id="runtime/frameworks/legacy/vm/dom-helper.js"><code class="javascript" >/**
+<pre id="runtime/frameworks/legacy/vm/dom-helper.js"><code class="javascript" >/**
  * Create an element by type
  * Using this._app.doc
  *
@@ -3575,18 +3575,18 @@ export function createElement (vm, type) {
   const doc = vm._app.doc
   return doc.createElement(type)
 }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org24f25a3"></a>-&gt; App =&gt; doc<br />
-                    <p>
-                      可以看到 App 的 doc 属性来来自于 <code>new renderer.Document()</code> 方法:
-                    </p>
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="org90c3ac5"></a>-&gt; App =&gt; doc<br />
+<p>
+可以看到 App 的 doc 属性来来自于 <code>new renderer.Document()</code> 方法:
+</p>
+<div class="org-src-container">
 
-                      <pre id="runtime/frameworks/legacy/app/instance.js"><code class="javascript" >import renderer from '../config' // renderer 的声明在 config.js 中
+<pre id="runtime/frameworks/legacy/app/instance.js"><code class="javascript" >import renderer from '../config' // renderer 的声明在 config.js 中
 /**
  * App constructor for Weex framework.
  * @param {string} id
@@ -3608,18 +3608,18 @@ export default function App (id, options) {
   )
   this.differ = new Differ(id)
 }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="orgdb58aeb"></a>-&gt; Document =&gt; createElement()<br />
-                    <p>
-                      这里调用的 <code>new Element()</code> 方法最终调用了 <code>new WeexElement()</code>
-                    </p>
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="orgb4b1bc7"></a>-&gt; Document =&gt; createElement()<br />
+<p>
+这里调用的 <code>new Element()</code> 方法最终调用了 <code>new WeexElement()</code>
+</p>
+<div class="org-src-container">
 
-                      <pre id="runtime/vdom/Document.js"><code class="javascript" >/**
+<pre id="runtime/vdom/Document.js"><code class="javascript" >/**
  * Create an element.
  * @param {string} tagName
  * @param {objct} props
@@ -3633,18 +3633,18 @@ createElement (tagName, props) {
   }
   return el
 }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org1a0b2c3"></a>-&gt; DomHelper =&gt;attachTarget()<br />
-                    <p>
-                      <code>attachTarget()</code> 中调用的 <code>Element =&gt; insertBefore()</code> 和 <code>Element =&gt; appendChild()</code> ，在这些方法中通过发送事件的方式来调用原生的方法
-                    </p>
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="orgb7ff41f"></a>-&gt; DomHelper =&gt;attachTarget()<br />
+<p>
+<code>attachTarget()</code> 中调用的 <code>Element =&gt; insertBefore()</code> 和 <code>Element =&gt; appendChild()</code> ，在这些方法中通过发送事件的方式来调用原生的方法
+</p>
+<div class="org-src-container">
 
-                      <pre id="runtime/frameworks/legacy/vm/dom-helper.js"><code class="javascript" >/**
+<pre id="runtime/frameworks/legacy/vm/dom-helper.js"><code class="javascript" >/**
  * Attach target to a certain dest using appendChild by default.
  * If the dest is a frag block then insert before the ender.
  * If the target is a frag block then attach the starter and ender in order.
@@ -3684,18 +3684,18 @@ export function attachTarget (vm, target, dest) {
     }
   }
 }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="orgf2a5ce6"></a>-&gt; Element =&gt; 发送渲染的消息<br />
-                    <p>
-                      Element 类的 <code>appendChild()</code> 方法, <code>insertBefore()</code> 和 <code>inserAfter()</code> 这些方法，都会去调用 taskCenter 的发送消息方法
-                    </p>
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="orgea00a74"></a>-&gt; Element =&gt; 发送渲染的消息<br />
+<p>
+Element 类的 <code>appendChild()</code> 方法, <code>insertBefore()</code> 和 <code>inserAfter()</code> 这些方法，都会去调用 taskCenter 的发送消息方法
+</p>
+<div class="org-src-container">
 
-                      <pre id="runtime/vdom/Element.js"><code class="javascript" >// 发送 "addElement" 消息，告诉 JSFramework 需要调用 callNative 方法渲染原生组件
+<pre id="runtime/vdom/Element.js"><code class="javascript" >// 发送 "addElement" 消息，告诉 JSFramework 需要调用 callNative 方法渲染原生组件
 const taskCenter = getTaskCenter(this.docId)
   if (taskCenter) {
     return taskCenter.send(
@@ -3704,18 +3704,18 @@ const taskCenter = getTaskCenter(this.docId)
       [this.ref, node.toJSON(), -1]
     )
   }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org708a913"></a>-&gt; TaskCenter =&gt; send()<br />
-                    <p>
-                      DOM 操作的方法会通过消息传递给 JavaScriptCore
-                    </p>
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="orgf2df570"></a>-&gt; TaskCenter =&gt; send()<br />
+<p>
+DOM 操作的方法会通过消息传递给 JavaScriptCore
+</p>
+<div class="org-src-container">
 
-                      <pre id="runtime/bridge/TaskCenter.js"><code class="javascript" >send (type, params, args, options) {
+<pre id="runtime/bridge/TaskCenter.js"><code class="javascript" >send (type, params, args, options) {
   const { action, component, ref, module, method } = params
 
   // normalize args and options
@@ -3741,15 +3741,15 @@ const taskCenter = getTaskCenter(this.docId)
   }
   }
 }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="orgb217d58"></a>-&gt; TaskCenter 中注册的 DOM<sub>METHODS</sub><br />
-                    <div class="org-src-container">
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="orgaeff8c8"></a>-&gt; TaskCenter 中注册的 DOM<sub>METHODS</sub><br />
+<div class="org-src-container">
 
-                      <pre id="runtime/bridge/TaskCenter.js"><code class="javascript" >const DOM_METHODS = {
+<pre id="runtime/bridge/TaskCenter.js"><code class="javascript" >const DOM_METHODS = {
   createFinish: global.callCreateFinish,
   updateFinish: global.callUpdateFinish,
   refreshFinish: global.callRefreshFinish,
@@ -3765,63 +3765,63 @@ const taskCenter = getTaskCenter(this.docId)
   addEvent: global.callAddEvent,
   removeEvent: global.callRemoveEvent
 }
-                      </code></pre>
-                    </div>
-          </section>
-          <section >
-                  </li>
-                  <li><a id="org74cd7ff"></a>-&gt; JavaScriptCore =&gt; callAddElement()<br />
-                    <p>
-                      <code>callAddElement()</code> 最终调用了 IPC 消息调用了各自 SDK 中的 callAddElement 方法，使用原生的方式渲染页面
-                    </p>
-          </section>
-          <section >
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </section>
-        </section>
-        <section>
-          <section id="slide-orge659e2e">
-            <h2 id="orge659e2e">Thank You</h2>
-            <p>
-              Q&amp;A
-            </p>
-          </section>
-        </section>
-      </div>
-    </div>
-    <script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
-    <script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+</code></pre>
+</div>
+</section>
+<section >
+</li>
+<li><a id="orge60f04f"></a>-&gt; JavaScriptCore =&gt; callAddElement()<br />
+<p>
+<code>callAddElement()</code> 最终调用了 IPC 消息调用了各自 SDK 中的 callAddElement 方法，使用原生的方式渲染页面
+</p>
+</section>
+<section >
+</li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org04527f8">
+<h2 id="org04527f8">Thank You</h2>
+<p>
+Q&amp;A
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
 
-    <script>
-     // Full list of configuration options available here:
-     // https://github.com/hakimel/reveal.js#configuration
-     Reveal.initialize({
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
 
-       controls: true,
-       progress: true,
-       history: false,
-       center: true,
-       slideNumber: 'c',
-       rollingLinks: false,
-       keyboard: true,
-       overview: true,
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
 
-       theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-       transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
-       transitionSpeed: 'default',
-       multiplex: {
-         secret: '', // null if client
-         id: '', // id, obtained from socket.io server
-         url: '' // Location of socket.io server
-       },
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
 
-       // Optional libraries used to extend on reveal.js
-       dependencies: [
-         { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }]
-     });
-    </script>
-  </body>
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }]
+});
+</script>
+</body>
 </html>
