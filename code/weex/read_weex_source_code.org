@@ -159,14 +159,18 @@
    #+END_NOTES
 *** Workflow
 **** Create Instance
+     在调用 ~WXSDKInstance => render()~ 方法时，会进到 createInstance 的流程中，具体调用流程如图：
      [[./imgs/img_weex_lifecycle_create_instance.jpeg]]
 **** Refresh Instance
+     在调用 ~WXSDKInstance => reloadPage()~ 方法时，会进到 refreshInstance 流程中，具体调用流程如图：
      [[./imgs/img_weex_lifecycle_refresh_instance.jpeg]]
 
 **** Fire Event/Callback
+     当点击 Weex 页面的按钮触发点击事件时，会进入 fireEvent 流程，具体调用流程如图：
      [[./imgs/img_weex_lifecycle_fire_event.jpeg]]
 
 **** Destroy Instance
+     ~WXSDKInstance => onActivityDestroy()~ 当 Weex 页面伴随着所在 Activity 的生命周期方法结束时，会进入 destoryInstance 的流程，具体调用流程如图：
      [[./imgs/img_weex_lifecycle_destroy_instance.jpeg]]
 
 **** Navigate
@@ -744,7 +748,7 @@
           }
       }
     #+END_SRC
-    后续的渲染工作就交给 native 层来完成,可以看下底层的实现:  [[weex_core_render][传送门]]
+    后续的渲染工作就交给 native 层来完成
 
 *** JSFramework 渲染过程
     [[weex_jsf_render][JSFramework 页面渲染]]
@@ -959,11 +963,9 @@
 ** Android Render Engine
 * iOS SDK
 ** 初始化流程分析
-
+** Weex 页面渲染流程分析
 ** JS Bridge
-
 ** iOS Render Engine
-
 * JSFramework
 ** JSFramework
    <<weex_jsframework>>
