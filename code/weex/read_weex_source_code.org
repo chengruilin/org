@@ -299,12 +299,16 @@
    [[./imgs/img_weex_framework_classes.jpeg]]
 ** 调用流程图
    [[./imgs/img_weex_arch_flow.png]]
+** 线程模型
+** 进程模型
+*** 为什么使用进程
+    解决的问题
+    - 资源竞争/内存挑战
+    - 碎⽚化／适配问题
+    - 稳定性
 
-** 进程/线程模型
-*** Weex 进程交互
-*** Weex 线程间交互
-    [[./imgs/img_weex_threads.jpg]]
-
+*** 线程模型图
+    [[./imgs/img_weex_process.jpg]]
 * Android SDK
 ** 初始化流程分析
    整个初始化的流程,简单来说就是:
@@ -937,7 +941,6 @@
       }
     #+END_SRC
 
-** Android Render Engine
 * iOS SDK
 ** 初始化流程分析
 ** Weex 页面渲染流程分析
@@ -1240,8 +1243,6 @@
        }
      #+END_SRC
 ** JSFramework 处理 Native 的调用
-   <<weex_jsf_render>>
-
 **** Methods
      列了下 ~WXBridgeManager.java~ 中声明的一些 call JS 的方法:
      #+NAME: Native Call JS Function
@@ -2035,12 +2036,29 @@
      #+END_SRC
 
 **** 注册 Module
+     #+NAME: runtime/api/module.js
      #+BEGIN_SRC javascript
-      // 将 functionBody 作为函数体，各种 arg 作为参数，创建一个新的函数
-      let func = new Function ([arg1[, arg2[, ...argN]],] functionBody)
+       /**
+        ,* Register native modules information.
+        ,* @param {object} newModules
+        ,*/
+       export function registerModules (newModules) {
+         for (const name in newModules) {
+           if (!weexModules[name]) {
+             weexModules[name] = {}
+           }
+           newModules[name].forEach(method => {
+             if (typeof method === 'string') {
+               weexModules[name][method] = true
+             }
+             else {
+               weexModules[name][method.name] = method.args
+             }
+           })
+         }
+       }
      #+END_SRC
 
-** JSFramework 调用 Native 方法
 * Weex Core
 ** Android & JS 调用流程分析
    Android SDK 代码分析中, ~WXBridgeManager.java~ 提供的很多方法都是通过 ~WXBridge.java~ 中定义的 JNI 接口,
