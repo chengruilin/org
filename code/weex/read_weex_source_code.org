@@ -1405,7 +1405,9 @@
           const bundleDefine = (...args) => defineFn(app, ...args)
           const bundleBootstrap = (name, config, _data) => {
             result = bootstrap(app, name, config, _data || data)
+            // misc.js => updateActions()
             updateActions(app)
+            // 会调用 callCreateFinish 方法
             app.doc.listener.createFinish()
             console.debug(`[JS Framework] After intialized an instance(${app.id})`)
           }
@@ -1570,7 +1572,6 @@
       #+END_SRC
 
 ***** -> 加载实际页面
-
       开发中创建一个 text 标签：
       #+NAME: weex page
       #+BEGIN_SRC javascript
@@ -1579,8 +1580,9 @@
         </template>
       #+END_SRC
 
-      实际打包生产的代码
+      实际打包生产的代码，提前剧透，这里每次执行的 ~_c()~ 方法，其实就是 compile.js 中的 ~compile (vm, target, dest, meta)~ 方法，具体的可以继续往下看。
       #+BEGIN_SRC javascript
+
         /* 1 */
         (function(module, exports) {
           module.exports={render:function (){
@@ -1593,6 +1595,435 @@
 
           /***/ })
       #+END_SRC
+      
+      那么问题来了，Weex 是如何加载打包之后的 JS 文件，并解析成 Weex 页面的呢？
+***** -> Vm 构造方法
+      关键方法： ~build(this);~ 完成了对生成的 JS 对象的解析，这里的 ~build()~ 方法，对应了 compile.js 中的 ~build()~ 方法。
+      #+NAME: runtime/frameworks/legacy/vm/index.js 
+      #+BEGIN_SRC javascript
+        export default function Vm (
+          type,
+          options,
+          parentVm,
+          parentEl,
+          mergedData,
+          externalEvents
+        ) {
+          parentVm = parentVm || {}
+          this._parent = parentVm._realParent ? parentVm._realParent : parentVm
+          this._app = parentVm._app || {}
+          parentVm._childrenVms && parentVm._childrenVms.push(this)
+
+          if (!options && this._app.customComponentMap) {
+            options = this._app.customComponentMap[type]
+          }
+          options = options || {}
+
+          const data = options.data || {}
+
+          this._options = options
+          this._methods = options.methods || {}
+          this._computed = options.computed || {}
+          this._css = options.style || {}
+          this._ids = {}
+          this._vmEvents = {}
+          this._childrenVms = []
+          this._type = type
+
+          // bind events and lifecycles
+          initEvents(this, externalEvents)
+
+          console.debug(`[JS Framework] "init" lifecycle in Vm(${this._type})`)
+          this.$emit('hook:init')
+          this._inited = true
+
+          // proxy data and methods
+          // observe data and add this to vms
+          this._data = typeof data === 'function' ? data() : data
+          if (mergedData) {
+            extend(this._data, mergedData)
+          }
+          initState(this)
+
+          console.debug(`[JS Framework] "created" lifecycle in Vm(${this._type})`)
+          this.$emit('hook:created')
+          this._created = true
+
+          // backward old ready entry
+          if (options.methods && options.methods.ready) {
+            console.warn('"exports.methods.ready" is deprecated, ' +
+                         'please use "exports.created" instead')
+            options.methods.ready.call(this)
+          }
+
+          if (!this._app.doc) {
+            return
+          }
+
+          // if no parentElement then specify the documentElement
+          this._parentEl = parentEl || this._app.doc.documentElement
+          build(this)
+        }
+      #+END_SRC
+***** -> Compile => build()
+      具体解析的 JS 文件的方法，关键的方法是 ~compile()~ 
+      #+NAME: runtime/frameworks/legacy/vm/compile.js
+      #+BEGIN_SRC javascript
+        /**
+         ,* build()
+         ,*   compile(template, parentNode)
+         ,*     if (type is content) create contentNode
+         ,*     else if (dirs have v-for) foreach -> create context
+         ,*       -> compile(templateWithoutFor, parentNode): diff(list) onchange
+         ,*     else if (dirs have v-if) assert
+         ,*       -> compile(templateWithoutIf, parentNode): toggle(shown) onchange
+         ,*     else if (type is dynamic)
+         ,*       -> compile(templateWithoutDynamicType, parentNode): watch(type) onchange
+         ,*     else if (type is custom)
+         ,*       addChildVm(vm, parentVm)
+         ,*       build(externalDirs)
+         ,*       foreach childNodes -> compile(childNode, template)
+         ,*     else if (type is native)
+         ,*       set(dirs): update(id/attr/style/class) onchange
+         ,*       append(template, parentNode)
+         ,*       foreach childNodes -> compile(childNode, template)
+         ,*/
+        export function build (vm) {
+          const opt = vm._options || {}
+          const template = opt.template || {}
+
+          if (opt.replace) {
+            if (template.children && template.children.length === 1) {
+              compile(vm, template.children[0], vm._parentEl)
+            }
+            else {
+              compile(vm, template.children, vm._parentEl)
+            }
+          }
+          else {
+            compile(vm, template, vm._parentEl)
+          }
+
+          console.debug(`[JS Framework] "ready" lifecycle in Vm(${vm._type})`)
+          vm.$emit('hook:ready')
+          vm._ready = true
+        }
+      #+END_SRC
+***** -> Compile => compile()
+      ~compile()~ 方法中，对传入的参数进行解析，并调用渲染的环节:
+      #+NAME: runtime/frameworks/legacy/vm/compile.js
+      #+BEGIN_SRC javascript
+        /**
+         ,* Generate elements by child or children and append to parent elements.
+         ,* Root element info would be merged if has. The first argument may be an array
+         ,* if the root element with options.replace has not only one child.
+         ,*
+         ,* @param {object|array} target
+         ,* @param {object}       dest
+         ,* @param {object}       meta
+         ,*/
+        function compile (vm, target, dest, meta) {
+          const app = vm._app || {}
+
+          if (app.lastSignal === -1) {
+            return
+          }
+
+          if (target.attr && target.attr.hasOwnProperty('static')) {
+            vm._static = true
+          }
+
+          if (targetIsFragment(target)) {
+            compileFragment(vm, target, dest, meta)
+            return
+          }
+          meta = meta || {}
+          if (targetIsContent(target)) {
+            console.debug('[JS Framework] compile "content" block by', target)
+            vm._content = createBlock(vm, dest)
+            return
+          }
+
+          if (targetNeedCheckRepeat(target, meta)) {
+            console.debug('[JS Framework] compile "repeat" logic by', target)
+            if (dest.type === 'document') {
+              console.warn('[JS Framework] The root element does\'t support `repeat` directive!')
+            }
+            else {
+              compileRepeat(vm, target, dest)
+            }
+            return
+          }
+          if (targetNeedCheckShown(target, meta)) {
+            console.debug('[JS Framework] compile "if" logic by', target)
+            if (dest.type === 'document') {
+              console.warn('[JS Framework] The root element does\'t support `if` directive!')
+            }
+            else {
+              compileShown(vm, target, dest, meta)
+            }
+            return
+          }
+          const typeGetter = meta.type || target.type
+          if (targetNeedCheckType(typeGetter, meta)) {
+            compileType(vm, target, dest, typeGetter, meta)
+            return
+          }
+          const type = typeGetter
+          const component = targetIsComposed(vm, target, type)
+          if (component) {
+            console.debug('[JS Framework] compile composed component by', target)
+            compileCustomComponent(vm, component, target, dest, type, meta)
+            return
+          }
+          console.debug('[JS Framework] compile native component by', target)
+          compileNativeComponent(vm, target, dest, type)
+        }
+      #+END_SRC
+***** -> Compile => compileNativeComponent()
+      对于 UI 组件的渲染，都会走到这个方法中，可以看到，在这个方法里面调用了 ~createElement()~ 方法，就是通过它来创建一个组件对象。
+      创建完成之后，通过 ~dom-helper => attachTarget()~ 方法把生成的 Element 添加到页面上（）。
+      #+NAME: runtime/frameworks/legacy/vm/compile.js
+      #+BEGIN_SRC javascript
+        /**
+         ,* Generate element from template and attach to the dest if needed.
+         ,* The time to attach depends on whether the mode status is node or tree.
+         ,*
+         ,* @param {object} template
+         ,* @param {object} dest
+         ,* @param {string} type
+         ,*/
+        function compileNativeComponent (vm, template, dest, type) {
+          applyNaitveComponentOptions(template)
+
+          let element
+          if (dest.ref === '_documentElement') {
+            // if its parent is documentElement then it's a body
+            console.debug(`[JS Framework] compile to create body for ${type}`)
+            element = createBody(vm, type)
+          }
+          else {
+            console.debug(`[JS Framework] compile to create element for ${type}`)
+            //就是在这里创建的每个组件对象
+            element = createElement(vm, type)
+          }
+
+          if (!vm._rootEl) {
+            vm._rootEl = element
+            // bind event earlier because of lifecycle issues
+            const binding = vm._externalBinding || {}
+            const target = binding.template
+            const parentVm = binding.parent
+            if (target && target.events && parentVm && element) {
+              for (const type in target.events) {
+                const handler = parentVm[target.events[type]]
+                if (handler) {
+                  element.addEvent(type, bind(handler, parentVm))
+                }
+              }
+            }
+          }
+
+          bindElement(vm, element, template)
+
+          if (template.attr && template.attr.append) { // backward, append prop in attr
+            template.append = template.attr.append
+          }
+
+          if (template.append) { // give the append attribute for ios adaptation
+            element.attr = element.attr || {}
+            element.attr.append = template.append
+          }
+
+          const treeMode = template.append === 'tree'
+          const app = vm._app || {}
+          if (app.lastSignal !== -1 && !treeMode) {
+            console.debug('[JS Framework] compile to append single node for', element)
+            app.lastSignal = attachTarget(vm, element, dest)
+          }
+          if (app.lastSignal !== -1) {
+            compileChildren(vm, template, element)
+          }
+          if (app.lastSignal !== -1 && treeMode) {
+            console.debug('[JS Framework] compile to append whole tree for', element)
+            app.lastSignal = attachTarget(vm, element, dest)
+          }
+        }
+      #+END_SRC
+***** -> DomHelper => createElement()
+      #+NAME: runtime/frameworks/legacy/vm/dom-helper.js
+      #+BEGIN_SRC javascript
+        /**
+         ,* Create an element by type
+         ,* Using this._app.doc
+         ,*
+         ,* @param  {string} type
+         ,*/
+        export function createElement (vm, type) {
+          // 这个_app 是个啥？剧透下把，是 framework 提供的 App 对象
+          const doc = vm._app.doc
+          return doc.createElement(type)
+        }
+      #+END_SRC
+***** -> App => doc
+      可以看到 App 的 doc 属性来来自于 ~new renderer.Document()~ 方法:
+      #+NAME: runtime/frameworks/legacy/app/instance.js
+      #+BEGIN_SRC javascript
+        import renderer from '../config' // renderer 的声明在 config.js 中
+        /**
+         ,* App constructor for Weex framework.
+         ,* @param {string} id
+         ,* @param {object} options
+         ,*/
+        export default function App (id, options) {
+          this.id = id
+          this.options = options || {}
+          this.vm = null
+          this.customComponentMap = {}
+          this.commonModules = {}
+
+          // document
+          this.doc = new renderer.Document(
+            id,
+            this.options.bundleUrl,
+            null,
+            renderer.Listener
+          )
+          this.differ = new Differ(id)
+        }
+      #+END_SRC
+***** -> Document => createElement()
+      这里调用的 ~new Element()~ 方法最终调用了 ~new WeexElement()~
+      #+NAME: runtime/vdom/Document.js
+      #+BEGIN_SRC javascript
+        /**
+         ,* Create an element.
+         ,* @param {string} tagName
+         ,* @param {objct} props
+         ,* @return {object} element
+         ,*/
+        createElement (tagName, props) {
+          const el = new Element(tagName, props)
+          if (checkLevel('debug')) {
+            debugLog(`[createElement](${this.id},${el.type},${el.ref}) `
+                     + `(${JSON.stringify(el.toJSON(true))}).`)
+          }
+          return el
+        }
+      #+END_SRC
+***** -> DomHelper => attachTarget()
+      ~attachTarget()~ 中调用的 ~Element => insertBefore()~ 和 ~Element => appendChild()~ ，在这些方法中通过发送事件的方式来调用原生的方法
+      #+NAME: runtime/frameworks/legacy/vm/dom-helper.js
+      #+BEGIN_SRC javascript
+        /**
+         ,* Attach target to a certain dest using appendChild by default.
+         ,* If the dest is a frag block then insert before the ender.
+         ,* If the target is a frag block then attach the starter and ender in order.
+         ,*
+         ,* @param  {object} target
+         ,* @param  {object} dest
+         ,*/
+        export function attachTarget (vm, target, dest) {
+          if (dest.element) {
+            const before = dest.end
+            const after = dest.updateMark
+            // push new target for watch list update later
+            if (dest.children) {
+              dest.children.push(target)
+            }
+            // for check repeat case
+            if (after) {
+              const signal = moveTarget(vm, target, after)
+              dest.updateMark = target.element ? target.end : target
+              return signal
+            }
+            else if (target.element) {
+              dest.element.insertBefore(target.start, before)
+              dest.element.insertBefore(target.end, before)
+            }
+            else {
+              return dest.element.insertBefore(target, before)
+            }
+          }
+          else {
+            if (target.element) {
+              dest.appendChild(target.start)
+              dest.appendChild(target.end)
+            }
+            else {
+              return dest.appendChild(target)
+            }
+          }
+        }
+      #+END_SRC
+***** -> Element => 发送渲染的消息
+      Element 类的 ~appendChild()~ 方法, ~insertBefore()~ 和 ~inserAfter()~ 这些方法，都会去调用 taskCenter 的发送消息方法
+      #+NAME: runtime/vdom/Element.js
+      #+BEGIN_SRC javascript
+      // 发送 "addElement" 消息，告诉 JSFramework 需要调用 callNative 方法渲染原生组件
+      const taskCenter = getTaskCenter(this.docId)
+        if (taskCenter) {
+          return taskCenter.send(
+            'dom',
+            { action: 'addElement' },
+            [this.ref, node.toJSON(), -1]
+          )
+        }
+      #+END_SRC
+***** -> TaskCenter => send()
+      DOM 操作的方法会通过消息传递给 JavaScriptCore
+      #+NAME: runtime/bridge/TaskCenter.js
+      #+BEGIN_SRC javascript
+        send (type, params, args, options) {
+          const { action, component, ref, module, method } = params
+
+          // normalize args and options
+          args = args.map(arg => this.normalize(arg))
+          if (typof(options) === 'Object') {
+            options = this.normalize(options, true)
+          }
+
+          switch (type) {
+          case 'dom': {
+            if (checkLevel('debug')) {
+              debugLog(`[task](${this.instanceId},${this.type},${action}) ${JSON.stringify(args)}`)
+            }
+            return this[action](this.instanceId, args)
+          }
+          case 'component':
+            return this.componentHandler(this.instanceId, ref, method, args, Object.assign({ component }, options))
+          default: {
+            if (checkLevel('debug')) {
+              debugLog(`[task](${this.instanceId},${module},${method}) ${JSON.stringify(args)}`)
+            }
+            return this.moduleHandler(this.instanceId, module, method, args, options)
+          }
+          }
+        }
+      #+END_SRC
+***** -> TaskCenter 中注册的 DOM_METHODS
+      #+NAME: runtime/bridge/TaskCenter.js
+      #+BEGIN_SRC javascript
+        const DOM_METHODS = {
+          createFinish: global.callCreateFinish,
+          updateFinish: global.callUpdateFinish,
+          refreshFinish: global.callRefreshFinish,
+
+          createBody: global.callCreateBody,
+
+          addElement: global.callAddElement,
+          removeElement: global.callRemoveElement,
+          moveElement: global.callMoveElement,
+          updateAttrs: global.callUpdateAttrs,
+          updateStyle: global.callUpdateStyle,
+
+          addEvent: global.callAddEvent,
+          removeEvent: global.callRemoveEvent
+        }
+      #+END_SRC
+***** -> JavaScriptCore => callAddElement()
+      ~callAddElement()~ 最终调用了 IPC 消息调用了各自 SDK 中的 callAddElement 方法，使用原生的方式渲染页面
+      
 **** 注册 Component
      #+NAME: runtime/api/component.js
      #+BEGIN_SRC javascript
@@ -2346,7 +2777,6 @@
      #+END_SRC
 
 **** 默认注册的 IPCHandler
-
      ~ScriptBridgeInMultiProcess => RegisterIPCCallback()~ 方法中，注册了很多内置的 IPC 回调方法:
      #+NAME: script_bridge_in_multi_process.cpp
      #+BEGIN_SRC c++
