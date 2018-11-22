@@ -115,7 +115,7 @@
     - IActivityNavBarSetter
     - IWXStorageAdapter
 
-    IWXJSExceptionAdapter 图片加载适配器,使用方法:
+    以 IWXJSExceptionAdapter 图片加载适配器为例,使用方法如下:
     #+BEGIN_SRC java
       public class ImageAdapter implements IWXImgLoaderAdapter {
 
@@ -123,8 +123,7 @@
           }
 
           @Override
-          public void setImage(final String url, final ImageView view,
-                               WXImageQuality quality, WXImageStrategy strategy) {
+          public void setImage(final String url, final ImageView view, WXImageQuality quality, WXImageStrategy strategy) {
 
               WXSDKManager.getInstance().postOnUiThread(new Runnable() {
 
@@ -141,8 +140,7 @@
                           if (url.startsWith("//")) {
                               temp = "http:" + url;
                           }
-                          if (view.getLayoutParams().width <= 0
-                              || view.getLayoutParams().height <= 0) {
+                          if (view.getLayoutParams().width <= 0 || view.getLayoutParams().height <= 0) {
                               return;
                           }
                           Picasso.with(WXEnvironment.getApplication())
@@ -154,13 +152,14 @@
       }
     #+END_SRC
 ** Lifecycle
-   #+BEGIN_NOTES
-   此处图片出处: [[https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG][WeexLiftcycle 的讨论]]
-   #+END_NOTES
-*** Workflow
+*** Weex 页面生命周期控制
+    #+BEGIN_NOTES
+    此处图片出处: [[https://github.com/alibaba/weex/issues/331?spm=a2c4e.11153940.blogcont59936.9.75012203aFrbFG][WeexLiftcycle 的讨论]]
+    #+END_NOTES
 **** Create Instance
      在调用 ~WXSDKInstance => render()~ 方法时，会进到 createInstance 的流程中，具体调用流程如图：
      [[./imgs/img_weex_lifecycle_create_instance.jpeg]]
+
 **** Refresh Instance
      在调用 ~WXSDKInstance => reloadPage()~ 方法时，会进到 refreshInstance 流程中，具体调用流程如图：
      [[./imgs/img_weex_lifecycle_refresh_instance.jpeg]]
@@ -212,7 +211,7 @@
      - 没有执行数据绑定,没有创建 Virtual-DOM,所以不能通过 this 获取到 data 中的数据,不能调用到 methods 中定义的方法,也不能获取到 Virtual-DOM 的节点
      - 可以在方法内初始化一些内部变量,绑定一些自定义事件
 
-     created:
+**** created:
      - 刚完成数据绑定,还没开始编译模板
      - 可以通过 this 操作 data 中的数据,可以调用 methods 中的方法,但是不能获取到 Virtual-DOM 的节点
      - 可以在方法中修改 data 中数据,不会触发额外的渲染
@@ -252,7 +251,8 @@
 * 架构分析
 ** 项目目录结构
 
-   #+NAME: Weex 目录结构(选择性列了一些比较重要的目录)
+   #+NAME: Weex 目录结构
+   选择性列了一些比较重要的目录:
    #+BEGIN_SRC org
     ./incubator-weex                        # 根目录
    -----------------------------------------------------------------------------------------
@@ -301,8 +301,9 @@
 ** 调用流程图
    [[./imgs/img_weex_arch_flow.png]]
 
-** 线程模型
-*** Weex 线程间交互关系图
+** 进程/线程模型
+*** Weex 进程交互
+*** Weex 线程间交互
     [[./imgs/img_weex_threads.jpg]]
 
 * Android SDK
@@ -1513,6 +1514,7 @@
           return result
         }
       #+END_SRC
+
 ***** -> runInContext()
       #+NAME: runtime/api/init.js
       #+BEGIN_SRC javascript
@@ -1536,6 +1538,31 @@
           `
           return (new Function(...keys, bundle))(...args)
         }
+      #+END_SRC
+
+***** -> 加载实际页面
+
+      开发中创建一个 text 标签：
+      #+NAME: weex page
+      #+BEGIN_SRC javascript
+        <template>
+          <text class="message">Now, let's use Vue.js to build your Weex app.</text>
+        </template>
+      #+END_SRC
+
+      实际打包生产的代码
+      #+BEGIN_SRC javascript
+        /* 1 */
+        (function(module, exports) {
+          module.exports={render:function (){
+            var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+            return _c('text', {
+              staticClass: ["message"]
+            }, [_vm._v("Now, let's use Vue.js to build your Weex app.")])
+          },staticRenderFns: []}
+          module.exports.render._withStripped = true
+
+          /***/ })
       #+END_SRC
 
 **** 注册 Component
@@ -1568,30 +1595,6 @@
       // 将 functionBody 作为函数体，各种 arg 作为参数，创建一个新的函数
       let func = new Function ([arg1[, arg2[, ...argN]],] functionBody)
      #+END_SRC
-***** -> 加载实际页面
-
-      开发中创建一个 text 标签：
-      #+NAME: weex page
-      #+BEGIN_SRC javascript
-        <template>
-          <text class="message">Now, let's use Vue.js to build your Weex app.</text>
-        </template>
-      #+END_SRC
-
-      实际打包生产的代码
-      #+BEGIN_SRC javascript
-        /* 1 */
-        (function(module, exports) {
-          module.exports={render:function (){
-            var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-            return _c('text', {
-              staticClass: ["message"]
-            }, [_vm._v("Now, let's use Vue.js to build your Weex app.")])
-          },staticRenderFns: []}
-          module.exports.render._withStripped = true
-
-          /***/ })
-      #+END_SRC
 
 ** JSFramework 调用 Native 方法
 * Weex Core
