@@ -292,14 +292,8 @@
            - CMakeLists.txt                # CMake 打包脚本
    #+END_SRC
 
-** 框架结构图
-   #+BEGIN_NOTES
-   图片出处: https://zhuanlan.zhihu.com/p/25326775
-   #+END_NOTES
-   [[./imgs/img_weex_framework_classes.jpeg]]
 ** 调用流程图
    [[./imgs/img_weex_arch_flow.png]]
-** 线程模型
 ** 进程模型
 *** 为什么使用进程
     解决的问题
@@ -307,7 +301,7 @@
     - 碎⽚化／适配问题
     - 稳定性
 
-*** 线程模型图
+*** 进程调用图
     [[./imgs/img_weex_process.jpg]]
 * Android SDK
 ** 初始化流程分析
@@ -2821,9 +2815,6 @@
      | POSTMESSAGE           | HandlePostMessage           | static void Java_WMLBridge_postMessage()     | wml_bridge.cpp          |
      | DISPATCHMESSAGE       | HandleDispatchMessage       | static void Java_WMLBridge_dispatchMessage() | wml_bridge.cpp          |
 
-** Native 注册 Module
-*** Android 注册 Module
-** Native 注册 Component
 ** Native 渲染流程分析
    ~WXBridgeManager => invokeExecJS()~ 之后通过 ~WXBridge => execJS()~ 调用到了底层的方法：
    #+NAME: WXBridgeManager.java
