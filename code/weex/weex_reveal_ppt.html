@@ -247,7 +247,7 @@ Component 扩展实现 Native 控件
 </section>
 <section >
 <ul class="org-ul">
-<li><a id="orga99a5ab"></a>Create Instance<br />
+  <a id="orga99a5ab"></a><h4>Create Instance</h4>
 <p>
 在调用 <code>WXSDKInstance =&gt; render()</code> 方法时，会进到 createInstance 的流程中，具体调用流程如图：
 <img src="./imgs/img_weex_lifecycle_create_instance.jpeg" alt="img_weex_lifecycle_create_instance.jpeg" />
@@ -255,8 +255,7 @@ Component 扩展实现 Native 控件
 
 </section>
 <section >
-</li>
-<li><a id="orgbf0e8e3"></a>Refresh Instance<br />
+<a id="orgbf0e8e3"></a><h4>Refresh Instance</h4>
 <p>
 在调用 <code>WXSDKInstance =&gt; reloadPage()</code> 方法时，会进到 refreshInstance 流程中，具体调用流程如图：
 <img src="./imgs/img_weex_lifecycle_refresh_instance.jpeg" alt="img_weex_lifecycle_refresh_instance.jpeg" />
@@ -264,8 +263,7 @@ Component 扩展实现 Native 控件
 
 </section>
 <section >
-</li>
-<li><a id="org84cb90b"></a>Fire Event/Callback<br />
+<a id="org84cb90b"></a><h4>Fire Event/Callback</h4>
 <p>
 当点击 Weex 页面的按钮触发点击事件时，会进入 fireEvent 流程，具体调用流程如图：
 <img src="./imgs/img_weex_lifecycle_fire_event.jpeg" alt="img_weex_lifecycle_fire_event.jpeg" />
@@ -273,8 +271,7 @@ Component 扩展实现 Native 控件
 
 </section>
 <section >
-</li>
-<li><a id="org45135d6"></a>Destroy Instance<br />
+<a id="org45135d6"></a>Destroy Instance<br />
 <p>
 <code>WXSDKInstance =&gt; onActivityDestroy()</code> 当 Weex 页面伴随着所在 Activity 的生命周期方法结束时，会进入 destoryInstance 的流程，具体调用流程如图：
 <img src="./imgs/img_weex_lifecycle_destroy_instance.jpeg" alt="img_weex_lifecycle_destroy_instance.jpeg" />
@@ -282,13 +279,12 @@ Component 扩展实现 Native 控件
 
 </section>
 <section >
-</li>
-<li><a id="org078867b"></a>Navigate<br />
+<a id="org078867b"></a>
+  <h4>Navigate</h4>
 <div class="figure">
 <p><img src="./imgs/img_weex_lifecycle_navigate.jpeg" alt="img_weex_lifecycle_navigate.jpeg" />
 </p>
 </div>
-</li>
 </ul>
 
 </section>
@@ -336,18 +332,16 @@ Component 扩展实现 Native 控件
 </section>
 <section >
 </li>
-<li><a id="orgefeab1a"></a>init<br />
 <ul>
+  <h4>Init</h4>
 <li>初始化内部变量,添加事件功能</li>
 <li>没有执行数据绑定,没有创建 Virtual-DOM,所以不能通过 this 获取到 data 中的数据,不能调用到 methods 中定义的方法,也不能获取到 Virtual-DOM 的节点</li>
 <li>可以在方法内初始化一些内部变量,绑定一些自定义事件</li>
-
 </ul>
 </section>
 <section >
-</li>
-<li><a id="orgc6ba1bf"></a>created:<br />
-<ul>
+  <ul class="org-ul">
+    <h4>Created</h4>
 <li>刚完成数据绑定,还没开始编译模板</li>
 <li>可以通过 this 操作 data 中的数据,可以调用 methods 中的方法,但是不能获取到 Virtual-DOM 的节点</li>
 <li>可以在方法中修改 data 中数据,不会触发额外的渲染</li>
@@ -356,28 +350,21 @@ Component 扩展实现 Native 控件
 
 </section>
 <section >
-</li>
-<li><a id="orgff0b188"></a>ready<br />
-<ul>
-<li>表示组件已经渲染完成</li>
-<li>首先执行子组件的 ready 方法</li>
-<li>可以获得 Virtual-DOM 的节点,也可以获取子组件的 Virtual-DOM 实例</li>
-<li>小心操作 data,避免频繁赋值</li>
-<li>建议去除需要频繁改动的值,等操作执行结束之后再赋值</li>
-
+    <h4>Ready</h4>
+    <ul>
+      <p>表示组件已经渲染完成
+        首先执行子组件的 ready 方法<br />
+        可以获得 Virtual-DOM 的节点,也可以获取子组件的 Virtual-DOM 实例<br />
+        小心操作 data,避免频繁赋值<br />
+        建议去除需要频繁改动的值,等操作执行结束之后再赋值
+      </p>
 </ul>
 
-
 <div class="figure">
-<p><img src="./imgs/img_weex_lifecycle_parent_son.png" alt="img_weex_lifecycle_parent_son.png" />
-</p>
+<img src="./imgs/img_weex_lifecycle_parent_son.png" alt="img_weex_lifecycle_parent_son.png" />
 </div>
 
-<p>
-避免频繁赋值:
-</p>
 <div class="org-src-container">
-
 <pre><code class="javascript" >// 在修改 this.count 前先获取它的值，在执行完操作后再赋值回去，如果在循环体中直接设置 this.count 的值，页面将触发 999 次局部刷新，很可能会导致页面卡顿
 module.exports = {
   data: {
@@ -396,16 +383,16 @@ module.exports = {
 
 </section>
 <section >
-</li>
-<li><a id="org886b1e6"></a>destroyed<br />
-<ul>
-<li>组件销毁时被调用</li>
-<li>自底向上执行(先触发子组件的 destroyed 方法,再触发自身的)</li>
-<li>先执行开发者定义的 destroyed 方法,再清除内部属性</li>
-<li>添加的全局或者 this 的属性,建议在 destroyed 方法中手动清除,避免内存泄露</li>
-
+  <h4>
+    Destroyed
+  </h4>
+  <p>
+    组件销毁时被调用<br />
+    自底向上执行(先触发子组件的 destroyed 方法,再触发自身的)<br />
+    先执行开发者定义的 destroyed 方法,再清除内部属性<br />
+    添加的全局或者 this 的属性,建议在 destroyed 方法中手动清除,避免内存泄露<br />
+  </p>
 </ul>
-</li>
 </ul>
 
 </section>

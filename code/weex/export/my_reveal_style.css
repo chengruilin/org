@@ -34,3 +34,23 @@
   font-size: 0.8em;
 }
 
+.reveal .org-ul {
+  width: 100%;
+}
+
+.reveal .org-ul li {
+  width: 100%;
+}
+
+.reveal .org-ul li a{
+  padding-left: 5%;
+}
+
+.reveal .org-ul li p{
+  padding-left: 5%;
+}
+
+.reveal li img{
+  margin: 20px;
+}
+
