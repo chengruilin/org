@@ -1,5 +1,5 @@
 #+TITLE: My GTDs
-#+TODO: TODO(t) DOING(d!) PAUSE(p!) RESUME(r!) | DONE(e@)
+#+TODO: TODO(t) DOING(d) PAUSE(p) RESUME(r) | DONE(e)
 #+STARTUP: overview
 #+TAGS: @work(w) @read(r) @code(c) @emacs(e) @develop(d)
 
@@ -13,7 +13,23 @@
 *** sogou input method not work
     update emacs.desktop "Exec=env LC_CTYPE=zh_CN.UTF-8 emacs25 %F"
 
+*** Org-mode "Easy Templates"
+    快速插入 Block
+    #+begin_src elisp
+    org-insert-structure-template
+    #+end_src
+
 ** Key Map
+
+** Tools
+
+*** org-reveal
+    + Reveal.js is a tool for creating good-looking HTML presentations.
+    + org-eveal export org document to reveal.js presentations.
+**** How to use?
+     1. To load org-reveal, type "M-x load-library", then type "ox-reveal"
+     2. You can export org into Reveal.js presentation by typing "C-c C-e R R"
+     3. Html file generate
 
 * Reading
 ** DOING [[file:books/the_art_of_unix_programming.org][The Art of UNIX Programming]]                                 :@read:
@@ -21,22 +37,23 @@
 ** DOING [[file:books/being_friends_with_time.org][把时间当作朋友]]                                              :@read:
 
 ** DONE [[file:doc/doc_info_org_mode.org][Org Mode Document]]                                     :@read:@emacs:
-   CLOSED: [2018-09-25 二 21:54]
 
 ** DOING [[file:doc/doc_info_elisp.org][Elisp Document]]                                       :@read:@emacs:
 
 * Source Code
-** DOING [[file:code/weex/read_weex_source_code.org][Weex]]                                                         :@code:
+
+** DONE [[file:code/weex/read_weex_source_code.org][Weex]]                                                          :@code:
 
 ** TODO [[file:code/read_flutter_source_code.org][flutter]]                                                      :@code:
 
 ** TODO [[file:code/read_react_native_source_code.org][React Native]]                                                 :@code:
 
 ** TODO [[file:code/read_java_source_code.org][Java]]                                                         :@code:
+
 ** TODO [[file:code/read_okhttp_source_code.org][OkHttp]]                                                       :@code:
 * Develop
 
-** DOING [[file:doc/doc_web_idea_plugin_develop.org][Idea Plugin Develop]]                                      :@develop:
+** DOING [[file:doc/doc_web_idea_plugin_develop.org][Idea Plugin Develop]]                                       :@develop:
 
 ** TODO [[file:doc/doc_android_app_bundle.org][Android App Bundle]]                                        :@develop:
 
@@ -44,3 +61,6 @@
 
 ** TODO Android 开发入门分享                                         :@work:
 
+* Personal Blog
+
+** DOING [[file:./blog/android_modular/android-modular.org][Android 组件化方案]]
