@@ -11,6 +11,7 @@
 
 <link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/night.css" id="theme"/>
 
+<link rel="stylesheet" href="./style/my_reveal_style.css"/>
 <link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/css/zenburn.css"/>
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
@@ -26,27 +27,27 @@
 <body>
 <div class="reveal">
 <div class="slides">
-<section id="sec-title-slide"><h1 class="title">Android 组件化方案</h1><h2 class="author">茄子</h2><p class="date">Created: 2019-04-20 Sat 18:46</p>
+<section id="sec-title-slide"><h1 class="title">Android 组件化方案</h1><h2 class="author">茄子</h2><p class="date">Created: 2019-04-22 Mon 14:22</p>
 </section>
 
 <section>
-<section id="slide-org84a6bf5">
-<h2 id="org84a6bf5">概述</h2>
+<section id="slide-org9a116f2">
+<h2 id="org9a116f2">概述</h2>
 <p>
 目前有赞移动端的主要工作内容是在“有赞微商城”和“有赞零售”两条公司主要的业务线，随着有赞 Saas 业务的增长，客户端也不断迭代，支持越来越多的功能。在这个业务快速增长的情况下，移动端技术的整体架构也是一直在不断调整，来保证开发效率和业务的快速迭代。
 </p>
 
 </section>
-<section id="slide-orga8bd88b">
-<h3 id="orga8bd88b">现状</h3>
+<section id="slide-org4f0c26d">
+<h3 id="org4f0c26d">现状</h3>
 <p>
 客户端的架构，也从一开始的“All IN ONE” 模式（即所有代码都在 App 中），逐渐演变到目前的一个单 Project 多 Module 结构：
 <img src="./imgs/old_modular_arch.jpg" alt="old_modular_arch.jpg" />
 </p>
 
 </section>
-<section id="slide-org73fbede">
-<h3 id="org73fbede">痛点</h3>
+<section id="slide-orgfa9f5bd">
+<h3 id="orgfa9f5bd">痛点</h3>
 <ul>
 <li>日益复杂的 Common 模块，逻辑复杂，依赖不清晰，不敢随便改动 Common 代码，造成大量冗余代码和无法维护的业务逻辑</li>
 <li>随着业务模块的增多，打包速度一发不可收拾；从倒杯水的时间到下楼吃个饭的时间，大大减慢了开发节奏</li>
@@ -56,8 +57,8 @@
 </ul>
 
 </section>
-<section id="slide-orgf9e7e99">
-<h3 id="orgf9e7e99">需要解决的问题</h3>
+<section id="slide-org0f150a3">
+<h3 id="org0f150a3">需要解决的问题</h3>
 <ul>
 <li>去 Common 化，需要将 Common 层的业务向上抽离，通用的底层和基础组件、公用 UI 组件抽成单独的依赖</li>
 <li>移动端业务服务化，解耦现有业务，抽象出业务接口，业务模块只向外暴露自己的接口，并实现跨模块之间的调用</li>
@@ -69,13 +70,37 @@
 </section>
 </section>
 <section>
-<section id="slide-org377a9dc">
-<h2 id="org377a9dc">架构调整</h2>
-<div class="outline-text-2" id="text-org377a9dc">
-</div>
+<section id="slide-org1ac9320">
+<h2 id="org1ac9320">架构调整</h2>
+<p>
+我们之前虽然有在做整个工程模块化的开发，但是目前的模块化框架可以说是不够彻底的：
+</p>
+<ul>
+<li>模块只是项目结构的概念（一个模块一个 Modular），在逻辑层并没有模块这个概念</li>
+<li>模块本身并没有生命周期控制</li>
+<li>公用服务中心化，公用逻辑部分全部都在 Common 模块中</li>
+<li>模块对外暴露的服务不可知，都是直接依赖模块内部的代码逻辑</li>
+<li>模块无法单独打包，针对模块的代码改动，只能全量打包之后才能看到效果</li>
+
+</ul>
+
+<p>
+为了解决以上的问题，我们需要对现有的结构进行调整。
+</p>
+
 </section>
-<section id="slide-org7d36bf0">
-<h3 id="org7d36bf0">公共业务去中心化</h3>
+<section id="slide-orgd6c0811">
+<h3 id="orgd6c0811">模块的抽象</h3>
+<ul>
+<li>抽象出模块本身作为某一类业务的容器</li>
+<li>模块对象跟 Activity、Fragment 一样，拥有生命周期的概念</li>
+<li>模块可以注册的对外暴露的服务的实现，在注册模块的时候，模块携带的服务也会被注册到 App 的服务中心</li>
+
+</ul>
+
+</section>
+<section id="slide-orgc29eba4">
+<h3 id="orgc29eba4">公共业务去中心化</h3>
 <p>
 跟很多客户端的同学聊过，很多 APP 发展到一定阶段之后，必然会诞生一个所谓的 Common 模块。它就像一个大储物柜，每个人都把一些其他人可能用到的东西一股脑儿塞进去。这么个塞法，会有两个问题：
 </p>
@@ -86,8 +111,8 @@
 </ol>
 
 </section>
-<section id="slide-org7aba3b4">
-<h4 id="org7aba3b4">Common 里面都有什么？</h4>
+<section id="slide-orge84dafc">
+<h4 id="orge84dafc">Common 里面都有什么？</h4>
 <ul>
 <li>工具类</li>
 <li>公用的 UI 组件</li>
@@ -99,8 +124,8 @@
 </ul>
 
 </section>
-<section id="slide-orge034dc4">
-<h4 id="orge034dc4">解决的思路</h4>
+<section id="slide-org75ea46e">
+<h4 id="org75ea46e">解决的思路</h4>
 <ul>
 <li>将公用的业务模块向上抽离到业务模块中（所谓业务模块的服务化）</li>
 <li>将基础组件抽象到一个独立的组件中</li>
@@ -109,98 +134,171 @@
 </ul>
 
 </section>
-<section id="slide-org2383115">
-<h3 id="org2383115">业务模块服务化</h3>
+<section id="slide-orgfb1d671">
+<h3 id="orgfb1d671">业务模块服务化</h3>
 <p>
-“服务化”这个词，好像是在服务端的开发中经常被提到，简单来说，就是根据业务划分为多个模块，模块之间的交互以互相提供服务的方式来完成。而客户端随着业务模块的增多，也必然存在业务模块之间存在业务依赖的情况，客户端这边老的处理方式一般有两种：
+“服务化”这个词，在服务端的开发中经常被提到，简单来说，就是根据业务划分为多个模块，模块之间的交互以互相提供服务的方式来完成。而客户端随着业务模块的增多，也必然存在业务模块之间存在业务依赖的情况，而 Android 端依赖的方式有：
 </p>
 <ol>
 <li>A 模块直接依赖 B 模块，直接调用 B 模块的代码逻辑</li>
-<li>将 A 模块中的公用部分放到 Common 模块中，提供给其他模块调用</li>
+<li>将 A 和 B 模块中的公用部分放到 Common 模块中，通过调用 Common 模块的代码实现依赖</li>
 
 </ol>
 
 </section>
-<section id="slide-org0927f94">
-<h4 id="org0927f94">将各个业务模块的实现隔离</h4>
+<section id="slide-orgf2babcd">
+<h4 id="orgf2babcd">业务模块服务依赖的实现</h4>
+<ul>
+<li>后端的服务化是借助于 Dubbo 来构建的 RPC 服务，依赖某个服务，只需要依赖其对外暴露的 API 模块（只包含接口和数据结构的 Maven 依赖），不需要依赖其具体实现，具体服务调用的实现由框架来实现</li>
+<li>客服端的依赖也可以参考这样的方式来实现模块之间的依赖，例如商品模块，可以提供一个 API 层，用来对外暴露数据结构和服务</li>
+
+</ul>
+<pre class="example">
++--------------+       +-------------------+
+|              |       |                   |
+|              |       |   Module 业务逻辑  |
+|              |       |                   |
+|    MODULE    |       +-------------------+
+|              |   =&gt;            |
+|              |                 v
+|              |       +-------------------+ 
++--------------+       |                   |                
+                       |    Module Api     |
+                       |                   |                
+                       +-------------------+
+</pre>
 
 </section>
-<section id="slide-orgc9ecd89">
-<h4 id="orgc9ecd89">服务的方式解决耦合不可控的问题</h4>
+<section id="slide-org66664f6">
+<h4 id="org66664f6">API 层实现方式</h4>
+<p>
+对外暴露服务的方式有很多种：
+</p>
+<ul>
+<li>协议的方式：例如"app://order/detail/get?id=100"，数据可以用 JSON 来进行传递，请求本地服务就像调用一个 Http 服务一样，根据请求协议来获取数据，然后解析数据进行操作</li>
+<li>接口的方式：像后端使用 Dubbo 服务那样，订单模块对外提供一个独立的 Maven 依赖，里面包含了数据接口和对外提供的服务接口，适用方依赖之后直接调用</li>
+
+</ul>
 
 </section>
-<section id="slide-org35e626d">
-<h3 id="org35e626d">基础组件抽象</h3>
+<section id="slide-org5405687">
+<h4 id="org5405687">接口的方式实现 API</h4>
+<p>
+协议的方式的问题：如果服务提供的地方更改了之后，需要手动去查询所有调用到的地方，进行更改，而且没有版本管理，而且数据解析都需要手动进行转换，改动的成本比较高，也有一定稳定性风险。接口的方式的问题：需要额外提供一个依赖（单独把 API 层打包成一个 aar 包），使用方需要添加 Mave 依赖，所以引入依赖和发布的成本比较高。
+</p>
+
+<p>
+我们最终选择了接口的方式，这种方式的稳定性和版本控制做的更好，对于改动来说，编译过程自动会帮你校验改动的影响面，而引入依赖和发布成本高的问题，完全可以交给构建工具（Gradle Plugin）来解决。
+</p>
 
 </section>
-<section id="slide-org36d105a">
-<h3 id="org36d105a">单/多模块快速打包</h3>
+<section id="slide-org9a9f9c2">
+<h4 id="org9a9f9c2">业务实现层</h4>
+<p>
+业务实现层就是现有的业务模块，需要做的就是需要在模块中实现的模块对象（继承自 BaseModule），在模块初始化过程中注册提供的服务接口及其实例：
+</p>
+<div class="org-src-container">
+
+<pre><code class="java" >public class ModuleA extends BaseModule {
+    @Override
+    public void onInstalled() {
+        registerBusinessService(ModuleAService.class, new CachedServiceFetcher\<ModuleAService\>() {
+            @Override
+            public ModuleAService createService(@NotNull ModularManage manager) {
+                return service = new ModuleAServiceImpl();
+            }
+        });
+    }
+}
+</code></pre>
+</div>
 
 </section>
-<section id="slide-org4fd8fb3">
-<h3 id="org4fd8fb3">组件发布优化</h3>
+<section id="slide-org3921f3b">
+<h3 id="org3921f3b">基础组件抽象</h3>
+
+</section>
+<section id="slide-org01fb6b9">
+<h3 id="org01fb6b9">单/多模块快速打包</h3>
+
+</section>
+<section id="slide-org78a3447">
+<h3 id="org78a3447">组件发布优化</h3>
 
 </section>
 </section>
 <section>
-<section id="slide-org9efb27e">
-<h2 id="org9efb27e">Android-Modular-Plugin</h2>
-<div class="outline-text-2" id="text-org9efb27e">
+<section id="slide-org822bcb7">
+<h2 id="org822bcb7">快速接入</h2>
+<div class="outline-text-2" id="text-org822bcb7">
 </div>
 </section>
-<section id="slide-org7b58c9e">
-<h3 id="org7b58c9e">不改变现有的开发模式</h3>
+<section id="slide-org9bd1ee8">
+<h3 id="org9bd1ee8">模块的实现</h3>
+
 
 </section>
-<section id="slide-orga2436a2">
-<h3 id="orga2436a2">单模块打包</h3>
+<section id="slide-org350be8c">
+<h3 id="org350be8c">单模块打包</h3>
 
 </section>
-<section id="slide-org134b5f3">
-<h3 id="org134b5f3">模块 API 层和业务层隔离</h3>
+<section id="slide-org2239078">
+<h3 id="org2239078">模块 API 层和业务层隔离</h3>
 
 </section>
-<section id="slide-org2de760e">
-<h3 id="org2de760e">模块间依赖管理</h3>
+<section id="slide-orgc383137">
+<h3 id="orgc383137">模块间依赖管理</h3>
 
 </section>
-<section id="slide-orgf3392c5">
-<h3 id="orgf3392c5">模块发布</h3>
-
-</section>
-</section>
-<section>
-<section id="slide-org342c775">
-<h2 id="org342c775">Android-Core</h2>
+<section id="slide-org393aadd">
+<h3 id="org393aadd">模块发布</h3>
 
 </section>
 </section>
 <section>
-<section id="slide-org34940c0">
-<h2 id="org34940c0">Android-Support</h2>
-<div class="outline-text-2" id="text-org34940c0">
+<section id="slide-orgf2d7377">
+<h2 id="orgf2d7377">模块化支持</h2>
+</section>
+</section>
+<section>
+<section id="slide-orgf7ac009">
+<h2 id="orgf7ac009">基础组件支持</h2>
+<div class="outline-text-2" id="text-orgf7ac009">
 </div>
 </section>
-<section id="slide-org480c017">
-<h4 id="org480c017">Native-Support</h4>
+<section id="slide-orgfad2753">
+<h4 id="orgfad2753">Native-Support</h4>
 
 </section>
-<section id="slide-org13d463a">
-<h4 id="org13d463a">Weex-Support</h4>
+<section id="slide-org2ad2669">
+<h4 id="org2ad2669">Weex-Support</h4>
 
 </section>
-<section id="slide-org8a81c84">
-<h4 id="org8a81c84">ReactNative-Support</h4>
+<section id="slide-org48c7964">
+<h4 id="org48c7964">ReactNative-Support</h4>
 
 </section>
-<section id="slide-org0394f49">
-<h4 id="org0394f49">Flutter-Support</h4>
+<section id="slide-org6c227ab">
+<h4 id="org6c227ab">Flutter-Support</h4>
 
 </section>
 </section>
 <section>
-<section id="slide-orgfca7a6a">
-<h2 id="orgfca7a6a">规划</h2>
+<section id="slide-org9ebaf08">
+<h2 id="org9ebaf08">规划</h2>
+<div class="outline-text-2" id="text-org9ebaf08">
+</div>
+</section>
+<section id="slide-orgc9b2ba4">
+<h3 id="orgc9b2ba4">使用更方便、侵入性更低</h3>
+<ul>
+<li>依赖注入的方式实现 API 的调用</li>
+
+</ul>
+
+</section>
+<section id="slide-org97bda75">
+<h3 id="org97bda75"></h3>
 </section>
 </section>
 </div>
@@ -217,7 +315,7 @@ controls: true,
 progress: true,
 history: false,
 center: true,
-slideNumber: 'c',
+slideNumber: 'h/v',
 rollingLinks: false,
 keyboard: true,
 overview: true,

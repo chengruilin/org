@@ -1,14 +1,17 @@
 #+TITLE: Android 组件化方案
 #+AUTHOR: 茄子
 #+STARTUP: overview
-#+OPTIONS: num:nil toc:nil todo:ni
+#+OPTIONS: num:nil toc:nil todo:nil reveal_global_header:t reveal_global_footer:t reveal_slide_number:h/v
 #+REVEAL_PLUGINS: (highlight)
 #+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
 #+REVEAL_DEFAULT_FRAG_STYLE: fade-out
 #+REVEAL_THEME: night
+#+REVEAL_PLUGINS: (highlight)
+#+REVEAL_EXTRA_CSS: ./style/my_reveal_style.css
+# REVEAL_SLIDE_HEADER: Ebiz-Mobile
+# REVEAL_SLIDE_FOOTER: Youzan@Qiezi
 
 * 概述
-
   目前有赞移动端的主要工作内容是在“有赞微商城”和“有赞零售”两条公司主要的业务线，随着有赞 Saas 业务的增长，客户端也不断迭代，支持越来越多的功能。
   在这个业务快速增长的情况下，移动端技术的整体架构也是一直在不断调整，来保证开发效率和业务的快速迭代。
 
@@ -29,6 +32,20 @@
    - 业务模块的依赖和发布管理
 
 * 架构调整
+  我们之前虽然有在做整个工程模块化的开发，但是目前的模块化框架可以说是不够彻底的：
+ - 模块只是项目结构的概念（一个模块一个 Modular），在逻辑层并没有模块这个概念
+ - 模块本身并没有生命周期控制
+ - 公用服务中心化，公用逻辑部分全部都在 Common 模块中
+ - 模块对外暴露的服务不可知，都是直接依赖模块内部的代码逻辑
+ - 模块无法单独打包，针对模块的代码改动，只能全量打包之后才能看到效果
+
+   为了解决以上的问题，我们需要对现有的架构进行调整。
+
+** 模块的抽象
+   将模块的功能抽象出一些基础类，组成了模块化支持组件，它提供的功能有：
+   - 抽象出模块本身作为某一类业务的容器，即所有业务模块需要实现自己的模块类，继承自我们的 BaseModule，并在 App 壳工程中进行注册
+   - 模块对象跟 Activity 一样，拥有生命周期的概念，需要在生命周期的不同阶段处理自己相应的逻辑（注册服务、初始化数据等）
+   - 模块可以注册的对外暴露的服务的实现，在注册模块的时候，模块携带的服务也会被注册到 App 的服务中心
 
 ** 公共业务去中心化
    跟很多客户端的同学聊过，很多 APP 发展到一定阶段之后，必然会诞生一个所谓的 Common 模块。它就像一个大储物柜，每个人都把一些其他人可能用到的东西一股脑儿塞进去。
@@ -51,47 +68,211 @@
 
 ** 业务模块服务化
    “服务化”这个词，在服务端的开发中经常被提到，简单来说，就是根据业务划分为多个模块，模块之间的交互以互相提供服务的方式来完成。
-   而客户端随着业务模块的增多，也必然存在业务模块之间存在业务依赖的情况，
-   客户端这边老的处理方式一般有两种：
+   而客户端随着业务模块的增多，也必然存在业务模块之间存在业务依赖的情况，而 Android 端依赖的方式有：
    1. A 模块直接依赖 B 模块，直接调用 B 模块的代码逻辑
-   2. 将 A 模块中的公用部分放到 Common 模块中，提供给其他模块调用
+   2. 将 A 和 B 模块中的公用部分放到 Common 模块中，通过调用 Common 模块的代码实现依赖
 
 *** 业务模块服务依赖的实现
-    了解了下后端的开发模式，后端的服务化是借助于 Dubbo 来构建的 RPC 服务，依赖某个服务，只需要依赖其对外暴露的 API 模块（只包含接口和数据结构的 Maven 依赖），不需要依赖其具体实现，具体服务调用的实现由框架来实现。
-    客服端的依赖虽然是本地的依赖，但是也可以参考这样的方式来实现模块之间的依赖，例如商品模块，封装所有对外暴露的服务，单独打一个 API 的包给到其他模块来依赖，在打包 App 的时候，对其服务的实现进行注册。
+    - 后端的服务化是借助于 Dubbo 来构建的 RPC 服务，依赖某个服务，只需要依赖其对外暴露的 API 模块（只包含接口和数据结构的 Maven 依赖），不需要依赖其具体实现，具体服务调用的实现由框架来实现
+    - 客服端的依赖也可以参考这样的方式来实现模块之间的依赖，例如商品模块，可以提供一个 API 层，用来对外暴露数据结构和服务
+    #+begin_example
+                +--------------+       +-------------------+
+                |              |       |                   |
+                |              |       |   Module 业务逻辑  |
+                |              |       |                   |
+                |    MODULE    |       +-------------------+
+                |              |   =>            |
+                |              |                 v
+                |              |       +-------------------+
+                +--------------+       |                   |
+                                       |    Module Api     |
+                                       |                   |
+                                       +-------------------+
+    #+end_example
 
-*** 业务 API 层
+*** API 层实现方式
+    对外暴露服务的方式有很多种：
+    - 协议的方式：例如"app://order/detail/get?id=100"，数据可以用 JSON 来进行传递，请求本地服务就像调用一个 Http 服务一样，根据请求协议来获取数据，然后解析数据进行操作
+    - 接口的方式：像后端使用 Dubbo 服务那样，订单模块对外提供一个独立的 Maven 依赖，里面包含了数据接口和对外提供的服务接口，适用方依赖之后直接调用
+
+*** 接口的方式实现 API
+    协议的方式的问题：如果服务提供的地方更改了之后，需要手动去查询所有调用到的地方，进行更改，而且没有版本管理，而且数据解析都需要手动进行转换，改动的成本比较高，也有一定稳定性风险。
+    接口的方式的问题：需要额外提供一个依赖（单独把 API 层打包成一个 aar 包），使用方需要添加 Mave 依赖，所以引入依赖和发布的成本比较高。
+
+    我们最终选择了接口的方式，这种方式的稳定性和版本控制做的更好，对于改动来说，编译过程自动会帮你校验改动的影响面，而引入依赖和发布成本高的问题，完全可以交给构建工具（Gradle Plugin）来解决。
 
 *** 业务实现层
+    业务实现层需要做的，就是实现自己模块本身的业务逻辑，并实现自己提供的 API 接口，暴露对外的服务，
 
 ** 基础组件抽象
 
-** 单/多模块快速打包
+*** 现有的基础组件实现
+    项目中现在有很多的基础组件都是统一在 Common 里面进行封装的，例如：账号库、网络库、图片加载、Web 容器库等等，这也带来了一些问题：
+    1. Common 太重
+    2. 业务模块跟基础组件强耦合，在开发一些跨团队的组件过程中，如果碰到使用的基础库不同的时候，需要比较多的时间来做封装
+    3. 升级基础组件或替换依赖的成本比较高，一些 API 的更改需要改动每个调用的地方
 
-** 组件发布优化
+*** 实现思路
+    - 将常用的基础组件整理，抽象成单独的一个抽象层，里面定义了一系列基础组件接口（图片加载、Web 容器、JsBridge 调用、账号等等）
+    - 把统一实现的组件放到另一个依赖里面，可以在 App 中进行具体实现的注册，而业务模块本身，可以只依赖抽象
 
-* Android-Modular-Plugin
+*** 依赖结构
+    [[./imgs/module_components.jpg]]
 
-** 不改变现有的开发模式
+** 单/多模块打包
+   随着业务量和业务复杂度的增长，还有多个三方组件的引入，客户端工程代码量也变得越来越庞大，直接造成的一个问题是：打包慢！
+   一个简单的场景：当你开发了一个商品模块内部的功能之后，你需要打整个 App 的包才能进行测试，而打一个包的时间可能是 5～10 分钟，如果一天打包 10 次，也是比较酸爽。
+   我们的组件也需要支持单模块或者选定的某些进行打包，其中的思路也是通过自定义 Gradle Plugin 在编译阶段，动态去更改 Module 实际依赖的 Android Gradle 插件来实现的。
 
-** 单模块打包
+** 架构图
+   上面的一些改进点，总结成一张图，就是这样的:
+   [[./imgs/ebiz_framework.png]]
 
-** 模块 API 层和业务层隔离
+* 实现
 
-** 模块间依赖管理
+** 模块基础组件
+   第一个需要的组件是模块化基础的支持: Android-Modular
+   
+*** 实现模块类
+    业务模块类需要继承 BaseModule：
+    #+BEGIN_SRC java
+      public class ModuleA extends BaseModule {
 
-** 模块发布
+          @Override
+          public void onInstalled() {
+              registerBusinessService(ModuleAService.class, new CachedServiceFetcher() {
+                  @Override
+                  public ModuleAService createService(@NotNull ModularManage manager) {
+                      if (service == null) {
+                          service = new ModuleAServiceImpl();
+                      }
+                      return service;
+                  }
+              });
+          }
+      }
+    #+END_SRC
 
-* Android-Core
+*** 模块生命周期
+    模块有以下几个生命周期：
+    - onInstalled() -> 模块被注册的时候调用：Module 在 App 中被注册的时候
+    - onCreate()    -> 模块第一次启动的时候调用：Module 所属的某个 Activity 第一次启动的时候
+    - onStart()     -> 模块启动的时候调用：模块第一次启动之的时候
+    - onStop()      -> 模块停止的时候调用：Activity 栈里面没有模块所属 Activity 的时候
 
-* Android-Support
+*** 模块生命周期的实现
+    其实组件内关于生命周期捕获和监听，都是借助于 Google 的 Android Architecture Components 中的 Lifecycle 库来实现的。
+    - 模块生命周期的捕获：首先需要将 Activity 的类注册到 Module 中，然后全局监听 Activity 的 Lifecycle.Event 事件，就可以获取到模块内 Activity 的运行情况
+    - 模块生命周期的监听：BaseModule 本身继承了 LifecycleOwner 接口，可以对其添加观察者，来实现对模块生命周期的监听
 
-*** Native-Support
+** 二方、三方包组件抽象
+   二方、三方包支持的组件: Modular-Support
+
+*** 基础组件抽象
+    以图片组件为例，一般业务模块中使用到的图片相关的功能有：图片加载、图片选择等，可以把这些功能抽象成接口
+    #+BEGIN_SRC kotlin
+    interface IImageLoadSupport {
+        fun <IMAGE : ImageView> loadImage(imageView: IMAGE?, imgUrl: String)
+        fun <IMAGE : ImageView> loadImage(imageView: IMAGE?, @DrawableRes drawableId: Int)
+        fun <IMAGE : ImageView> loadImage(imageView: IMAGE?, imgUrl: String, callback: ImageLoadCallback<IMAGE>)
+        fun imagePicker(activity: Activity?, selectedImgUris: List<Uri>)
+        fun onImagePickerResult(requestCode: Int, resultCode: Int, intent: Intent?): List<String>?
+    }
+    #+END_SRC
+
+*** 基础组件的实现
+    基础组件的实现可以在 App 中进行注册，如果需要单模块组件中使用 Support 相关功能，可以提供一套默认实现，在但模块运行时引入，在全局有一个 Support 注册中心，以 Map 的形式维护运行中的 Support 对象：
+    #+BEGIN_SRC kotlin
+    fun <SUPPORT : Any, SUPPORTIMPL : SUPPORT> registerProvider(supportCls: Class<SUPPORT>, provider: SupportProvider<SUPPORTIMPL>) {
+        synchronized(Lock) {
+            supportsProviderMap[supportCls] = provider
+            if (supportsMap.containsKey(supportCls)) {
+                supportsMap.remove(supportCls)
+            }
+        }
+    }
+    #+END_SRC
+
+** 模块运行组件
+   支持模块打包、模块发布的 Gradle 插件：Modular-Plugin
+   需要修改之前的 Plugin 
+   #+BEGIN_SRC groovy
+   apply plugin 'com.android.library' => apply plugin 'com.youzan.ebizmobile'
+   #+END_SRC
+
+
+*** 实现原理
+    - 实现一个自定义的 Gradle Plugin
+    - 根据执行的 Task 动态更改支持的 Plugin 类型（'com.android.applicatio'或是'com.android.library'）
+    - 根据模块的配置使用 Maven-publish 插件分别上传 API 和具体实现的 AAR 包
+    
+*** 单模块打包 Step1
+    将以下配置添加到模块目录下的 build.gradle 文件中
+    #+BEGIN_SRC groovy
+    modular {
+        // 模块包名
+        packageName = "com.youzan.ebizcore.plugin.demoa"
+
+        app {
+            // 单模块打包开关
+            asApp = true
+            // 运行的 App 的名称
+            appName = "Module A"
+            // 入口 Activity
+            launchActivity = "com.youzan.ebizcore.plugin.demoa.ModuleAActivity"
+            
+            // 配置只在单模块打包时需要引入的依赖
+            requires {
+                require "com.squareup.picasso:picasso:2.3.2"
+            }
+        }
+    }
+    #+END_SRC
+    
+*** 单模块打包 Step2
+    运行 modular 的 createApp Task，就会自动生成需要的类（以 module_a 为例）
+    #+BEGIN_SRC sh
+    自动生成的文件：
+    ./module_a
+      --src
+      ----main
+      ------app # 自动生成 app 目录
+      --------java # 自动生成 Application 类
+      --------res # 自动生成资源
+      --------AndroidManifest.xml # 自动生成 Manifest 文件
+    #+END_SRC
+
+*** 单模块打包 Step3
+    运行 modular 的 runAsApp Task，模块就会被单独达成一个 apk 包，并安装到你的手机上，如果模块有上下文依赖（比如登录）的话可以额外提供依赖，加到模块的 app 的 requires 中。
+
+*** 模块 API 管理
+    #+BEGIN_SRC groovy
+    modular {
+        packageName = "com.youzan.ebizcore.plugin.demoa"
+        // 模块 API 支持相关参数
+        api {
+            // 是否需要提供 API 支持的开关（会影响到是否可以运行自动生成代码的 Task）
+            hasApi = true
+            // 对外提供的 API Service 类名
+            apiService = "ModuleAService"
+            // API 层的依赖
+            requires {
+                require "com.google.code.gson:gson:2.8.2"
+            }
+        }
+    }
+    #+END_SRC
+
+* 规划
+
+** 使用更方便、侵入性更低
+   - 依赖注入的方式实现 API 的调用
+
+** 多个平台支持
 
 *** Weex-Support
 
-*** ReactNative-Support
-
 *** Flutter-Support
 
-* 规划
+*** JS-Support
+
